@@ -7,6 +7,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
+	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/validation"
@@ -50,6 +51,7 @@ func NewBuiltinValidator() *BuiltinValidator {
 	_ = networkingv1.AddToScheme(bv.scheme)
 	_ = batchv1.AddToScheme(bv.scheme)
 	_ = rbacv1.AddToScheme(bv.scheme)
+	_ = autoscalingv1.AddToScheme(bv.scheme)
 
 	// Set up decoder using UniversalDeserializer
 	codecFactory := serializer.NewCodecFactory(bv.scheme)
@@ -66,6 +68,7 @@ func NewBuiltinValidator() *BuiltinValidator {
 	bv.registerService()
 	bv.registerConfigMap()
 	bv.registerSecret()
+	bv.registerReplicationController()
 	bv.registerPVC()
 	bv.registerNamespace()
 	bv.registerServiceAccount()
@@ -78,6 +81,9 @@ func NewBuiltinValidator() *BuiltinValidator {
 	// batch/v1 kinds
 	bv.registerJob()
 	bv.registerCronJob()
+	bv.registerHorizontalPodAutoscaler()
+	bv.registerLimitRange()
+	bv.registerList()
 
 	// rbac.authorization.k8s.io/v1 kinds
 	bv.registerRole()
@@ -170,6 +176,24 @@ func (v *BuiltinValidator) ValidateManifest(manifest Manifest, rawData []byte) *
 			Errors: []ErrorItem{
 				{Field: "spec", Message: fmt.Sprintf("failed to decode object: %v", err), Code: types.ErrCodeInvalid},
 			},
+		}
+	}
+
+	// Apply thin namespace defaulter: set default namespace for namespaced resources
+	// that lack one. This mirrors the k8s API server's DefaultNamespace admission
+	// plugin. In real operational YAML, namespace-scoped resources often omit the
+	// namespace field and rely on the API server to default it.
+	if objMeta, ok := obj.(metav1.Object); ok {
+		if objMeta.GetNamespace() == "" && isNamespacedKind(manifest.Kind) {
+			objMeta.SetNamespace(metav1.NamespaceDefault)
+		}
+	}
+
+	// Apply admission-level defaults: ReplicationController selector can be
+	// defaulted from pod template labels (k8s admission behavior).
+	if rc, ok := obj.(*corev1.ReplicationController); ok {
+		if len(rc.Spec.Selector) == 0 && rc.Spec.Template != nil && len(rc.Spec.Template.Labels) > 0 {
+			rc.Spec.Selector = rc.Spec.Template.Labels
 		}
 	}
 
@@ -296,6 +320,18 @@ func (v *BuiltinValidator) registerConfigMap() {
 	v.registerKind("ConfigMap", "v1",
 		func(obj runtime.Object) field.ErrorList {
 			return v.validateConfigMap(obj.(*corev1.ConfigMap))
+		},
+		func(data []byte) (runtime.Object, error) {
+			obj, _, err := v.decode(data)
+			return obj, err
+		},
+	)
+}
+
+func (v *BuiltinValidator) registerReplicationController() {
+	v.registerKind("ReplicationController", "v1",
+		func(obj runtime.Object) field.ErrorList {
+			return v.validateReplicationController(obj.(*corev1.ReplicationController))
 		},
 		func(data []byte) (runtime.Object, error) {
 			obj, _, err := v.decode(data)
@@ -552,6 +588,21 @@ func (v *BuiltinValidator) validateReplicaSet(rs *appsv1.ReplicaSet) field.Error
 	return allErrs
 }
 
+func (v *BuiltinValidator) validateReplicationController(rc *corev1.ReplicationController) field.ErrorList {
+	var allErrs field.ErrorList
+	allErrs = append(allErrs, validation.ValidateObjectMeta(&rc.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
+
+	if rc.Spec.Replicas != nil && *rc.Spec.Replicas < 0 {
+		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "replicas"), *rc.Spec.Replicas, "must be >= 0"))
+	}
+
+	if len(rc.Spec.Selector) == 0 {
+		allErrs = append(allErrs, field.Required(field.NewPath("spec", "selector"), ""))
+	}
+
+	return allErrs
+}
+
 func (v *BuiltinValidator) validatePod(pod *corev1.Pod) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&pod.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
@@ -700,6 +751,60 @@ func (v *BuiltinValidator) validateCronJob(cj *batchv1.CronJob) field.ErrorList 
 	return allErrs
 }
 
+func (v *BuiltinValidator) registerHorizontalPodAutoscaler() {
+	v.registerKind("HorizontalPodAutoscaler", "autoscaling/v1",
+		func(obj runtime.Object) field.ErrorList {
+			return v.validateHorizontalPodAutoscaler(obj.(*autoscalingv1.HorizontalPodAutoscaler))
+		},
+		func(data []byte) (runtime.Object, error) {
+			obj, _, err := v.decode(data)
+			return obj, err
+		},
+	)
+}
+
+func (v *BuiltinValidator) registerLimitRange() {
+	v.registerKind("LimitRange", "v1",
+		func(obj runtime.Object) field.ErrorList {
+			return v.validateLimitRange(obj.(*corev1.LimitRange))
+		},
+		func(data []byte) (runtime.Object, error) {
+			obj, _, err := v.decode(data)
+			return obj, err
+		},
+	)
+}
+
+func (v *BuiltinValidator) validateHorizontalPodAutoscaler(hpa *autoscalingv1.HorizontalPodAutoscaler) field.ErrorList {
+	var allErrs field.ErrorList
+	allErrs = append(allErrs, validation.ValidateObjectMeta(&hpa.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
+
+	if hpa.Spec.MinReplicas != nil && *hpa.Spec.MinReplicas < 0 {
+		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "minReplicas"), *hpa.Spec.MinReplicas, "must be >= 0"))
+	}
+
+	return allErrs
+}
+
+func (v *BuiltinValidator) validateLimitRange(lr *corev1.LimitRange) field.ErrorList {
+	var allErrs field.ErrorList
+	allErrs = append(allErrs, validation.ValidateObjectMeta(&lr.ObjectMeta, false, nameValidator, field.NewPath("metadata"))...)
+
+	return allErrs
+}
+
+func (v *BuiltinValidator) registerList() {
+	v.registerKind("List", "v1",
+		func(obj runtime.Object) field.ErrorList {
+			return nil // List is a meta-type; items are validated individually
+		},
+		func(data []byte) (runtime.Object, error) {
+			obj, _, err := v.decode(data)
+			return obj, err
+		},
+	)
+}
+
 func (v *BuiltinValidator) validateRole(role *rbacv1.Role) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&role.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
@@ -763,4 +868,18 @@ type ErrorItem struct {
 	Field   string
 	Message string
 	Code    string
+}
+// isNamespacedKind returns true for Kubernetes resource kinds that are namespaced.
+// Cluster-scoped kinds return false.
+func isNamespacedKind(kind string) bool {
+	switch kind {
+	case "Namespace", "Node", "PersistentVolume",
+		"ClusterRole", "ClusterRoleBinding", "StorageClass",
+		"CSIDriver", "CSINode", "PriorityClass",
+		"RuntimeClass", "FlowSchema", "PriorityLevelConfiguration",
+		"EndpointSlice" /* cluster-scoped for service mesh */:
+		return false
+	default:
+		return true
+	}
 }

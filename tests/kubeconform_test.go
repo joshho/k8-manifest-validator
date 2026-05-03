@@ -93,8 +93,8 @@ func TestKubeconformValidFixtures(t *testing.T) {
 		t.Errorf("kubeconform exit code %d vs our exit code %d for valid fixtures", kcExitCode, ourExitCode)
 	}
 
-	if results.Summary.Total != 10 {
-		t.Errorf("expected 10 valid resources, got %d", results.Summary.Total)
+	if results.Summary.Total != 12 {
+		t.Errorf("expected 12 valid resources, got %d", results.Summary.Total)
 	}
 }
 

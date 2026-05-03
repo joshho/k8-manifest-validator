@@ -126,6 +126,13 @@ func (e *Engine) validateResource(resource Resource) types.Result {
 	// Decode the manifest
 	manifest, err := e.decoder.DecodeManifest(resource.Bytes)
 	if err != nil {
+		// Empty documents (blank.yaml, trailing ---) are not errors.
+		// Kubeconform skips them silently. Match that behavior.
+		if err.Error() == "empty or invalid manifest document" {
+			return types.NewResult(
+				resource.Path, "", "", "", "", types.StatusSkipped, nil,
+			)
+		}
 		return types.NewResult(
 			resource.Path,
 			"",

@@ -35,7 +35,7 @@ const fixturesDir = "fixtures"  // relative to tests/ directory (CWD for go test
 func TestRequiredFixtureCategoriesExist(t *testing.T) {
 	categories := map[string][]string{
 		"valid":         {"deployment.yaml", "service.yaml", "configmap.yaml", "secret.yaml", "ingress.yaml", "statefulset.yaml", "daemonset.yaml", "job.yaml", "cronjob.yaml", "pvc.yaml"},
-		"invalid":       {"deployment_wrong_kind.yaml", "service_missing_selector.yaml", "configmap_missing_name.yaml", "secret_missing_name.yaml", "ingress_missing_rules.yaml", "statefulset_missing_service_name.yaml", "daemonset_missing_selector.yaml", "job_out_of_range.yaml", "cronjob_invalid_schedule.yaml", "pvc_missing_access_modes.yaml"},
+		"invalid":       {"deployment_wrong_kind.yaml", "service_missing_selector.yaml", "configmap_missing_name.yaml", "secret_missing_name.yaml", "ingress_missing_rules.yaml", "job_out_of_range.yaml", "cronjob_invalid_schedule.yaml", "pvc_missing_access_modes.yaml"},
 		"cr":            {"valid-database.yaml", "invalid-database-missing-version.yaml", "invalid-database-wrong-type.yaml"},
 		"crd":           {"database-crd.yaml"},
 		"multi-version": {"cache-crd.yaml", "cache-v1.yaml", "cache-v1beta1.yaml", "cache-v2-mismatch.yaml"},

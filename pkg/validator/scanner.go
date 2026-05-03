@@ -11,6 +11,8 @@ import (
 	"regexp"
 	"strings"
 	"unicode/utf8"
+
+	"sigs.k8s.io/yaml"
 )
 
 // ErrFileTooLarge is returned when a file exceeds the maximum buffer size
@@ -83,10 +85,20 @@ func (s *Scanner) Walk(path string) ([]Resource, error) {
 		// Split multi-document YAML and add each as separate resource
 		docs := SplitYAMLDocument(data)
 		for _, doc := range docs {
-			resources = append(resources, Resource{
-				Path:  walkPath,
-				Bytes: doc,
-			})
+			// Check if this is a List and expand it into individual items
+			if listItems := expandList(doc); listItems != nil {
+				for _, item := range listItems {
+					resources = append(resources, Resource{
+						Path:  walkPath,
+						Bytes: item,
+					})
+				}
+			} else {
+				resources = append(resources, Resource{
+					Path:  walkPath,
+					Bytes: doc,
+				})
+			}
 		}
 
 		return nil
@@ -159,6 +171,33 @@ func (s *Scanner) readFile(path string) ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+// expandList expands a List kind into its individual item resources.
+// This handles the Kubernetes List type which wraps other resources.
+func expandList(data []byte) [][]byte {
+	var doc map[string]interface{}
+	if err := yaml.Unmarshal(data, &doc); err != nil {
+		return nil
+	}
+	if doc["kind"] != "List" {
+		return nil
+	}
+
+	items, ok := doc["items"].([]interface{})
+	if !ok || len(items) == 0 {
+		return nil
+	}
+
+	var result [][]byte
+	for _, item := range items {
+		itemBytes, err := yaml.Marshal(item)
+		if err != nil {
+			continue
+		}
+		result = append(result, itemBytes)
+	}
+	return result
 }
 
 // SplitYAMLDocument splits a YAML byte slice into individual documents
