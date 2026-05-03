@@ -1,0 +1,2 @@
+# kubeconform-aligned scenario: empty file (no resources)
+# Both tools should handle gracefully — zero resources, zero errors

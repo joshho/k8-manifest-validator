@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Widget
+metadata:
+  name: my-widget
+  namespace: default
+spec:
+  size: large
+  color: blue

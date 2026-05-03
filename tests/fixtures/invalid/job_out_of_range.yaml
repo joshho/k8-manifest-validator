@@ -1,0 +1,16 @@
+# Invalid Job - negative completions (out-of-range)
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: my-job
+  namespace: default
+spec:
+  completions: -1
+  template:
+    metadata:
+    spec:
+      containers:
+      - name: hello
+        image: busybox:1.28
+        command: ["sh", "-c", "echo hello"]
+      restartPolicy: OnFailure

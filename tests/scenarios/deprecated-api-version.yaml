@@ -1,0 +1,20 @@
+# kubeconform-aligned scenario: deprecated API version
+# extensions/v1beta1 for Deployment has been deprecated since k8s 1.16
+# Both tools should flag this (or at minimum kubeconform flags it)
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: legacy-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21

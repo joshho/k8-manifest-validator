@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Database
+metadata:
+  name: my-database
+  namespace: default
+spec:
+  engine: postgres
+  version: "14.2"
+  replicas: 3

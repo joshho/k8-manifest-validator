@@ -1,0 +1,17 @@
+# kubeconform-aligned scenario: Deployment missing required selector
+# spec.selector.matchLabels is required — both tools should flag this
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: default
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21

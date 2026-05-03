@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Database
+metadata:
+  name: invalid-database
+  namespace: default
+spec:
+  engine: postgres
+  # missing required 'version' field

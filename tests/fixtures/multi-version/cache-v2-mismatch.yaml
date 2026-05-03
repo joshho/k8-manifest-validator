@@ -1,0 +1,7 @@
+apiVersion: example.com/v2
+kind: Cache
+metadata:
+  name: my-cache-v2-mismatch
+  namespace: default
+spec:
+  maxMemory: "512Mi"

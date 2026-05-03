@@ -1,0 +1,15 @@
+project_name: k8-manifest-validator
+version: 2
+archives:
+  - format: binary
+    id: k8-manifest-validator
+builds:
+  - goos: [linux, darwin]
+    goarch: [amd64, arm64]
+    main: ./cmd/k8-manifest-validator/
+    env:
+      - CGO_ENABLED=0
+checksum:
+  name_template: 'k8-manifest-validator_{{ .Version }}_checksums.txt'
+snapshot:
+  name_template: "{{ .Tag }}-next"

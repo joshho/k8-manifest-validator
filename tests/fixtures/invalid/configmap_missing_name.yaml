@@ -1,0 +1,7 @@
+# Invalid ConfigMap - missing required metadata.name
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: default
+data:
+  database: "postgres"
