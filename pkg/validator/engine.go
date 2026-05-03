@@ -56,6 +56,17 @@ func NewEngine(opts EngineOptions) *Engine {
 // Validate validates all Kubernetes manifests in the given path
 // crdPaths can be provided to register CRDs before validation
 func (e *Engine) Validate(path string, crdPaths []string) (*types.Results, error) {
+	// Check single-file paths exist before Walk
+	if info, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return nil, fmt.Errorf("file not found: %s", path)
+		}
+	} else if !info.IsDir() {
+		if os.IsNotExist(err) {
+			return nil, fmt.Errorf("file not found: %s", path)
+		}
+	}
+
 	// Register CRDs if provided
 	for _, crdPath := range crdPaths {
 		crdData, err := os.ReadFile(crdPath)

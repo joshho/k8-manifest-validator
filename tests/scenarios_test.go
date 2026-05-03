@@ -10,7 +10,7 @@ import (
 	"k8-manifest-validator/pkg/validator"
 )
 
-const scenariosDir = "/home/node/.openclaw/workspace/github/SWE/swe-k8-manifest-validator/tests/scenarios"
+const scenariosDir = "scenarios"
 
 // exitCodeFromResults determines the exit code from validation results.
 func exitCodeFromResults(results *types.Results) int {

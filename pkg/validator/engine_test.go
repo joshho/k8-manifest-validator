@@ -3,6 +3,7 @@ package validator
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"k8-manifest-validator/pkg/types"
@@ -276,5 +277,18 @@ spec:
 
 	if results.Summary.Invalid != 1 {
 		t.Errorf("expected 1 invalid, got %d", results.Summary.Invalid)
+	}
+}
+func TestValidateNonexistentFile(t *testing.T) {
+	engine := NewEngine(EngineOptions{})
+	results, err := engine.Validate("/nonexistent/path/to/file.yaml", nil)
+	if err == nil {
+		t.Fatal("expected error for non-existent file, got nil")
+	}
+	if !strings.Contains(err.Error(), "file not found") {
+		t.Fatalf("expected 'file not found' in error, got: %v", err)
+	}
+	if results != nil {
+		t.Fatal("expected nil results on error")
 	}
 }
