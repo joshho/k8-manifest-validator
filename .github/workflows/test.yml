@@ -66,9 +66,13 @@ jobs:
       - name: Create and push tag
         if: needs.test.conclusion == 'success'
         run: |
+          set -x
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git tag -a "${{ steps.next_tag.outputs.tag }}" -m "Automatic release ${{ steps.next_tag.outputs.tag }}"
-          git push origin "${{ steps.next_tag.outputs.tag }}"
+          TAG="${{ steps.next_tag.outputs.tag }}"
+          echo "Creating and pushing tag: $TAG"
+          git tag -a "$TAG" -m "Automatic release $TAG"
+          git push origin "$TAG"
+          echo "Tag $TAG pushed successfully"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
