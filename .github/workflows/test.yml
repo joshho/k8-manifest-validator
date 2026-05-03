@@ -1,17 +1,66 @@
 name: test
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - 'v[0-9]+.[0-9]+'
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - 'v[0-9]+.[0-9]+'
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-go@v5
         with:
           go-version: '1.26'
           cache: true
+
       - run: go test ./...
+
+  tag-and-release:
+    needs: test
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Determine next release tag
+        id: next_tag
+        run: |
+          VERSION_CONTENT=$(cat VERSION)
+          K8S_MINOR="${VERSION_CONTENT#v}"   # "v1.31" → "1.31"
+
+          # Find last prerelease tag under this minor
+          LAST_TAG=$(gh release list --repo joshho/k8-manifest-validator --limit 50 2>/dev/null | \
+            awk -v minor="$K8S_MINOR" '$2 ~ "^v" minor "-" { print $2 }' | \
+            sort -V | tail -1 || true)
+
+          if [ -z "$LAST_TAG" ]; then
+            PATCH_NUM=0
+          else
+            PATCH_NUM="${LAST_TAG##*-}"
+            PATCH_NUM=$((PATCH_NUM + 1))
+          fi
+
+          TAG="v${K8S_MINOR}-${PATCH_NUM}"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+      - name: Create and push tag
+        if: needs.test.conclusion == 'success'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag -a "${{ steps.next_tag.outputs.tag }}" -m "Automatic release ${{ steps.next_tag.outputs.tag }}"
+          git push origin "${{ steps.next_tag.outputs.tag }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
