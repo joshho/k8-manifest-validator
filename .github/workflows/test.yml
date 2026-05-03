@@ -33,6 +33,8 @@ jobs:
   tag-and-release:
     needs: test
     if: github.event_name == 'push'
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
