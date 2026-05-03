@@ -1,12 +1,12 @@
 name: release
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   tag:
     tags:
       - 'v[0-9]+.[0-9]+-[0-9]+'
+
+# Triggered ONLY when a tag matching v{MAJOR}.{MINOR}-{PATCH} is pushed.
+# test.yml handles go test ./... on every main push.
+# This workflow handles goreleaser release build → script-driven dual releases.
 
 jobs:
   build:
@@ -25,13 +25,12 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         with:
           version: ~> v2
-          args: "release ${{ github.run_id }}-${{ github.run_attempt }} --clean"
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
     needs: build
-    if: github.event_name == 'tag'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
