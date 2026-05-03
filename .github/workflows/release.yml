@@ -45,12 +45,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: artifacts
-          path: dist/
-
       - name: Create/update releases
         run: ./scripts/release.sh
         env:
