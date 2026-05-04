@@ -110,6 +110,10 @@ jobs:
           TAG="v${K8S_MINOR}-${PATCH_NUM}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
+      - name: Debug condition
+        run: |
+          echo "test.conclusion=${{ needs.test.conclusion }}"
+
       - name: Create and push tag
         if: needs.test.conclusion == 'success'
         continue-on-error: true
