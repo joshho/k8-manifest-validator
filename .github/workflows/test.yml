@@ -121,12 +121,12 @@ jobs:
             --repo joshho/k8-manifest-validator 2>&1; then
             echo "Release $TAG created successfully with binary"
           else
-            echo "[$TAG] already exists — updating assets instead"
-            gh release edit "$TAG" \
+            echo "[$TAG] already exists — uploading assets with gh release upload"
+            gh release upload "$TAG" \
+              dist/k8-manifest-validator \
               --repo joshho/k8-manifest-validator \
-              --addAsset dist/k8-manifest-validator \
-              --notes "Release $TAG built by CI."
-            echo "Release $TAG updated"
+              --clobber
+            echo "Release $TAG updated with new binary"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
