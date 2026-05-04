@@ -153,6 +153,22 @@ func TestCustomResourceWrongType(t *testing.T) {
 	}
 }
 
+func TestCustomResourceNoCRD(t *testing.T) {
+	// A CR without a corresponding CRD should be an error (not unknown-kind)
+	engine := validator.NewEngine(validator.EngineOptions{})
+	results, err := engine.Validate(filepath.Join(fixturesDir, "cr", "invalid-database-no-crd.yaml"), nil)
+	if err != nil {
+		t.Fatalf("failed to validate: %v", err)
+	}
+	if len(results.Resources) == 0 {
+		t.Fatal("expected result but got none")
+	}
+	r := results.Resources[0]
+	if r.Status == types.StatusValid {
+		t.Errorf("expected error status for CR without CRD, got valid")
+	}
+}
+
 func TestCRDSelfValidationValid(t *testing.T) {
 	engine := validator.NewEngine(validator.EngineOptions{})
 	results, err := engine.Validate(filepath.Join(fixturesDir, "crd", "database-crd.yaml"), nil)

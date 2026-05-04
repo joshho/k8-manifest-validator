@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Database
+metadata:
+  name: orphan-database
+  namespace: default
+spec:
+  engine: postgres
+  version: "15.0"

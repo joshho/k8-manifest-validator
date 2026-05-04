@@ -1,0 +1,135 @@
+name: version-bump
+
+on:
+  schedule:
+    # Run nightly at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Bump mode (patch|minor|check)'
+        required: true
+        default: 'check'
+        type: choice
+        options:
+          - check
+          - patch
+          - minor
+
+permissions:
+  contents: write
+  actions: write
+  pull-requests: write
+
+jobs:
+  # ─── Minor version bump ───────────────────────────────────────────────────────
+  # Only runs on main branch. Detects new k8s minor releases (e.g. 1.31 -> 1.32).
+  # Creates release/v{major}.{minor} branch from current main state, then updates
+  # main to the new version. Pushes trigger test.yml + release.yml.
+  minor-bump:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+
+      - name: Check for new minor version
+        id: check
+        run: |
+          # Capture old minor BEFORE we modify anything
+          CURRENT_VERSION=$(cat VERSION | tr -d '[:space:]')
+          echo "current_version=$CURRENT_VERSION" >> "$GITHUB_OUTPUT"
+          echo "current_minor=$(echo $CURRENT_VERSION | sed 's/^v//' | sed 's/-[0-9]*$//')" >> "$GITHUB_OUTPUT"
+
+          result=$(./scripts/check-new-version.sh --minor 2>&1 || true)
+          echo "output: $result"
+          if echo "$result" | grep -q "NEW_MINOR="; then
+            echo "new_minor=$(echo "$result" | grep NEW_MINOR | cut -d= -f2)" >> "$GITHUB_OUTPUT"
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create release branch for old version
+        if: steps.check.outputs.available == 'true'
+        env:
+          OLD_MINOR: ${{ steps.check.outputs.current_minor }}
+        run: |
+          echo "Creating release/v${OLD_MINOR} from current main state"
+          git checkout main
+          git checkout -b "release/v${OLD_MINOR}"
+          git push origin "release/v${OLD_MINOR}"
+          echo "Created branch release/v${OLD_MINOR}"
+
+      - name: Bump to new minor version
+        if: steps.check.outputs.available == 'true'
+        env:
+          NEW_MINOR: ${{ steps.check.outputs.new_minor }}
+        run: |
+          ./scripts/bump-version.sh --minor "${NEW_MINOR#v}"
+
+      - name: Push updated main + tag
+        if: steps.check.outputs.available == 'true'
+        env:
+          NEW_MINOR: ${{ steps.check.outputs.new_minor }}
+        run: |
+          TAG="v${NEW_MINOR#v}-0"
+          echo "Pushing main and tag $TAG"
+          git push origin main --follow-tags
+          echo "Minor bump complete: main is now at $TAG"
+
+      - name: No new minor version
+        if: steps.check.outputs.available == 'false'
+        run: echo "Already on latest k8s minor version. No action needed."
+
+  # ─── Patch version bump ───────────────────────────────────────────────────────
+  # Runs on ALL branches (main + every vX.YY branch) on a nightly schedule.
+  # Reads current k8s package minor from go.mod, checks GitHub API for latest
+  # patch for that minor, and if newer: bumps packages + VERSION patch counter,
+  # commits and tags. The tag push triggers test.yml + release.yml.
+  patch-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+
+      - name: Check if patch update is needed
+        id: check
+        run: |
+          result=$(./scripts/check-new-version.sh --patch 2>&1 || true)
+          echo "check_output: $result"
+          if echo "$result" | grep -q "NEW_PATCH="; then
+            echo "new_patch=$(echo "$result" | grep NEW_PATCH | cut -d= -f2)" >> "$GITHUB_OUTPUT"
+            echo "update_available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "update_available=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply patch bump + push
+        if: steps.check.outputs.update_available == 'true'
+        run: |
+          ./scripts/bump-version.sh --patch
+          TAG=$(cat VERSION | tr -d '[:space:]')
+          git push origin ${{ github.ref_name }}
+          git push origin "$TAG"
+          echo "Pushed branch and tag $TAG"
+
+      - name: No patch update needed
+        if: steps.check.outputs.update_available == 'false'
+        run: echo "Already on latest k8s patch for this branch."
