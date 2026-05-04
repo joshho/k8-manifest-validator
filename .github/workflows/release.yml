@@ -35,6 +35,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Upload release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: |
+            dist/k8-manifest-validator_linux_amd64/k8-manifest-validator
+            dist/k8-manifest-validator_linux_arm64/k8-manifest-validator
+            dist/k8-manifest-validator_darwin_amd64/k8-manifest-validator
+            dist/k8-manifest-validator_darwin_arm64/k8-manifest-validator
+            dist/*.txt
+          retention-days: 1
+
   release:
     needs: build
     permissions:
@@ -44,6 +56,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-artifacts
+          path: dist/
+
+      - name: Make artifacts executable
+        run: |
+          chmod +x dist/k8-manifest-validator_linux_amd64/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_linux_arm64/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_darwin_amd64/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_darwin_arm64/k8-manifest-validator
 
       - name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v6
