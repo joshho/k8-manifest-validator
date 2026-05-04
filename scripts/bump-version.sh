@@ -80,7 +80,7 @@ if [[ "$MODE" == "minor" ]]; then
 
   # 2b. Add cel-go replace directive if not present (fixes k8s 1.32 cel issue)
   if ! grep -q "cel-go v0.22.0" go.mod; then
-    echo "replace google.golang.org/cel-go => google.golang.org/cel-go v0.22.0" >> go.mod
+    echo "replace github.com/google/cel-go => github.com/google/cel-go v0.22.0" >> go.mod
     echo "[2b] cel-go replace directive added"
   fi
 
