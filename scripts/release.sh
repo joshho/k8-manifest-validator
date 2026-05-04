@@ -5,7 +5,7 @@ set -euo pipefail
 #
 # Triggered by release.yml (build job runs first and produces dist/ artifacts).
 # Expects: dist/k8-manifest-validator_{os}_{arch}/k8-manifest-validator for
-# linux/darwin × amd64/arm64, plus checksums file in dist/.
+# linux/darwin × amd64/arm64.
 #
 # Reads k8s minor from VERSION file (e.g., "v1.31").
 # Queries gh release list for last prerelease tag under that minor to determine
@@ -92,38 +92,36 @@ for artifact in "${ARTIFACTS[@]}"; do
     fi
 done
 
-# --- Helper: create or edit a release ---
-# Usage: create_release <tag> <notes> <is_prerelease>
-create_release() {
+# --- Helper: create a release, or upload --clobber if tag already exists ---
+upload_release() {
     local tag="$1"
     local notes="$2"
     local is_prerelease="$3"   # "--prerelease" or ""
 
-    # Try create first; if tag already exists, fall back to edit
-    if ! gh release create "$tag" \
+    # Try create first
+    if gh release create "$tag" \
         --repo "$GITHUB_REPO" \
         --title "$tag" \
         --notes "$notes" \
         ${is_prerelease:+"--prerelease"} \
         "${ARTIFACTS[@]}" \
-        2>/dev/null; then
-        echo "[$tag] already exists — editing to add assets"
-        local edit_args=()
-        for artifact in "${ARTIFACTS[@]}"; do
-            edit_args+=(--addAsset "$artifact")
-        done
-        gh release edit "$tag" \
-            --repo "$GITHUB_REPO" \
-            --notes "$notes" \
-            ${is_prerelease:+--prerelease} \
-            "${edit_args[@]}" \
-            2>/dev/null || true
+        2>&1; then
+        echo "[$tag] created successfully"
+        return 0
     fi
+
+    # Tag already exists — upload assets with clobber to update
+    echo "[$tag] already exists — uploading assets (--clobber)"
+    gh release upload "$tag" \
+        --repo "$GITHUB_REPO" \
+        --clobber \
+        "${ARTIFACTS[@]}" \
+        2>&1 || true
 }
 
 # --- Stable release (latest) ---
 echo "Creating stable release: $STABLE_TAG"
-create_release "$STABLE_TAG" \
+upload_release "$STABLE_TAG" \
     "Stable release for k8s $K8S_MINOR" \
     ""
 
@@ -132,7 +130,7 @@ gh release edit "$STABLE_TAG" --repo "$GITHUB_REPO" --latest true 2>/dev/null ||
 
 # --- Prerelease ---
 echo "Creating prerelease: $PRERELEASE_TAG"
-create_release "$PRERELEASE_TAG" \
+upload_release "$PRERELEASE_TAG" \
     "Prerelease $PRERELEASE_TAG for k8s $K8S_MINOR" \
     "--prerelease"
 
