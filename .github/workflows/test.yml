@@ -16,7 +16,7 @@ on:
       - '.gitignore'
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,7 +28,42 @@ jobs:
           go-version: '1.26'
           cache: true
 
-      - run: go test ./...
+      - name: Build
+        run: ./scripts/build.sh
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: dist/k8-manifest-validator
+          retention-days: 1
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: dist/
+
+      - name: Make executable
+        run: chmod +x dist/k8-manifest-validator
+
+      - name: Test
+        run: |
+          chmod +x dist/k8-manifest-validator
+          ./scripts/test.sh
 
   tag-and-release:
     needs: test
@@ -42,18 +77,30 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: dist/
+
+      - name: Make executable
+        run: chmod +x dist/k8-manifest-validator
+
       - name: Determine next release tag
         id: next_tag
         run: |
-          VERSION_CONTENT=$(cat VERSION)
-          K8S_MINOR="${VERSION_CONTENT#v}"   # "v1.31" → "1.31"
+          VERSION_CONTENT=$(grep -v '^[ ]*$' VERSION | head -1)
+          K8S_MINOR=$(echo "$VERSION_CONTENT" | grep -oP '^v\K[0-9]+\.[0-9]+')
+          if [[ -z "$K8S_MINOR" ]]; then
+            echo "ERROR: Could not parse k8s minor from VERSION"
+            exit 1
+          fi
 
-          # Find last prerelease tag under this minor
           LAST_TAG=$(gh release list --repo joshho/k8-manifest-validator --limit 50 2>/dev/null | \
             awk -v minor="$K8S_MINOR" '$2 ~ "^v" minor "-" { print $2 }' | \
             sort -V | tail -1 || true)
 
-          if [ -z "$LAST_TAG" ]; then
+          if [[ -z "$LAST_TAG" ]]; then
             PATCH_NUM=0
           else
             PATCH_NUM="${LAST_TAG##*-}"
