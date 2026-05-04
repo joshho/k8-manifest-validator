@@ -1,6 +1,6 @@
 name: version-bump
 
-on:
+"on":
   schedule:
     # Run nightly at 00:00 UTC
     - cron: '0 0 * * *'
