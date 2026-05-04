@@ -82,9 +82,23 @@ if [[ "$MODE" == "minor" ]]; then
   sed -i 's/^\([[:space:]]*const version = "\)v[0-9]*\.[0-9]*-[0-9]*"/\1'"${NEW_TAG}"'"/' cmd/k8-manifest-validator/main.go
   echo "[3/4] main.go version const -> ${NEW_TAG}"
 
-  # 4. go mod tidy + commit + tag
+  # 4. go mod tidy + build test
   go mod tidy
-  echo "[4/4] go mod tidy"
+  echo "[4/6] go mod tidy"
+
+  echo "[5/6] go build ./..."
+  if ! go build ./...; then
+    echo "BUILD FAILED — rolling back"
+    git checkout -- VERSION go.mod go.sum cmd/k8-manifest-validator/main.go
+    exit 1
+  fi
+
+  echo "[6/6] go test ./..."
+  if ! go test ./...; then
+    echo "TESTS FAILED — rolling back"
+    git checkout -- VERSION go.mod go.sum cmd/k8-manifest-validator/main.go
+    exit 1
+  fi
 
   git add VERSION go.mod go.sum cmd/k8-manifest-validator/main.go
   git commit -m "release: bump to k8s v${TARGET_MINOR}"
