@@ -91,11 +91,13 @@ jobs:
         run: echo "Already on latest k8s minor version. No action needed."
 
   # ─── Patch version bump ───────────────────────────────────────────────────────
-  # Runs on ALL branches (main + every vX.YY branch) on a nightly schedule.
+  # Runs on main + version branches (v1.30, v1.31, etc.) only.
+  # Skips release/vX.Y branches and any other feature/hotfix branches.
   # Reads current k8s package minor from go.mod, checks GitHub API for latest
   # patch for that minor, and if newer: bumps packages + VERSION patch counter,
   # commits and tags. The tag push triggers test.yml + release.yml.
   patch-bump:
+    if: github.ref_name == 'main' || (github.ref_name =~ '^v\d+\.\d+$')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
