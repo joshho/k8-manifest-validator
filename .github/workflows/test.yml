@@ -89,25 +89,25 @@ jobs:
       - name: Determine next release tag
         id: next_tag
         run: |
-          VERSION_CONTENT=$(grep -v '^[ ]*$' VERSION | head -1)
-          K8S_MINOR=$(echo "$VERSION_CONTENT" | grep -oP '^v\K[0-9]+\.[0-9]+')
-          if [[ -z "$K8S_MINOR" ]]; then
-            echo "ERROR: Could not parse k8s minor from VERSION"
-            exit 1
-          fi
+          K8S_MINOR=$(cat VERSION | tr -d '[:space:]')
+          echo "k8s_minor=$K8S_MINOR"
 
-          LAST_TAG=$(gh release list --repo joshho/k8-manifest-validator --limit 50 2>/dev/null | \
-            awk -v minor="$K8S_MINOR" '$2 ~ "^v" minor "-" { print $2 }' | \
-            sort -V | tail -1 || true)
+          # Find highest patch number for this minor's prerelease tags (v{minor}-N)
+          # Only match exact minor prefix to avoid confusion with stable releases
+          LAST_NUM=$(gh release list --repo joshho/k8-manifest-validator --limit 50 2>/dev/null | \
+            grep -E '^v[0-9]+\.[0-9]+-[0-9]+' | \
+            grep -v '^Release ' | \
+            sed -n "s/^v${K8S_MINOR#v}-\\([0-9]*\\).*/\\1/p" | \
+            sort -n | tail -1 || true)
 
-          if [[ -z "$LAST_TAG" ]]; then
+          if [[ -z "$LAST_NUM" ]]; then
             PATCH_NUM=0
           else
-            PATCH_NUM="${LAST_TAG##*-}"
-            PATCH_NUM=$((PATCH_NUM + 1))
+            PATCH_NUM=$((LAST_NUM + 1))
           fi
 
-          TAG="v${K8S_MINOR}-${PATCH_NUM}"
+          TAG="v${K8S_MINOR#v}-${PATCH_NUM}"
+          echo "tag=$TAG"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
