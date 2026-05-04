@@ -114,11 +114,19 @@ jobs:
         run: |
           set -x
           TAG="${{ steps.next_tag.outputs.tag }}"
-          gh release create "$TAG" \
+          if gh release create "$TAG" \
             --title "Release $TAG" \
             --notes-file <(echo "Release $TAG built by CI.") \
             dist/k8-manifest-validator \
-            --repo joshho/k8-manifest-validator
-          echo "Release $TAG created successfully with binary"
+            --repo joshho/k8-manifest-validator 2>&1; then
+            echo "Release $TAG created successfully with binary"
+          else
+            echo "[$TAG] already exists — updating assets instead"
+            gh release edit "$TAG" \
+              --repo joshho/k8-manifest-validator \
+              --addAsset dist/k8-manifest-validator \
+              --notes "Release $TAG built by CI."
+            echo "Release $TAG updated"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
