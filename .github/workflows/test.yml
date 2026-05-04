@@ -130,7 +130,7 @@ jobs:
           fi
 
           # Also ensure stable v{minor} release exists with this binary
-          K8S_MINOR="${{ steps.next_tag.outputs.tag }}" | grep -oP '^v\K[0-9]+\.[0-9]+'
+          K8S_MINOR=$(echo "$TAG" | grep -oP '^v\K[0-9]+\.[0-9]+')
           STABLE_TAG="v${K8S_MINOR}"
           echo "Ensuring stable release $STABLE_TAG exists"
           if gh release create "$STABLE_TAG" \
