@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "DEBUG: build.sh started for commit $(git log -1 --pretty=%H)"
+
 # build.sh — Parse k8s version from VERSION, update go packages, build binary.
 #
 # VERSION holds the k8s version (e.g. v1.36).
