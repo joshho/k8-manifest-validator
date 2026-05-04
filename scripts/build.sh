@@ -94,4 +94,13 @@ if ! "$GO" build -o dist/k8-manifest-validator ./cmd/k8-manifest-validator/; the
 fi
 
 echo "Build successful: dist/k8-manifest-validator"
+
+# --- Update binary version const (seen by --version) ---
+VERSION_STR=$(grep -oP '^v\K[0-9]+\.[0-9]+' VERSION | head -1)
+CURRENT_CONST=$(grep -oP 'const version = "\Kv[^"]+' cmd/k8-manifest-validator/main.go)
+if [[ "$VERSION_STR" != "$CURRENT_CONST" ]]; then
+  sed -i "s/const version = \"v[0-9.]*[0-9]\"/const version = \"v${VERSION_STR}\"/" cmd/k8-manifest-validator/main.go
+  echo "[version] main.go const updated to v${VERSION_STR}"
+fi
+
 exit 0
