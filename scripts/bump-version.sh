@@ -78,22 +78,62 @@ if [[ "$MODE" == "minor" ]]; then
   sed -i "s|^\([[:space:]]*k8s\.io/[a-zA-Z][a-zA-Z0-9/-]*[[:space:]]*\)v0\.[0-9]*\.[0-9]*$|\1${NEW_PKG}|" go.mod
   echo "[2/4] go.mod -> ${NEW_PKG}"
 
+  # 2b. Add cel-go replace directive if not present (fixes k8s 1.32 cel issue)
+  if ! grep -q "cel-go v0.22.0" go.mod; then
+    echo "replace google.golang.org/cel-go => google.golang.org/cel-go v0.22.0" >> go.mod
+    echo "[2b] cel-go replace directive added"
+  fi
+
   # 3. Update version const in main.go
   sed -i 's/^\([[:space:]]*const version = "\)v[0-9]*\.[0-9]*-[0-9]*"/\1'"${NEW_TAG}"'"/' cmd/k8-manifest-validator/main.go
   echo "[3/4] main.go version const -> ${NEW_TAG}"
 
-  # 4. go mod tidy + build test
-  go mod tidy
-  echo "[4/6] go mod tidy"
+  # 4. Fetch latest patch for target minor
+  LATEST_PATCH=$(curl -sSfL --max-time 15 \
+    "https://api.github.com/repos/kubernetes/kubernetes/releases?per_page=50" \
+    | python3 -c "
+import sys, json
+releases = json.load(sys.stdin)
+for r in releases:
+    tag = r.get('tag_name','')
+    if not tag.startswith('v1.${MINOR}.'):
+        continue
+    if 'alpha' in tag or 'beta' in tag or 'rc' in tag:
+        continue
+    parts = tag.lstrip('v').split('.')
+    if len(parts) != 3:
+        continue
+    print(parts[2])
+    break
+" 2>/dev/null || true)
 
-  echo "[5/6] go build ./..."
+  if [[ -z "$LATEST_PATCH" ]]; then
+    echo "Could not determine latest patch for k8s 1.${MINOR}. Using 0."
+    LATEST_PATCH="0"
+  fi
+
+  # Use latest patch version, not .0
+  ACTUAL_PKG="v0.${MINOR}.${LATEST_PATCH}"
+  echo "Using k8s packages: ${ACTUAL_PKG} (k8s 1.${MINOR}.${LATEST_PATCH})"
+
+  # 5. go get all k8s packages at actual version
+  go get k8s.io/api@${ACTUAL_PKG} \
+       k8s.io/apimachinery@${ACTUAL_PKG} \
+       k8s.io/apiextensions-apiserver@${ACTUAL_PKG}
+  echo "[5/6] go get k8s packages -> ${ACTUAL_PKG}"
+
+  # 6. go mod tidy + build test
+  go mod tidy
+  echo "[6/6] go mod tidy"
+
+  echo "[7/7] go build ./..."
   if ! go build ./...; then
     echo "BUILD FAILED — rolling back"
     git checkout -- VERSION go.mod go.sum cmd/k8-manifest-validator/main.go
     exit 1
   fi
 
-  echo "[6/6] go test ./..."
+  echo "[8/8] go test ./..."
   if ! go test ./...; then
     echo "TESTS FAILED — rolling back"
     git checkout -- VERSION go.mod go.sum cmd/k8-manifest-validator/main.go
@@ -101,7 +141,7 @@ if [[ "$MODE" == "minor" ]]; then
   fi
 
   git add VERSION go.mod go.sum cmd/k8-manifest-validator/main.go
-  git commit -m "release: bump to k8s v${TARGET_MINOR}"
+  git commit -m "release: bump to k8s v${TARGET_MINOR}.${LATEST_PATCH} (v0.${MINOR}.${LATEST_PATCH})"
   git tag "$NEW_TAG"
 
   echo ""
