@@ -23,9 +23,9 @@ permissions:
 
 jobs:
   # ─── Minor version bump ───────────────────────────────────────────────────────
-  # Only runs on main branch. Detects new k8s minor releases (e.g. 1.31 -> 1.32).
-  # Creates release/v{major}.{minor} branch from current main state, then updates
-  # main to the new version. Pushes trigger test.yml + release.yml.
+  # Only runs on main branch. Detects new k8s minor releases (e.g. 1.33 -> 1.34).
+  # Updates main to the new k8s minor version. Pushes trigger test.yml + release.yml.
+  # Version branches (v1.32, v1.33, etc.) handle their own tracking separately.
   minor-bump:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -58,17 +58,6 @@ jobs:
             echo "available=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create release branch for old version
-        if: steps.check.outputs.available == 'true'
-        env:
-          OLD_MINOR: ${{ steps.check.outputs.current_minor }}
-        run: |
-          echo "Creating release/v${OLD_MINOR} from current main state"
-          git checkout main
-          git checkout -b "release/v${OLD_MINOR}"
-          git push origin "release/v${OLD_MINOR}"
-          echo "Created branch release/v${OLD_MINOR}"
-
       - name: Bump to new minor version
         if: steps.check.outputs.available == 'true'
         env:
@@ -97,7 +86,7 @@ jobs:
   # patch for that minor, and if newer: bumps packages + VERSION patch counter,
   # commits and tags. The tag push triggers test.yml + release.yml.
   patch-bump:
-    if: github.ref_name == 'main' || (github.ref_name =~ '^v\d+\.\d+$')
+    if: github.ref_name == 'main' || (github.ref_name =~ '^release/v\d+\.\d+$')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
