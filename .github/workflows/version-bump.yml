@@ -55,6 +55,16 @@ jobs:
         run: |
           ./scripts/bump-version.sh --minor "${NEW_MINOR#v}"
 
+      - name: Validate build and tests
+        if: steps.check.outputs.available == 'true'
+        run: |
+          GO=/home/node/.local/go/go/bin/go
+          if ! command -v "$GO" &>/dev/null; then GO=$(command -v go); fi
+          echo "[validate] go build ./..."
+          "$GO" build ./...
+          echo "[validate] go test ./..."
+          "$GO" test ./...
+
       - name: Push updated main + tag
         if: steps.check.outputs.available == 'true'
         env:
@@ -102,10 +112,20 @@ jobs:
             echo "update_available=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Apply patch bump + push
+      - name: Apply patch bump + validate
         if: steps.check.outputs.update_available == 'true'
         run: |
           ./scripts/bump-version.sh --patch
+          GO=/home/node/.local/go/go/bin/go
+          if ! command -v "$GO" &>/dev/null; then GO=$(command -v go); fi
+          echo "[validate] go build ./..."
+          "$GO" build ./...
+          echo "[validate] go test ./..."
+          "$GO" test ./...
+
+      - name: Push branch + tag
+        if: steps.check.outputs.update_available == 'true'
+        run: |
           TAG=$(cat VERSION | tr -d '[:space:]')
           git push origin ${{ github.ref_name }}
           git push origin "$TAG"
