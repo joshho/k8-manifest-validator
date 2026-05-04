@@ -86,7 +86,7 @@ jobs:
   # patch for that minor, and if newer: bumps packages + VERSION patch counter,
   # commits and tags. The tag push triggers test.yml + release.yml.
   patch-bump:
-    if: github.ref_name == 'main' || (github.ref_name =~ '^v\d+\.\d+$')
+    if: github.ref_name == 'main' || (github.ref_name =~ '^release/v\d+\.\d+$')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

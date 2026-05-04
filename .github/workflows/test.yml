@@ -3,14 +3,14 @@ on:
   push:
     branches:
       - main
-      - 'v[0-9]+.[0-9]+'
+      - 'release/v[0-9]+.[0-9]+'
     paths-ignore:
       - '.github/workflows/**'
       - '.gitignore'
   pull_request:
     branches:
       - main
-      - 'v[0-9]+.[0-9]+'
+      - 'release/v[0-9]+.[0-9]+'
     paths-ignore:
       - '.github/workflows/**'
       - '.gitignore'
