@@ -6,8 +6,12 @@ on:
       - 'release/v[0-9]+.[0-9]+'
     tags:
       - 'v[0-9]+.[0-9]+-[0-9]+'
+      - 'v[0-9]+.[0-9]+'
 
-# Triggered ONLY when a tag matching v{MAJOR}.{MINOR}-{PATCH} is pushed.
+# Fires on:
+#   - prerelease tags: v1.36-0, v1.36-1 (test.yml pushes these)
+#   - stable tags: v1.36 (manually pushed or version-bump.yml)
+#   - NOT on patch-only tags like v1.36.1 (hyphen vs dot)
 # test.yml handles go test ./... on every main push.
 # This workflow handles goreleaser release build → script-driven dual releases.
 
