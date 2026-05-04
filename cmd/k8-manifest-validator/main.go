@@ -13,7 +13,7 @@ import (
 
 // version is the binary version string.
 // Format: v{ks_version}-{patch} (e.g., v1.31-0, v1.32-0)
-const version = "v1.33-0"
+const version = "v1.34-0"
 
 func getVersion() string {
 	return version
