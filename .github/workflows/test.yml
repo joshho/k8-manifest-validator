@@ -128,5 +128,25 @@ jobs:
               --clobber
             echo "Release $TAG updated with new binary"
           fi
+
+          # Also ensure stable v{minor} release exists with this binary
+          K8S_MINOR="${{ steps.next_tag.outputs.tag }}" | grep -oP '^v\K[0-9]+\.[0-9]+'
+          STABLE_TAG="v${K8S_MINOR}"
+          echo "Ensuring stable release $STABLE_TAG exists"
+          if gh release create "$STABLE_TAG" \
+            --title "Release $STABLE_TAG" \
+            --notes "Stable release for k8s $K8S_MINOR" \
+            dist/k8-manifest-validator \
+            --repo joshho/k8-manifest-validator 2>&1; then
+            echo "Stable $STABLE_TAG created"
+          else
+            echo "[$STABLE_TAG] already exists — uploading latest binary"
+            gh release upload "$STABLE_TAG" \
+              dist/k8-manifest-validator \
+              --repo joshho/k8-manifest-validator \
+              --clobber
+            echo "Stable $STABLE_TAG updated"
+          fi
+          gh release edit "$STABLE_TAG" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
