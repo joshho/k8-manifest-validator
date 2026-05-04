@@ -113,10 +113,11 @@ jobs:
       - name: Debug condition
         run: |
           echo "RAW=${{ needs.test.conclusion }}"
-          echo "event=${{ github.event_name }}"
+          echo "RESULT=${{ needs.test.result }}"
+          echo "SUCCESS=${{ needs.test.conclusion == 'success' }}"
 
       - name: Create and push tag
-        if: needs.test.conclusion == 'success'
+        if: needs.test.result == 'success'
         continue-on-error: true
         run: |
           set -x
