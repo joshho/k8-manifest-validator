@@ -110,15 +110,15 @@ jobs:
           TAG="v${K8S_MINOR}-${PATCH_NUM}"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Create and push tag
+      - name: Create GitHub Release
         run: |
           set -x
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
           TAG="${{ steps.next_tag.outputs.tag }}"
-          echo "Creating and pushing tag: $TAG"
-          git tag -a "$TAG" -m "Automatic release $TAG"
-          git push origin "$TAG"
-          echo "Tag $TAG pushed successfully"
+          gh release create "$TAG" \
+            --title "Release $TAG" \
+            --notes-file <(echo "Release $TAG built by CI.") \
+            dist/k8-manifest-validator \
+            --repo joshho/k8-manifest-validator
+          echo "Release $TAG created successfully with binary"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
