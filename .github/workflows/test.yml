@@ -3,20 +3,20 @@ on:
   push:
     branches:
       - main
-      - 'v[0-9]+.[0-9]+'
+      - 'release/v[0-9]+.[0-9]+'
     paths-ignore:
       - '.github/workflows/**'
       - '.gitignore'
   pull_request:
     branches:
       - main
-      - 'v[0-9]+.[0-9]+'
+      - 'release/v[0-9]+.[0-9]+'
     paths-ignore:
       - '.github/workflows/**'
       - '.gitignore'
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,11 +28,46 @@ jobs:
           go-version: '1.26'
           cache: true
 
-      - run: go test ./...
+      - name: Build
+        run: ./scripts/build.sh
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: dist/k8-manifest-validator
+          retention-days: 1
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: dist/
+
+      - name: Make executable
+        run: chmod +x dist/k8-manifest-validator
+
+      - name: Test
+        run: |
+          chmod +x dist/k8-manifest-validator
+          ./scripts/test.sh
 
   tag-and-release:
     needs: test
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' && needs.test.result == 'success'
     permissions:
       contents: write
     runs-on: ubuntu-latest
@@ -42,38 +77,76 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Download binary
+        uses: actions/download-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: dist/
+
+      - name: Make executable
+        run: chmod +x dist/k8-manifest-validator
+
       - name: Determine next release tag
         id: next_tag
         run: |
-          VERSION_CONTENT=$(cat VERSION)
-          K8S_MINOR="${VERSION_CONTENT#v}"   # "v1.31" → "1.31"
+          K8S_MINOR=$(cat VERSION | tr -d '[:space:]')
+          echo "k8s_minor=$K8S_MINOR"
 
-          # Find last prerelease tag under this minor
-          LAST_TAG=$(gh release list --repo joshho/k8-manifest-validator --limit 50 2>/dev/null | \
-            awk -v minor="$K8S_MINOR" '$2 ~ "^v" minor "-" { print $2 }' | \
-            sort -V | tail -1 || true)
+          # Find highest patch number for this minor's prerelease tags (v{minor}-N)
+          # Only match exact minor prefix to avoid confusion with stable releases
+          LAST_NUM=$(gh release list --repo joshho/k8-manifest-validator --limit 50 2>/dev/null | \
+            grep -E '^v[0-9]+\.[0-9]+-[0-9]+' | \
+            grep -v '^Release ' | \
+            sed -n "s/^v${K8S_MINOR#v}-\\([0-9]*\\).*/\\1/p" | \
+            sort -n | tail -1 || true)
 
-          if [ -z "$LAST_TAG" ]; then
+          if [[ -z "$LAST_NUM" ]]; then
             PATCH_NUM=0
           else
-            PATCH_NUM="${LAST_TAG##*-}"
-            PATCH_NUM=$((PATCH_NUM + 1))
+            PATCH_NUM=$((LAST_NUM + 1))
           fi
 
-          TAG="v${K8S_MINOR}-${PATCH_NUM}"
+          TAG="v${K8S_MINOR#v}-${PATCH_NUM}"
+          echo "tag=$TAG"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Create and push tag
-        if: needs.test.conclusion == 'success'
-        continue-on-error: true
+      - name: Create GitHub Release
         run: |
           set -x
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
           TAG="${{ steps.next_tag.outputs.tag }}"
-          echo "Creating and pushing tag: $TAG"
-          git tag -a "$TAG" -m "Automatic release $TAG"
-          git push origin "$TAG"
-          echo "Tag $TAG pushed successfully"
+          if gh release create "$TAG" \
+            --title "Release $TAG" \
+            --notes-file <(echo "Release $TAG built by CI.") \
+            dist/k8-manifest-validator \
+            --repo joshho/k8-manifest-validator 2>&1; then
+            echo "Release $TAG created successfully with binary"
+          else
+            echo "[$TAG] already exists — uploading assets with gh release upload"
+            gh release upload "$TAG" \
+              dist/k8-manifest-validator \
+              --repo joshho/k8-manifest-validator \
+              --clobber
+            echo "Release $TAG updated with new binary"
+          fi
+
+          # Also ensure stable v{minor} release exists with this binary
+          K8S_MINOR=$(echo "$TAG" | grep -oP '^v\K[0-9]+\.[0-9]+')
+          STABLE_TAG="v${K8S_MINOR}"
+          echo "Ensuring stable release $STABLE_TAG exists"
+          if gh release create "$STABLE_TAG" \
+            --title "Release $STABLE_TAG" \
+            --notes "Stable release for k8s $K8S_MINOR" \
+            dist/k8-manifest-validator \
+            --repo joshho/k8-manifest-validator 2>&1; then
+            echo "Stable $STABLE_TAG created"
+          else
+            echo "[$STABLE_TAG] already exists — uploading latest binary"
+            gh release upload "$STABLE_TAG" \
+              dist/k8-manifest-validator \
+              --repo joshho/k8-manifest-validator \
+              --clobber
+            echo "Stable $STABLE_TAG updated"
+          fi
+          gh release edit "$STABLE_TAG" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
