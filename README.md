@@ -1,0 +1,46 @@
+# k8-manifest-validator
+
+Validate Kubernetes manifests against the k8s API server schema.
+
+## Problem
+
+Writing Kubernetes YAML by hand is error-prone. Missing fields, wrong types, invalid
+enum values — these only surface at `kubectl apply` time, not at authoring time.
+
+## Solution
+
+k8-manifest-validator statically validates Kubernetes manifests against the official
+k8s API schema for your target k8s minor version. Catch schema violations before
+they reach the cluster.
+
+## Usage
+
+```bash
+# Validate a manifest
+./k8-manifest-validator path/to/deployment.yaml
+
+# Validate all manifests in a directory
+./k8-manifest-validator ./manifests/
+
+# Show version
+./k8-manifest-validator --version
+```
+
+## Build
+
+```bash
+./scripts/build.sh
+```
+
+## Test
+
+```bash
+./scripts/test.sh
+```
+
+## Releases
+
+Releases are built automatically on every push to `main`. You get:
+- `v{k8s-minor}` — stable release for a given k8s minor (e.g. v1.36)
+- `v{k8s-minor}-{N}` — prerelease builds, one per successful CI run
+<!-- last updated: 2026-05-05 -->
