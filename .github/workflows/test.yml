@@ -179,6 +179,8 @@ jobs:
             rm -f "$target"
           done
           gh release edit "$STABLE_TAG" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
 
