@@ -1,0 +1,8 @@
+apiVersion: versioned.example.com/v1
+kind: Versioned
+metadata:
+  name: valid-versioned-v1
+spec:
+  name: my-app
+  replicas: 3
+  image: nginx:latest

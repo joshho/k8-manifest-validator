@@ -1,0 +1,14 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: valid-preserve-unknown
+spec:
+  preserveField:
+    unknownField1: value1
+    unknownField2: value2
+    nested:
+      deep: value
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test
+  v2OnlyField: v2-only

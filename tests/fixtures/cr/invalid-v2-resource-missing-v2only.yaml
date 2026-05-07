@@ -1,0 +1,9 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: invalid-v2-resource-missing-v2only
+spec:
+  field: hello
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test
