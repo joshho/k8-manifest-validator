@@ -159,6 +159,66 @@ func TestKubeconformCRFixtures(t *testing.T) {
 	}
 }
 
+// TestKubeconformComprehensiveCRFixtures tests comprehensive CRD validation capabilities.
+func TestKubeconformComprehensiveCRFixtures(t *testing.T) {
+	kcPath := findKubeconform(t)
+	if kcPath == "" {
+		t.Skip("kubeconform not installed — skipping integration test")
+	}
+
+	crdPath := filepath.Join(fixturesDir, "crd", "comprehensive-crd.yaml")
+	crDir := filepath.Join(fixturesDir, "cr")
+
+	// Run kubeconform with CRD directory
+	_, kcExitCode := runKubeconform(t, kcPath, crDir, filepath.Dir(crdPath))
+
+	// Run our validator with CRD paths
+	engine := createTestEngine(false, 8)
+	results, err := engine.Validate(crDir, []string{crdPath})
+	if err != nil {
+		t.Fatalf("failed to validate: %v", err)
+	}
+
+	ourExitCode := 0
+	if results.Summary.Invalid > 0 || results.Summary.Errors > 0 {
+		ourExitCode = 1
+	}
+
+	if kcExitCode != ourExitCode {
+		t.Errorf("kubeconform exit code %d vs our exit code %d for comprehensive CR fixtures", kcExitCode, ourExitCode)
+	}
+}
+
+// TestKubeconformVersionedCRFixtures tests multi-version CRD behavior.
+func TestKubeconformVersionedCRFixtures(t *testing.T) {
+	kcPath := findKubeconform(t)
+	if kcPath == "" {
+		t.Skip("kubeconform not installed — skipping integration test")
+	}
+
+	crdPath := filepath.Join(fixturesDir, "crd", "versioned-crd.yaml")
+	crDir := filepath.Join(fixturesDir, "cr")
+
+	// Run kubeconform with CRD directory
+	_, kcExitCode := runKubeconform(t, kcPath, crDir, filepath.Dir(crdPath))
+
+	// Run our validator with CRD paths
+	engine := createTestEngine(false, 8)
+	results, err := engine.Validate(crDir, []string{crdPath})
+	if err != nil {
+		t.Fatalf("failed to validate: %v", err)
+	}
+
+	ourExitCode := 0
+	if results.Summary.Invalid > 0 || results.Summary.Errors > 0 {
+		ourExitCode = 1
+	}
+
+	if kcExitCode != ourExitCode {
+		t.Errorf("kubeconform exit code %d vs our exit code %d for versioned CR fixtures", kcExitCode, ourExitCode)
+	}
+}
+
 // TestKubeconformMixedFixtures compares kubeconform with our validator on mixed resources.
 func TestKubeconformMixedFixtures(t *testing.T) {
 	crdPath := filepath.Join(fixturesDir, "crd", "database-crd.yaml")

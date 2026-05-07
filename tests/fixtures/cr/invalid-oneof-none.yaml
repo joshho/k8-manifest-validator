@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: invalid-oneof-none
+spec:
+  choiceField: option-c
+  requiredField: required-value
+  logicalField: prefix-test

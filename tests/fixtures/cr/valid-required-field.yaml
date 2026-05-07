@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: valid-required-field
+spec:
+  requiredField: present
+  optionalField: not-required-but-present
+  choiceField: option-a
+  logicalField: prefix-test

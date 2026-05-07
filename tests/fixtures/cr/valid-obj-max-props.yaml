@@ -1,0 +1,12 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: valid-obj-max-props
+spec:
+  maxPropsField:
+    key1: value1
+    key2: value2
+    key3: value3
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

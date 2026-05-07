@@ -1,0 +1,11 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: valid-obj-min-props
+spec:
+  minPropsField:
+    key1: value1
+    key2: value2
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

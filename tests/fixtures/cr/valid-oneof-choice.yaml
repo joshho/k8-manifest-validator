@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: valid-oneof-choice
+spec:
+  choiceField: option-a
+  requiredField: required-value
+  logicalField: prefix-test
