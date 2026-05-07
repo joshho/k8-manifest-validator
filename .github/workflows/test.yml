@@ -129,6 +129,9 @@ jobs:
             "dist/k8-manifest-validator_darwin_amd64_v1/k8-manifest-validator"
             "dist/k8-manifest-validator_darwin_arm64_v8.0/k8-manifest-validator"
           )
+          echo "=== Contents of dist/ ==="
+          find dist/ -type f | sort
+          echo "==="
           for f in "${ARTIFACTS[@]}"; do
             if [ ! -f "$f" ]; then
               echo "ERROR: artifact missing: $f"
