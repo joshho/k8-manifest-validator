@@ -79,10 +79,10 @@ fi
 
 # --- Collect artifacts (goreleaser output layout) ---
 ARTIFACTS=(
-    "dist/k8-manifest-validator_linux_amd64/k8-manifest-validator"
-    "dist/k8-manifest-validator_linux_arm64/k8-manifest-validator"
-    "dist/k8-manifest-validator_darwin_amd64/k8-manifest-validator"
-    "dist/k8-manifest-validator_darwin_arm64/k8-manifest-validator"
+    "dist/k8-manifest-validator_linux_amd64_v1/k8-manifest-validator"
+    "dist/k8-manifest-validator_linux_arm64_v8.0/k8-manifest-validator"
+    "dist/k8-manifest-validator_darwin_amd64_v1/k8-manifest-validator"
+    "dist/k8-manifest-validator_darwin_arm64_v8.0/k8-manifest-validator"
 )
 
 for artifact in "${ARTIFACTS[@]}"; do
