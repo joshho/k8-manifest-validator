@@ -1,0 +1,10 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: valid-nullable-value
+spec:
+  nullableField: some-value
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test
+  v2OnlyField: v2-only

@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: valid-enum-value
+spec:
+  enumField: bar
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

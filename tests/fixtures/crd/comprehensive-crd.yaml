@@ -1,0 +1,343 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: comprehensive.example.com
+spec:
+  group: example.com
+  names:
+    kind: Comprehensive
+    plural: comprehensive
+    singular: comprehensive
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    deprecated: true
+    deprecationWarning: "example.com/v1 Comprehensive is deprecated; use example.com/v2"
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              # String validations
+              field:
+                type: string
+              patternField:
+                type: string
+                pattern: "^[a-z]+$"
+              minLenField:
+                type: string
+                minLength: 3
+              maxLenField:
+                type: string
+                maxLength: 10
+              formatField:
+                type: string
+                format: date
+              enumField:
+                type: string
+                enum:
+                - foo
+                - bar
+                - baz
+
+              # Integer/number validations
+              intField:
+                type: integer
+              minIntField:
+                type: integer
+                minimum: 5
+              maxIntField:
+                type: integer
+                maximum: 100
+
+              # Boolean
+              boolField:
+                type: boolean
+
+              # Array
+              arrayField:
+                type: array
+                items:
+                  type: string
+              minItemsField:
+                type: array
+                minItems: 2
+                items:
+                  type: string
+              maxItemsField:
+                type: array
+                maxItems: 4
+                items:
+                  type: string
+              uniqueField:
+                type: array
+                uniqueItems: true
+                items:
+                  type: string
+
+              # Object
+              objField:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  value:
+                    type: string
+              minPropsField:
+                type: object
+                minProperties: 2
+                additionalProperties:
+                  type: string
+              maxPropsField:
+                type: object
+                maxProperties: 3
+                additionalProperties:
+                  type: string
+
+              # Required fields
+              requiredField:
+                type: string
+              optionalField:
+                type: string
+
+              # oneOf
+              choiceField:
+                type: string
+
+              # Logical (allOf/anyOf/not)
+              logicalField:
+                type: string
+
+            required:
+            - requiredField
+            - choiceField
+            - logicalField
+          oneOf:
+          - properties:
+              choiceField:
+                type: string
+                enum:
+                - option-a
+            required:
+            - choiceField
+          - properties:
+              choiceField:
+                type: string
+                enum:
+                - option-b
+            required:
+            - choiceField
+          allOf:
+          - properties:
+              logicalField:
+                type: string
+                minLength: 5
+            required:
+            - logicalField
+          anyOf:
+          - properties:
+              logicalField:
+                type: string
+                pattern: "^prefix-"
+            required:
+            - logicalField
+          - properties:
+              logicalField:
+                type: string
+                pattern: "^suffix$"
+            required:
+            - logicalField
+          not:
+            properties:
+              logicalField:
+                type: string
+                pattern: "^forbidden-"
+  - name: v2
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              # String validations
+              field:
+                type: string
+              patternField:
+                type: string
+                pattern: "^[a-z]+$"
+              minLenField:
+                type: string
+                minLength: 3
+              maxLenField:
+                type: string
+                maxLength: 10
+              formatField:
+                type: string
+                format: date
+              enumField:
+                type: string
+                enum:
+                - foo
+                - bar
+                - baz
+
+              # Integer/number validations
+              intField:
+                type: integer
+              minIntField:
+                type: integer
+                minimum: 5
+              maxIntField:
+                type: integer
+                maximum: 100
+
+              # Boolean
+              boolField:
+                type: boolean
+
+              # Array
+              arrayField:
+                type: array
+                items:
+                  type: string
+              minItemsField:
+                type: array
+                minItems: 2
+                items:
+                  type: string
+              maxItemsField:
+                type: array
+                maxItems: 4
+                items:
+                  type: string
+              uniqueField:
+                type: array
+                uniqueItems: true
+                items:
+                  type: string
+
+              # Object
+              objField:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  value:
+                    type: string
+              minPropsField:
+                type: object
+                minProperties: 2
+                additionalProperties:
+                  type: string
+              maxPropsField:
+                type: object
+                maxProperties: 3
+                additionalProperties:
+                  type: string
+
+              # Required fields
+              requiredField:
+                type: string
+              optionalField:
+                type: string
+
+              # oneOf
+              choiceField:
+                type: string
+
+              # Logical (allOf/anyOf/not)
+              logicalField:
+                type: string
+
+              # x-kubernetes-int-or-string
+              intOrStringField:
+                x-kubernetes-int-or-string: true
+
+              # x-kubernetes-embedded-resource
+              embeddedField:
+                x-kubernetes-embedded-resource: true
+                type: object
+                required:
+                - kind
+                - apiVersion
+                properties:
+                  apiVersion:
+                    type: string
+                  kind:
+                    type: string
+                  metadata:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+
+              # nullable
+              nullableField:
+                type: string
+                nullable: true
+
+              # default
+              defaultedField:
+                type: string
+                default: ""
+
+              # preserve-unknown-fields
+              preserveField:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+
+              # v2-only field
+              v2OnlyField:
+                type: string
+
+            required:
+            - requiredField
+            - choiceField
+            - logicalField
+            - v2OnlyField
+          oneOf:
+          - properties:
+              choiceField:
+                type: string
+                enum:
+                - option-a
+            required:
+            - choiceField
+          - properties:
+              choiceField:
+                type: string
+                enum:
+                - option-b
+            required:
+            - choiceField
+          allOf:
+          - properties:
+              logicalField:
+                type: string
+                minLength: 5
+            required:
+            - logicalField
+          anyOf:
+          - properties:
+              logicalField:
+                type: string
+                pattern: "^prefix-"
+            required:
+            - logicalField
+          - properties:
+              logicalField:
+                type: string
+                pattern: "^suffix$"
+            required:
+            - logicalField
+          not:
+            properties:
+              logicalField:
+                type: string
+                pattern: "^forbidden-"

@@ -1,0 +1,13 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: invalid-embedded-resource-missing-kind
+spec:
+  embeddedField:
+    apiVersion: apps/v1
+    metadata:
+      name: embedded-deployment
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test
+  v2OnlyField: v2-only

@@ -1,0 +1,14 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: invalid-array-max-items
+spec:
+  maxItemsField:
+  - item1
+  - item2
+  - item3
+  - item4
+  - item5
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

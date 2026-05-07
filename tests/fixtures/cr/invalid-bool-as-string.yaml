@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: invalid-bool-as-string
+spec:
+  boolField: "true"
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

@@ -1,0 +1,14 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: valid-string-all-formats
+spec:
+  field: hello
+  patternField: hello
+  minLenField: hello
+  maxLenField: hello
+  formatField: "2024-01-15"
+  enumField: bar
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

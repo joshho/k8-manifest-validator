@@ -1,0 +1,7 @@
+apiVersion: versioned.example.com/v1
+kind: Versioned
+metadata:
+  name: invalid-versioned-v1-missing-v1field
+spec:
+  name: my-app
+  replicas: 3
