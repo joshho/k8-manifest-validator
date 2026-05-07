@@ -28,14 +28,23 @@ jobs:
           go-version: '1.26'
           cache: true
 
-      - name: Build
-        run: ./scripts/build.sh
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: ~> v2
+          args: build --clean --snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload binary
+      - name: Upload all binaries
         uses: actions/upload-artifact@v4
         with:
           name: k8-manifest-validator
-          path: dist/k8-manifest-validator
+          path: |
+            dist/k8-manifest-validator_linux_amd64/k8-manifest-validator
+            dist/k8-manifest-validator_linux_arm64/k8-manifest-validator
+            dist/k8-manifest-validator_darwin_amd64/k8-manifest-validator
+            dist/k8-manifest-validator_darwin_arm64/k8-manifest-validator
           retention-days: 1
 
   test:
@@ -51,18 +60,15 @@ jobs:
           go-version: '1.26'
           cache: true
 
-      - name: Download binary
+      - name: Download linux/amd64 binary
         uses: actions/download-artifact@v4
         with:
           name: k8-manifest-validator
           path: dist/
 
-      - name: Make executable
-        run: chmod +x dist/k8-manifest-validator
-
-      - name: Test
+      - name: Make executable and test
         run: |
-          chmod +x dist/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_linux_amd64/k8-manifest-validator
           ./scripts/test.sh
 
   tag-and-release:
@@ -75,16 +81,19 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: true
 
-      - name: Download binary
+      - name: Download all binaries
         uses: actions/download-artifact@v4
         with:
           name: k8-manifest-validator
           path: dist/
 
-      - name: Make executable
-        run: chmod +x dist/k8-manifest-validator
+      - name: Make all binaries executable
+        run: |
+          chmod +x dist/k8-manifest-validator_linux_amd64/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_linux_arm64/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_darwin_amd64/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_darwin_arm64/k8-manifest-validator
 
       - name: Determine next release tag
         id: next_tag
@@ -92,8 +101,6 @@ jobs:
           K8S_MINOR=$(cat VERSION | tr -d '[:space:]')
           echo "k8s_minor=$K8S_MINOR"
 
-          # Find highest patch number for this minor's prerelease tags (v{minor}-N)
-          # Only match exact minor prefix to avoid confusion with stable releases
           LAST_NUM=$(gh release list --repo joshho/k8-manifest-validator --limit 50 2>/dev/null | \
             grep -E '^v[0-9]+\.[0-9]+-[0-9]+' | \
             grep -v '^Release ' | \
@@ -110,39 +117,53 @@ jobs:
           echo "tag=$TAG"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release
+      - name: Create GitHub Release with all binaries
         run: |
           set -x
           TAG="${{ steps.next_tag.outputs.tag }}"
+          ARTIFACTS=(
+            "dist/k8-manifest-validator_linux_amd64/k8-manifest-validator"
+            "dist/k8-manifest-validator_linux_arm64/k8-manifest-validator"
+            "dist/k8-manifest-validator_darwin_amd64/k8-manifest-validator"
+            "dist/k8-manifest-validator_darwin_arm64/k8-manifest-validator"
+          )
+          for f in "${ARTIFACTS[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "ERROR: artifact missing: $f"
+              ls -la dist/
+              exit 1
+            fi
+          done
+          echo "All artifacts present"
+
           if gh release create "$TAG" \
             --title "Release $TAG" \
-            --notes-file <(echo "Release $TAG built by CI.") \
-            dist/k8-manifest-validator \
+            --notes "Release $TAG built by CI — multi-platform" \
+            "${ARTIFACTS[@]}" \
             --repo joshho/k8-manifest-validator 2>&1; then
-            echo "Release $TAG created successfully with binary"
+            echo "Release $TAG created with all binaries"
           else
-            echo "[$TAG] already exists — uploading assets with gh release upload"
+            echo "[$TAG] already exists — uploading with --clobber"
             gh release upload "$TAG" \
-              dist/k8-manifest-validator \
+              "${ARTIFACTS[@]}" \
               --repo joshho/k8-manifest-validator \
               --clobber
-            echo "Release $TAG updated with new binary"
+            echo "Release $TAG updated"
           fi
 
-          # Also ensure stable v{minor} release exists with this binary
+          # Also update stable release
           K8S_MINOR=$(echo "$TAG" | grep -oP '^v\K[0-9]+\.[0-9]+')
           STABLE_TAG="v${K8S_MINOR}"
-          echo "Ensuring stable release $STABLE_TAG exists"
+          echo "Ensuring stable release $STABLE_TAG"
           if gh release create "$STABLE_TAG" \
             --title "Release $STABLE_TAG" \
             --notes "Stable release for k8s $K8S_MINOR" \
-            dist/k8-manifest-validator \
+            "${ARTIFACTS[@]}" \
             --repo joshho/k8-manifest-validator 2>&1; then
             echo "Stable $STABLE_TAG created"
           else
-            echo "[$STABLE_TAG] already exists — uploading latest binary"
             gh release upload "$STABLE_TAG" \
-              dist/k8-manifest-validator \
+              "${ARTIFACTS[@]}" \
               --repo joshho/k8-manifest-validator \
               --clobber
             echo "Stable $STABLE_TAG updated"
