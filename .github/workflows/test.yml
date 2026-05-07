@@ -147,32 +147,35 @@ jobs:
             echo "[$TAG] already exists — will update assets"
           fi
 
-          # Upload each artifact individually (prevents 404 on multi-asset create)
+          # Upload each artifact with a distinct name per platform
           for f in "${ARTIFACTS[@]}"; do
-            gh release upload "$TAG" "$f" \
-              --repo joshho/k8-manifest-validator \
-              --clobber
-            echo "Uploaded: $f to $TAG"
+            case "$f" in
+              *linux_amd64*) platform="linux-amd64" ;;
+              *linux_arm64*) platform="linux-arm64" ;;
+              *darwin_amd64*) platform="darwin-amd64" ;;
+              *darwin_arm64*) platform="darwin-arm64" ;;
+              *) platform="$(basename "$f")" ;;
+            esac
+            gh release upload "$TAG" "$f" --name "$platform"               --repo joshho/k8-manifest-validator               --clobber
+            echo "Uploaded: $f as $platform"
           done
 
-          # Also update stable release
           K8S_MINOR=$(echo "$TAG" | grep -oP '^v\K[0-9]+\.[0-9]+')
           STABLE_TAG="v${K8S_MINOR}"
           echo "Ensuring stable release $STABLE_TAG"
-          if gh release create "$STABLE_TAG" \
-            --title "Release $STABLE_TAG" \
-            --notes "Stable release for k8s $K8S_MINOR" \
-            --repo joshho/k8-manifest-validator 2>&1; then
-            echo "Stable $STABLE_TAG created"
-          else
-            echo "[$STABLE_TAG] already exists — will update assets"
-          fi
+
+          # Same for stable release
           for f in "${ARTIFACTS[@]}"; do
-            gh release upload "$STABLE_TAG" "$f" \
-              --repo joshho/k8-manifest-validator \
-              --clobber
-            echo "Uploaded: $f to $STABLE_TAG"
+            case "$f" in
+              *linux_amd64*) platform="linux-amd64" ;;
+              *linux_arm64*) platform="linux-arm64" ;;
+              *darwin_amd64*) platform="darwin-amd64" ;;
+              *darwin_arm64*) platform="darwin-arm64" ;;
+              *) platform="$(basename "$f")" ;;
+            esac
+            gh release upload "$STABLE_TAG" "$f" --name "$platform"               --repo joshho/k8-manifest-validator               --clobber
+            echo "Uploaded: $f as $platform to $STABLE_TAG"
           done
           gh release edit "$STABLE_TAG" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
