@@ -43,17 +43,3 @@ they reach the cluster.
 Releases are built automatically on every push to `main`. You get:
 - `v{k8s-minor}` — stable release for a given k8s minor (e.g. v1.36)
 - `v{k8s-minor}-{N}` — prerelease builds, one per successful CI run
-<!-- last updated: 2026-05-05 -->
-<!-- test: 2026-05-07T01:49:51Z -->
--e 
----
-Multi-platform CI: 2026-05-07
--e 
----
-Fix goreleaser paths: 2026-05-07T02:35:15Z
--e 
----
-Binary path fix CI trigger: 2026-05-07T02:40:54Z
--e 
----
-Debug dist listing: 2026-05-07T02:54:08Z
