@@ -1,0 +1,12 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: invalid-array-not-unique
+spec:
+  uniqueField:
+  - item1
+  - item2
+  - item1
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

@@ -1,0 +1,11 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: valid-int-in-range
+spec:
+  intField: 42
+  minIntField: 10
+  maxIntField: 50
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

@@ -1,0 +1,10 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: valid-int-or-string-int
+spec:
+  intOrStringField: 42
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test
+  v2OnlyField: v2-only

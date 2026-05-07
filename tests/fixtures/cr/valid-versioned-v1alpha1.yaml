@@ -1,0 +1,7 @@
+apiVersion: versioned.example.com/v1alpha1
+kind: Versioned
+metadata:
+  name: valid-versioned-v1alpha1
+spec:
+  name: my-app
+  replicas: 3

@@ -1,0 +1,10 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: invalid-array-min-items
+spec:
+  minItemsField:
+  - item1
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test

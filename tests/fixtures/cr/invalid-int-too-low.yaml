@@ -1,0 +1,11 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: invalid-int-too-low
+spec:
+  intField: 42
+  minIntField: 3
+  maxIntField: 50
+  requiredField: required-value
+  choiceField: option-a
+  logicalField: prefix-test
