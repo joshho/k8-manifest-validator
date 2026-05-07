@@ -126,9 +126,8 @@ jobs:
             "dist/k8-manifest-validator_darwin_amd64_v1/k8-manifest-validator"
             "dist/k8-manifest-validator_darwin_arm64_v8.0/k8-manifest-validator"
           )
-          echo "=== Contents of dist/ ==="
-          find dist/ -type f -ls | sort
-          echo "==="
+
+          # Verify all artifacts exist
           for f in "${ARTIFACTS[@]}"; do
             if [ ! -f "$f" ]; then
               echo "ERROR: artifact missing: $f"
@@ -136,22 +135,25 @@ jobs:
               exit 1
             fi
           done
-          echo "All artifacts present"
 
+          # Create release (without assets first, then upload each separately)
+          # This avoids the 404 error when attaching multiple assets at once
           if gh release create "$TAG" \
             --title "Release $TAG" \
             --notes "Release $TAG built by CI — multi-platform" \
-            "${ARTIFACTS[@]}" \
             --repo joshho/k8-manifest-validator 2>&1; then
-            echo "Release $TAG created with all binaries"
+            echo "Release $TAG created"
           else
-            echo "[$TAG] already exists — uploading with --clobber"
-            gh release upload "$TAG" \
-              "${ARTIFACTS[@]}" \
+            echo "[$TAG] already exists — will update assets"
+          fi
+
+          # Upload each artifact individually (prevents 404 on multi-asset create)
+          for f in "${ARTIFACTS[@]}"; do
+            gh release upload "$TAG" "$f" \
               --repo joshho/k8-manifest-validator \
               --clobber
-            echo "Release $TAG updated"
-          fi
+            echo "Uploaded: $f to $TAG"
+          done
 
           # Also update stable release
           K8S_MINOR=$(echo "$TAG" | grep -oP '^v\K[0-9]+\.[0-9]+')
@@ -160,16 +162,17 @@ jobs:
           if gh release create "$STABLE_TAG" \
             --title "Release $STABLE_TAG" \
             --notes "Stable release for k8s $K8S_MINOR" \
-            "${ARTIFACTS[@]}" \
             --repo joshho/k8-manifest-validator 2>&1; then
             echo "Stable $STABLE_TAG created"
           else
-            gh release upload "$STABLE_TAG" \
-              "${ARTIFACTS[@]}" \
+            echo "[$STABLE_TAG] already exists — will update assets"
+          fi
+          for f in "${ARTIFACTS[@]}"; do
+            gh release upload "$STABLE_TAG" "$f" \
               --repo joshho/k8-manifest-validator \
               --clobber
-            echo "Stable $STABLE_TAG updated"
-          fi
+            echo "Uploaded: $f to $STABLE_TAG"
+          done
           gh release edit "$STABLE_TAG" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
