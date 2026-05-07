@@ -45,3 +45,6 @@ Releases are built automatically on every push to `main`. You get:
 - `v{k8s-minor}-{N}` — prerelease builds, one per successful CI run
 <!-- last updated: 2026-05-05 -->
 <!-- test: 2026-05-07T01:49:51Z -->
+-e 
+---
+Multi-platform CI: 2026-05-07
