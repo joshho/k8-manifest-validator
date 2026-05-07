@@ -113,8 +113,10 @@ jobs:
           fi
 
           TAG="v${K8S_MINOR#v}-${PATCH_NUM}"
+          STABLE_TAG="v${K8S_MINOR#v}"
           echo "tag=$TAG"
           echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "stable_tag=$STABLE_TAG" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release with all binaries
         run: |
@@ -172,13 +174,13 @@ jobs:
               *darwin_arm64*) target="/tmp/k8-manifest-validator_darwin_arm64" ;;
             esac
             cp "$f" "$target"
-            gh release upload "$STABLE_TAG" "$target" \
+            gh release upload "${{ steps.next_tag.outputs.stable_tag }}" "$target" \
               --repo joshho/k8-manifest-validator \
               --clobber
             echo "Uploaded: $f as $(basename "$target") to $STABLE_TAG"
             rm -f "$target"
           done
-          gh release edit "$STABLE_TAG" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
+          gh release edit "${{ steps.next_tag.outputs.stable_tag }}" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
