@@ -58,17 +58,3 @@ Binary path fix CI trigger: 2026-05-07T02:40:54Z
 ---
 Debug dist listing: 2026-05-07T02:54:08Z
 -e 
----
-Upload tarball fix: 2026-05-07T03:02:29Z
--e 
----
-Debug ls: 2026-05-07T03:11:55Z
--e 
----
-Separate create/upload: 2026-05-07T03:23:06Z
-ci: trigger --name fix test 033507
-ci: trigger temp file rename 034110
-ci: trigger fixed upload 034911
-ci: trigger syntax fix 035549
-ci: trigger GITHUB_TOKEN fix 040439
-
