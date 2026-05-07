@@ -156,7 +156,14 @@ jobs:
               *darwin_arm64*) platform="darwin-arm64" ;;
               *) platform="$(basename "$f")" ;;
             esac
-            gh release upload "$TAG" "$f" --name "$platform"               --repo joshho/k8-manifest-validator               --clobber
+            # Copy to temp name, then upload (gh upload uses basename as asset name)
+            tmpfile="/tmp/$(basename "$f" .container)-$(echo "$f" | sed 's/.*k8-manifest-validator_/k8-manifest-validator_/' | sed 's|/k8-manifest-validator||')
+            cp "$f" "$tmpfile"
+            gh release upload "$TAG" "$tmpfile" \
+              --repo joshho/k8-manifest-validator \
+              --clobber
+            echo "Uploaded: $f as $(basename "$tmpfile")"
+            rm -f "$tmpfile"
             echo "Uploaded: $f as $platform"
           done
 
@@ -173,7 +180,13 @@ jobs:
               *darwin_arm64*) platform="darwin-arm64" ;;
               *) platform="$(basename "$f")" ;;
             esac
-            gh release upload "$STABLE_TAG" "$f" --name "$platform"               --repo joshho/k8-manifest-validator               --clobber
+            tmpfile="/tmp/$(basename "$f" .container)-$(echo "$f" | sed 's/.*k8-manifest-validator_/k8-manifest-validator_/' | sed 's|/k8-manifest-validator||')
+            cp "$f" "$tmpfile"
+            gh release upload "$STABLE_TAG" "$tmpfile" \
+              --repo joshho/k8-manifest-validator \
+              --clobber
+            echo "Uploaded: $f as $(basename "$tmpfile")"
+            rm -f "$tmpfile"
             echo "Uploaded: $f as $platform to $STABLE_TAG"
           done
           gh release edit "$STABLE_TAG" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
