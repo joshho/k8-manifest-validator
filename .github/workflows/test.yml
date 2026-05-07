@@ -145,7 +145,7 @@ jobs:
             echo "Release $TAG created"
           else
             echo "[$TAG] already exists — will update assets"
-
+          fi
 
           # Upload each artifact with a distinct name per platform
           for f in "${ARTIFACTS[@]}"; do
