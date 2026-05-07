@@ -174,10 +174,15 @@ jobs:
               *darwin_arm64*) target="/tmp/k8-manifest-validator_darwin_arm64" ;;
             esac
             cp "$f" "$target"
-            gh release upload "${{ steps.next_tag.outputs.stable_tag }}" "$target" \
-              --repo joshho/k8-manifest-validator \
-              --clobber
-            echo "Uploaded: $f as $(basename "$target") to $STABLE_TAG"
+            if gh release view "${{ steps.next_tag.outputs.stable_tag }}" >/dev/null 2>&1; then
+              gh release upload "${{ steps.next_tag.outputs.stable_tag }}" "$target" \
+                --repo joshho/k8-manifest-validator --clobber
+            else
+              gh release create "${{ steps.next_tag.outputs.stable_tag }}" "$target" \
+                --title "Release ${{ steps.next_tag.outputs.stable_tag }}" \
+                --repo joshho/k8-manifest-validator --clobber
+            fi
+            echo "Uploaded: $f as $(basename "$target") to ${{ steps.next_tag.outputs.stable_tag }}"
             rm -f "$target"
           done
           gh release edit "${{ steps.next_tag.outputs.stable_tag }}" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
