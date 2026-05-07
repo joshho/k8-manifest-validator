@@ -161,11 +161,25 @@ jobs:
             gh release upload "$TAG" "$target" \
               --repo joshho/k8-manifest-validator \
               --clobber
-            echo "Uploaded: $f as $(basename "$target")"
+            echo "Uploaded: $f as $(basename "$target") to $TAG"
             rm -f "$target"
           done
 
-          # Same for stable release
+          # --- STABLE RELEASE ---
+          # Delete existing stable release so we can recreate it fresh with all binaries
+          if gh release view "${{ steps.next_tag.outputs.stable_tag }}" >/dev/null 2>&1; then
+            echo "Deleting existing stable release: ${{ steps.next_tag.outputs.stable_tag }}"
+            gh release delete "${{ steps.next_tag.outputs.stable_tag }}" --yes --repo joshho/k8-manifest-validator
+          fi
+
+          # Create fresh stable release (without inline assets to avoid 404)
+          gh release create "${{ steps.next_tag.outputs.stable_tag }}" \
+            --title "Release ${{ steps.next_tag.outputs.stable_tag }}" \
+            --notes "Stable release for k8s ${{ steps.next_tag.outputs.stable_tag }} — multi-platform binaries" \
+            --repo joshho/k8-manifest-validator
+          echo "Stable release ${{ steps.next_tag.outputs.stable_tag }} created"
+
+          # Upload each binary to stable release with distinct platform name
           for f in "${ARTIFACTS[@]}"; do
             case "$f" in
               *linux_amd64*) target="/tmp/k8-manifest-validator_linux_amd64" ;;
@@ -175,11 +189,11 @@ jobs:
             esac
             cp "$f" "$target"
             gh release upload "${{ steps.next_tag.outputs.stable_tag }}" "$target" \
-              --repo joshho/k8-manifest-validator \
-              --clobber
-            echo "Uploaded: $f as $(basename "$target") to $STABLE_TAG"
+              --repo joshho/k8-manifest-validator --clobber
+            echo "Uploaded: $f as $(basename "$target") to ${{ steps.next_tag.outputs.stable_tag }}"
             rm -f "$target"
           done
+
           gh release edit "${{ steps.next_tag.outputs.stable_tag }}" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
