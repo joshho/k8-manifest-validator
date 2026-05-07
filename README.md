@@ -48,3 +48,6 @@ Releases are built automatically on every push to `main`. You get:
 -e 
 ---
 Multi-platform CI: 2026-05-07
+-e 
+---
+Fix goreleaser paths: 2026-05-07T02:35:15Z
