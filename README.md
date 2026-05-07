@@ -44,3 +44,4 @@ Releases are built automatically on every push to `main`. You get:
 - `v{k8s-minor}` — stable release for a given k8s minor (e.g. v1.36)
 - `v{k8s-minor}-{N}` — prerelease builds, one per successful CI run
 <!-- last updated: 2026-05-05 -->
+<!-- test: 2026-05-07T01:49:51Z -->
