@@ -1,0 +1,209 @@
+name: ci
+on:
+  push:
+    branches:
+      - main
+      - 'release/v[0-9]+.[0-9]+'
+    paths-ignore:
+      - '.github/workflows/**'
+      - '.gitignore'
+  pull_request:
+    branches:
+      - main
+      - 'release/v[0-9]+.[0-9]+'
+    paths-ignore:
+      - '.github/workflows/**'
+      - '.gitignore'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+
+      - name: Build binaries
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          version: ~> v2
+          args: build --clean --snapshot
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload all binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: |
+            dist/k8-manifest-validator_linux_amd64_v1/k8-manifest-validator
+            dist/k8-manifest-validator_linux_arm64_v8.0/k8-manifest-validator
+            dist/k8-manifest-validator_darwin_amd64_v1/k8-manifest-validator
+            dist/k8-manifest-validator_darwin_arm64_v8.0/k8-manifest-validator
+          retention-days: 1
+
+  test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: dist/
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+
+      - name: Copy linux-amd64 binary for tests
+        run: |
+          cp dist/k8-manifest-validator_linux_amd64_v1/k8-manifest-validator dist/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator
+
+      - name: Run unit tests
+        run: go test ./...
+
+      - name: Run fixture tests
+        run: ./scripts/test.sh
+
+  release:
+    needs: test
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: k8-manifest-validator
+          path: dist/
+
+      - name: Make artifacts executable
+        run: |
+          chmod +x dist/k8-manifest-validator_linux_amd64_v1/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_linux_arm64_v8.0/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_darwin_amd64_v1/k8-manifest-validator
+          chmod +x dist/k8-manifest-validator_darwin_arm64_v8.0/k8-manifest-validator
+
+      - name: Determine next release tags
+        id: next_tag
+        run: |
+          set -x
+          K8S_MINOR=$(cat VERSION | tr -d '[:space:]')
+          echo "k8s_minor=$K8S_MINOR"
+
+          LAST_NUM=$(gh release list --repo joshho/k8-manifest-validator --limit 50 2>/dev/null | \
+            grep -E '^v[0-9]+\.[0-9]+-[0-9]+' | \
+            grep -v '^Release ' | \
+            sed -n "s/^v${K8S_MINOR#v}-\([0-9]*\).*/\1/p" | \
+            sort -n | tail -1 || true)
+
+          if [[ -z "$LAST_NUM" ]]; then
+            PATCH_NUM=0
+          else
+            PATCH_NUM=$((LAST_NUM + 1))
+          fi
+
+          PRERELEASE_TAG="v${K8S_MINOR#v}-${PATCH_NUM}"
+          STABLE_TAG="v${K8S_MINOR#v}"
+          echo "prerelease_tag=$PRERELEASE_TAG"
+          echo "prerelease_tag=$PRERELEASE_TAG" >> $GITHUB_OUTPUT
+          echo "stable_tag=$STABLE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Configure git identity
+        run: |
+          git config --global user.email "ci@k8-manifest-validator.dev"
+          git config --global user.name "CI Bot"
+
+      - name: Create prerelease
+        run: |
+          set -x
+          PRERELEASE_TAG="${{ steps.next_tag.outputs.prerelease_tag }}"
+          ARTIFACTS=(
+            "dist/k8-manifest-validator_linux_amd64_v1/k8-manifest-validator"
+            "dist/k8-manifest-validator_linux_arm64_v8.0/k8-manifest-validator"
+            "dist/k8-manifest-validator_darwin_amd64_v1/k8-manifest-validator"
+            "dist/k8-manifest-validator_darwin_arm64_v8.0/k8-manifest-validator"
+          )
+
+          # Create release bare (inline multi-file upload fails with 404)
+          gh release create "$PRERELEASE_TAG" \
+            --title "Release $PRERELEASE_TAG" \
+            --notes "Prerelease $PRERELEASE_TAG — multi-platform binaries" \
+            --repo joshho/k8-manifest-validator \
+            --prerelease
+
+          # Upload each artifact under a unique name per platform (--clobber so each
+          # upload replaces only its own platform, instead of all sharing one name)
+          for artifact in "${ARTIFACTS[@]}"; do
+            local src="$artifact"
+            local unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
+            local tmpfile="/tmp/release_$$_$unique_name"
+            cp "$src" "$tmpfile"
+            echo "  Uploading $unique_name"
+            gh release upload "$PRERELEASE_TAG" "$tmpfile" \
+              --repo joshho/k8-manifest-validator --clobber
+            rm -f "$tmpfile"
+          done
+
+      - name: Delete and recreate stable release
+        run: |
+          set -x
+          STABLE_TAG="${{ steps.next_tag.outputs.stable_tag }}"
+          ARTIFACTS=(
+            "dist/k8-manifest-validator_linux_amd64_v1/k8-manifest-validator"
+            "dist/k8-manifest-validator_linux_arm64_v8.0/k8-manifest-validator"
+            "dist/k8-manifest-validator_darwin_amd64_v1/k8-manifest-validator"
+            "dist/k8-manifest-validator_darwin_arm64_v8.0/k8-manifest-validator"
+          )
+
+          # Delete old stable release for a clean slate
+          if gh release view "$STABLE_TAG" >/dev/null 2>&1; then
+            echo "Deleting existing $STABLE_TAG..."
+            gh release delete "$STABLE_TAG" --yes --repo joshho/k8-manifest-validator
+          fi
+
+          # Recreate stable release with current artifacts
+          gh release create "$STABLE_TAG" \
+            --title "Release $STABLE_TAG" \
+            --notes "Stable release $STABLE_TAG — multi-platform binaries" \
+            --repo joshho/k8-manifest-validator \
+            --latest
+
+          # Upload each artifact (same unique-name approach)
+          for artifact in "${ARTIFACTS[@]}"; do
+            local src="$artifact"
+            local unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
+            local tmpfile="/tmp/release_$$_$unique_name"
+            cp "$src" "$tmpfile"
+            echo "  Uploading $unique_name"
+            gh release upload "$STABLE_TAG" "$tmpfile" \
+              --repo joshho/k8-manifest-validator --clobber
+            rm -f "$tmpfile"
+          done
+
+      - name: Push git tags
+        run: |
+          set -x
+          PRERELEASE_TAG="${{ steps.next_tag.outputs.prerelease_tag }}"
+          STABLE_TAG="${{ steps.next_tag.outputs.stable_tag }}"
+
+          git tag -f "$PRERELEASE_TAG" -m "Prerelease $PRERELEASE_TAG"
+          git push -f origin "refs/tags/$PRERELEASE_TAG"
+          git tag -f "$STABLE_TAG" -m "Stable release $STABLE_TAG"
+          git push -f origin "refs/tags/$STABLE_TAG"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
