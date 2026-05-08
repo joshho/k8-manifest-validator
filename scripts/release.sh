@@ -110,18 +110,25 @@ upload_release() {
         echo "[$tag] already exists — uploading assets (--clobber)"
     fi
 
-    # Upload each artifact individually (GitHub API accepts one binary per request)
+    # Upload each artifact individually under a unique name so --clobber only
+    # replaces within its own platform group (not across all 4 platforms).
     for artifact in "${ARTIFACTS[@]}"; do
-        local filename="$(basename "$artifact")"
-        echo "  Uploading $filename to $tag"
-        if gh release upload "$tag" "$artifact" \
+        local src="$artifact"
+        # Derive a unique, path-free name from the artifact path that encodes
+        # the platform: e.g. "k8-manifest-validator-linux-amd64"
+        local unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
+        local tmpfile="/tmp/release_$$_$unique_name"
+        cp "$src" "$tmpfile"
+        echo "  Uploading $unique_name to $tag"
+        if gh release upload "$tag" "$tmpfile" \
             --repo "$GITHUB_REPO" \
             --clobber \
             2>&1; then
-            echo "  Uploaded $filename"
+            echo "  Uploaded $unique_name"
         else
-            echo "  FAILED to upload $filename"
+            echo "  FAILED to upload $unique_name"
         fi
+        rm -f "$tmpfile"
     done
 }
 
