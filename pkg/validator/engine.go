@@ -73,8 +73,14 @@ func (e *Engine) Validate(path string, crdPaths []string) (*types.Results, error
 		if err != nil {
 			return nil, fmt.Errorf("failed to read CRD file %s: %w", crdPath, err)
 		}
-		if err := e.cr.RegisterCRD(crdData); err != nil {
-			return nil, fmt.Errorf("failed to register CRD %s: %w", crdPath, err)
+		// Split multi-document CRD files (e.g., cert-manager.crds.yaml bundles all cert-manager CRDs)
+		for _, doc := range SplitYAMLDocument(crdData) {
+			if len(doc) == 0 {
+				continue
+			}
+			if err := e.cr.RegisterCRD(doc); err != nil {
+				return nil, fmt.Errorf("failed to register CRD from %s: %w", crdPath, err)
+			}
 		}
 	}
 
