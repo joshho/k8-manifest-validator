@@ -163,9 +163,9 @@ jobs:
           # Upload each artifact under a unique name per platform (--clobber so each
           # upload replaces only its own platform, instead of all sharing one name)
           for artifact in "${ARTIFACTS[@]}"; do
-            local src="$artifact"
-            local unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
-            local tmpfile="/tmp/release_$$_$unique_name"
+            src="$artifact"
+            unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
+            tmpfile="/tmp/release_$$_$unique_name"
             cp "$src" "$tmpfile"
             echo "  Uploading $unique_name"
             gh release upload "$PRERELEASE_TAG" "$tmpfile" \
@@ -201,9 +201,9 @@ jobs:
 
           # Upload each artifact (same unique-name approach)
           for artifact in "${ARTIFACTS[@]}"; do
-            local src="$artifact"
-            local unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
-            local tmpfile="/tmp/release_$$_$unique_name"
+            src="$artifact"
+            unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
+            tmpfile="/tmp/release_$$_$unique_name"
             cp "$src" "$tmpfile"
             echo "  Uploading $unique_name"
             gh release upload "$STABLE_TAG" "$tmpfile" \
