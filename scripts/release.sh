@@ -98,38 +98,40 @@ upload_release() {
     local notes="$2"
     local is_prerelease="$3"   # "--prerelease" or ""
 
-    # Try create first (without inline assets — we'll upload them one by one)
+    # Always delete + recreate for a clean slate (stable gets refreshed each run,
+    # prereleases are unique per tag so this is fine).
+    echo "  Deleting any existing $tag release for a clean slate..."
+    gh release delete "$tag" --repo "$GITHUB_REPO" --yes 2>/dev/null || true
+
+    # Create release with all artifacts inline (single API call, atomic).
+    echo "  Creating $tag with all artifacts..."
     if gh release create "$tag" \
         --repo "$GITHUB_REPO" \
         --title "$tag" \
         --notes "$notes" \
         ${is_prerelease:+"--prerelease"} \
+        "${ARTIFACTS[@]}" \
         2>&1; then
-        echo "[$tag] created successfully"
+        echo "[$tag] created with all artifacts"
     else
-        echo "[$tag] already exists — uploading assets (--clobber)"
-    fi
-
-    # Upload each artifact individually under a unique name so --clobber only
-    # replaces within its own platform group (not across all 4 platforms).
-    for artifact in "${ARTIFACTS[@]}"; do
-        local src="$artifact"
-        # Derive a unique, path-free name from the artifact path that encodes
-        # the platform: e.g. "k8-manifest-validator-linux-amd64"
-        local unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
-        local tmpfile="/tmp/release_$$_$unique_name"
-        cp "$src" "$tmpfile"
-        echo "  Uploading $unique_name to $tag"
-        if gh release upload "$tag" "$tmpfile" \
+        echo "[$tag] create failed — trying upload-based approach"
+        # Fall back: create bare, then upload one by one with unique names
+        gh release create "$tag" \
             --repo "$GITHUB_REPO" \
-            --clobber \
-            2>&1; then
-            echo "  Uploaded $unique_name"
-        else
-            echo "  FAILED to upload $unique_name"
-        fi
-        rm -f "$tmpfile"
-    done
+            --title "$tag" \
+            --notes "$notes" \
+            ${is_prerelease:+"--prerelease"} \
+            2>/dev/null || true
+        for artifact in "${ARTIFACTS[@]}"; do
+            local src="$artifact"
+            local unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
+            local tmpfile="/tmp/release_$$_$unique_name"
+            cp "$src" "$tmpfile"
+            echo "  Uploading $unique_name to $tag"
+            gh release upload "$tag" "$tmpfile" --repo "$GITHUB_REPO" --clobber 2>&1 || true
+            rm -f "$tmpfile"
+        done
+    fi
 }
 
 # --- Stable release (latest) ---
