@@ -158,6 +158,8 @@ jobs:
               --repo joshho/k8-manifest-validator --clobber
             rm -f "$tmpfile"
           done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Delete and recreate stable release
         run: |
@@ -194,6 +196,8 @@ jobs:
               --repo joshho/k8-manifest-validator --clobber
             rm -f "$tmpfile"
           done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push git tags
         run: |
@@ -206,4 +210,5 @@ jobs:
           git tag -f "$STABLE_TAG" -m "Stable release $STABLE_TAG"
           git push -f origin "refs/tags/$STABLE_TAG"
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
