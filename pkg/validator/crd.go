@@ -137,6 +137,22 @@ func (v *CRDValidator) buildCRD(crd *apiextensions.CustomResourceDefinition) (*C
 	return result, nil
 }
 
+// ExtractVersionSchema extracts the OpenAPIV3Schema from a specific served version
+func (v *CRDValidator) ExtractVersionSchema(crd *CRD, versionName string) (*apiextensions.JSONSchemaProps, error) {
+	for _, version := range crd.Spec.Versions {
+		if version.Name == versionName {
+			if !version.Served {
+				return nil, fmt.Errorf("version %s is not served", versionName)
+			}
+			if version.Schema == nil {
+				return nil, fmt.Errorf("version %s is served but has no schema", versionName)
+			}
+			return version.Schema, nil
+		}
+	}
+	return nil, fmt.Errorf("version %s not found in CRD", versionName)
+}
+
 // ExtractSchema extracts the OpenAPIV3Schema from the first served version
 func (v *CRDValidator) ExtractSchema(crd *CRD) (*apiextensions.JSONSchemaProps, error) {
 	for _, version := range crd.Spec.Versions {

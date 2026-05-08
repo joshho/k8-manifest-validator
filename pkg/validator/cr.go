@@ -45,21 +45,20 @@ func (v *CRValidator) RegisterCRD(crdYAML []byte) error {
 		return fmt.Errorf("failed to validate CRD: %w", err)
 	}
 
-	// Build a schema validator from the CRD schema
-	schemaValidator, err := v.buildSchemaValidator(crd)
-	if err != nil {
-		return fmt.Errorf("failed to build schema validator: %w", err)
-	}
-
-	// Register the schema validator for each served version
+	// Register a schema validator for each served version, built from that version's schema
 	for _, ver := range crd.Spec.Versions {
-		if ver.Served {
-			key := crdKey(crd.Spec.Group, ver.Name, crd.Spec.Names.Kind)
-			v.schemaRegistry.Store(key, &crdSchemaEntry{
-				crd:            crd,
-				schemaValidator: schemaValidator,
-			})
+		if !ver.Served {
+			continue
 		}
+		schemaValidator, err := v.buildSchemaValidatorForVersion(crd, ver.Name)
+		if err != nil {
+			return fmt.Errorf("failed to build schema validator for version %s: %w", ver.Name, err)
+		}
+		key := crdKey(crd.Spec.Group, ver.Name, crd.Spec.Names.Kind)
+		v.schemaRegistry.Store(key, &crdSchemaEntry{
+			crd:            crd,
+			schemaValidator: schemaValidator,
+		})
 	}
 
 	return nil
@@ -77,6 +76,21 @@ func (v *CRValidator) buildSchemaValidator(crd *CRD) (validation.SchemaValidator
 	schemaValidator, _, err := validation.NewSchemaValidator(schema)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create schema validator: %w", err)
+	}
+
+	return schemaValidator, nil
+}
+
+// buildSchemaValidatorForVersion creates a validation.SchemaValidator from a specific CRD version's schema
+func (v *CRValidator) buildSchemaValidatorForVersion(crd *CRD, versionName string) (validation.SchemaValidator, error) {
+	schema, err := v.crdValidator.ExtractVersionSchema(crd, versionName)
+	if err != nil {
+		return nil, err
+	}
+
+	schemaValidator, _, err := validation.NewSchemaValidator(schema)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create schema validator for version %s: %w", versionName, err)
 	}
 
 	return schemaValidator, nil
