@@ -98,7 +98,13 @@ upload_release() {
     local notes="$2"
     local is_prerelease="$3"   # "--prerelease" or ""
 
-    # Try create first
+    # Always delete + recreate for a clean slate (stable gets refreshed each run,
+    # prereleases are unique per tag so this is fine).
+    echo "  Deleting any existing $tag release for a clean slate..."
+    gh release delete "$tag" --repo "$GITHUB_REPO" --yes 2>/dev/null || true
+
+    # Create release with all artifacts inline (single API call, atomic).
+    echo "  Creating $tag with all artifacts..."
     if gh release create "$tag" \
         --repo "$GITHUB_REPO" \
         --title "$tag" \
@@ -106,17 +112,26 @@ upload_release() {
         ${is_prerelease:+"--prerelease"} \
         "${ARTIFACTS[@]}" \
         2>&1; then
-        echo "[$tag] created successfully"
-        return 0
+        echo "[$tag] created with all artifacts"
+    else
+        echo "[$tag] create failed — trying upload-based approach"
+        # Fall back: create bare, then upload one by one with unique names
+        gh release create "$tag" \
+            --repo "$GITHUB_REPO" \
+            --title "$tag" \
+            --notes "$notes" \
+            ${is_prerelease:+"--prerelease"} \
+            2>/dev/null || true
+        for artifact in "${ARTIFACTS[@]}"; do
+            local src="$artifact"
+            local unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
+            local tmpfile="/tmp/release_$$_$unique_name"
+            cp "$src" "$tmpfile"
+            echo "  Uploading $unique_name to $tag"
+            gh release upload "$tag" "$tmpfile" --repo "$GITHUB_REPO" --clobber 2>&1 || true
+            rm -f "$tmpfile"
+        done
     fi
-
-    # Tag already exists — upload assets with clobber to update
-    echo "[$tag] already exists — uploading assets (--clobber)"
-    gh release upload "$tag" \
-        --repo "$GITHUB_REPO" \
-        --clobber \
-        "${ARTIFACTS[@]}" \
-        2>&1 || true
 }
 
 # --- Stable release (latest) ---
