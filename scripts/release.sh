@@ -98,25 +98,31 @@ upload_release() {
     local notes="$2"
     local is_prerelease="$3"   # "--prerelease" or ""
 
-    # Try create first
+    # Try create first (without inline assets — we'll upload them one by one)
     if gh release create "$tag" \
         --repo "$GITHUB_REPO" \
         --title "$tag" \
         --notes "$notes" \
         ${is_prerelease:+"--prerelease"} \
-        "${ARTIFACTS[@]}" \
         2>&1; then
         echo "[$tag] created successfully"
-        return 0
+    else
+        echo "[$tag] already exists — uploading assets (--clobber)"
     fi
 
-    # Tag already exists — upload assets with clobber to update
-    echo "[$tag] already exists — uploading assets (--clobber)"
-    gh release upload "$tag" \
-        --repo "$GITHUB_REPO" \
-        --clobber \
-        "${ARTIFACTS[@]}" \
-        2>&1 || true
+    # Upload each artifact individually (GitHub API accepts one binary per request)
+    for artifact in "${ARTIFACTS[@]}"; do
+        local filename="$(basename "$artifact")"
+        echo "  Uploading $filename to $tag"
+        if gh release upload "$tag" "$artifact" \
+            --repo "$GITHUB_REPO" \
+            --clobber \
+            2>&1; then
+            echo "  Uploaded $filename"
+        else
+            echo "  FAILED to upload $filename"
+        fi
+    done
 }
 
 # --- Stable release (latest) ---
