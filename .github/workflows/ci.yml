@@ -139,12 +139,14 @@ jobs:
             "dist/k8-manifest-validator_darwin_arm64_v8.0/k8-manifest-validator"
           )
 
-          # Create release bare (inline multi-file upload fails with 404)
-          gh release create "$PRERELEASE_TAG" \
+          # Create release bare (inline multi-file upload fails with 404).
+          # Whether the release already exists or is new, we proceed to the upload.
+          create_out=$(gh release create "$PRERELEASE_TAG" \
             --title "Release $PRERELEASE_TAG" \
             --notes "Prerelease $PRERELEASE_TAG — multi-platform binaries" \
             --repo joshho/k8-manifest-validator \
-            --prerelease
+            --prerelease 2>&1) \
+          || echo "$create_out" | grep -q "already exists" || { echo "$create_out"; exit 1; }
 
           # Upload each artifact under a unique name per platform (--clobber so each
           # upload replaces only its own platform, instead of all sharing one name)
