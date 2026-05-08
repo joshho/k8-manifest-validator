@@ -196,6 +196,10 @@ jobs:
 
           gh release edit "${{ steps.next_tag.outputs.stable_tag }}" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
 
+          # Configure git identity (needed for git tag)
+          git config --global user.email "ci@k8-manifest-validator.dev"
+          git config --global user.name "CI Bot"
+
           # Push git tags so release.yml can build from them
           git tag -f "$TAG" -m "Prerelease $TAG"
           git push -f origin "refs/tags/$TAG"
