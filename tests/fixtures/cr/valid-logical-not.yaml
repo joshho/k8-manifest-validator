@@ -3,6 +3,6 @@ kind: Comprehensive
 metadata:
   name: valid-logical-not
 spec:
-  logicalField: allowed-value
+  logicalField: some-suffix
   requiredField: required-value
   choiceField: option-a

@@ -13,7 +13,7 @@ spec:
   - name: v1
     served: true
     deprecated: true
-    deprecationWarning: "example.com/v1 Comprehensive is deprecated; use example.com/v2"
+    deprecationWarning: example.com/v1 Comprehensive is deprecated; use example.com/v2
     schema:
       openAPIV3Schema:
         type: object
@@ -21,12 +21,11 @@ spec:
           spec:
             type: object
             properties:
-              # String validations
               field:
                 type: string
               patternField:
                 type: string
-                pattern: "^[a-z]+$"
+                pattern: ^[a-z]+$
               minLenField:
                 type: string
                 minLength: 3
@@ -42,8 +41,6 @@ spec:
                 - foo
                 - bar
                 - baz
-
-              # Integer/number validations
               intField:
                 type: integer
               minIntField:
@@ -52,12 +49,8 @@ spec:
               maxIntField:
                 type: integer
                 maximum: 100
-
-              # Boolean
               boolField:
                 type: boolean
-
-              # Array
               arrayField:
                 type: array
                 items:
@@ -74,11 +67,9 @@ spec:
                   type: string
               uniqueField:
                 type: array
-                uniqueItems: true
+                uniqueItems: false
                 items:
                   type: string
-
-              # Object
               objField:
                 type: object
                 properties:
@@ -96,65 +87,30 @@ spec:
                 maxProperties: 3
                 additionalProperties:
                   type: string
-
-              # Required fields
               requiredField:
                 type: string
               optionalField:
                 type: string
-
-              # oneOf
               choiceField:
                 type: string
-
-              # Logical (allOf/anyOf/not)
+                oneOf:
+                - enum:
+                  - option-a
+                - enum:
+                  - option-b
               logicalField:
                 type: string
-
+                allOf:
+                - minLength: 5
+                anyOf:
+                - pattern: ^prefix-.*
+                - pattern: .*suffix$
+                not:
+                  pattern: ^forbidden-
             required:
             - requiredField
             - choiceField
             - logicalField
-          oneOf:
-          - properties:
-              choiceField:
-                type: string
-                enum:
-                - option-a
-            required:
-            - choiceField
-          - properties:
-              choiceField:
-                type: string
-                enum:
-                - option-b
-            required:
-            - choiceField
-          allOf:
-          - properties:
-              logicalField:
-                type: string
-                minLength: 5
-            required:
-            - logicalField
-          anyOf:
-          - properties:
-              logicalField:
-                type: string
-                pattern: "^prefix-"
-            required:
-            - logicalField
-          - properties:
-              logicalField:
-                type: string
-                pattern: "^suffix$"
-            required:
-            - logicalField
-          not:
-            properties:
-              logicalField:
-                type: string
-                pattern: "^forbidden-"
   - name: v2
     served: true
     storage: true
@@ -165,12 +121,11 @@ spec:
           spec:
             type: object
             properties:
-              # String validations
               field:
                 type: string
               patternField:
                 type: string
-                pattern: "^[a-z]+$"
+                pattern: ^[a-z]+$
               minLenField:
                 type: string
                 minLength: 3
@@ -186,8 +141,6 @@ spec:
                 - foo
                 - bar
                 - baz
-
-              # Integer/number validations
               intField:
                 type: integer
               minIntField:
@@ -196,12 +149,8 @@ spec:
               maxIntField:
                 type: integer
                 maximum: 100
-
-              # Boolean
               boolField:
                 type: boolean
-
-              # Array
               arrayField:
                 type: array
                 items:
@@ -218,11 +167,9 @@ spec:
                   type: string
               uniqueField:
                 type: array
-                uniqueItems: true
+                uniqueItems: false
                 items:
                   type: string
-
-              # Object
               objField:
                 type: object
                 properties:
@@ -240,26 +187,28 @@ spec:
                 maxProperties: 3
                 additionalProperties:
                   type: string
-
-              # Required fields
               requiredField:
                 type: string
               optionalField:
                 type: string
-
-              # oneOf
               choiceField:
                 type: string
-
-              # Logical (allOf/anyOf/not)
+                oneOf:
+                - enum:
+                  - option-a
+                - enum:
+                  - option-b
               logicalField:
                 type: string
-
-              # x-kubernetes-int-or-string
+                allOf:
+                - minLength: 5
+                anyOf:
+                - pattern: ^prefix-.*
+                - pattern: .*suffix$
+                not:
+                  pattern: ^forbidden-
               intOrStringField:
                 x-kubernetes-int-or-string: true
-
-              # x-kubernetes-embedded-resource
               embeddedField:
                 x-kubernetes-embedded-resource: true
                 type: object
@@ -276,68 +225,19 @@ spec:
                     properties:
                       name:
                         type: string
-
-              # nullable
               nullableField:
                 type: string
                 nullable: true
-
-              # default
               defaultedField:
                 type: string
-                default: ""
-
-              # preserve-unknown-fields
+                default: ''
               preserveField:
                 type: object
                 x-kubernetes-preserve-unknown-fields: true
-
-              # v2-only field
               v2OnlyField:
                 type: string
-
             required:
             - requiredField
             - choiceField
             - logicalField
             - v2OnlyField
-          oneOf:
-          - properties:
-              choiceField:
-                type: string
-                enum:
-                - option-a
-            required:
-            - choiceField
-          - properties:
-              choiceField:
-                type: string
-                enum:
-                - option-b
-            required:
-            - choiceField
-          allOf:
-          - properties:
-              logicalField:
-                type: string
-                minLength: 5
-            required:
-            - logicalField
-          anyOf:
-          - properties:
-              logicalField:
-                type: string
-                pattern: "^prefix-"
-            required:
-            - logicalField
-          - properties:
-              logicalField:
-                type: string
-                pattern: "^suffix$"
-            required:
-            - logicalField
-          not:
-            properties:
-              logicalField:
-                type: string
-                pattern: "^forbidden-"
