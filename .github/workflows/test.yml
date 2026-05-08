@@ -197,10 +197,10 @@ jobs:
           gh release edit "${{ steps.next_tag.outputs.stable_tag }}" --repo joshho/k8-manifest-validator --latest true 2>/dev/null || true
 
           # Push git tags so release.yml can build from them
-          git tag "$TAG" -m "Prerelease $TAG"
-          git push origin "refs/tags/$TAG"
-          git tag "${{ steps.next_tag.outputs.stable_tag }}" -m "Stable release ${{ steps.next_tag.outputs.stable_tag }}"
-          git push origin "refs/tags/${{ steps.next_tag.outputs.stable_tag }}"
+          git tag -f "$TAG" -m "Prerelease $TAG"
+          git push -f origin "refs/tags/$TAG"
+          git tag -f "${{ steps.next_tag.outputs.stable_tag }}" -m "Stable release ${{ steps.next_tag.outputs.stable_tag }}"
+          git push -f origin "refs/tags/${{ steps.next_tag.outputs.stable_tag }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
