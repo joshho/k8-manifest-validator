@@ -165,7 +165,7 @@ jobs:
           for artifact in "${ARTIFACTS[@]}"; do
             src="$artifact"
             unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
-            tmpfile="/tmp/release_$$_$unique_name"
+            tmpfile="/tmp/$unique_name"
             cp "$src" "$tmpfile"
             echo "  Uploading $unique_name"
             gh release upload "$PRERELEASE_TAG" "$tmpfile" \
@@ -203,7 +203,7 @@ jobs:
           for artifact in "${ARTIFACTS[@]}"; do
             src="$artifact"
             unique_name="k8-manifest-validator-$(echo "$artifact" | sed 's|dist/k8-manifest-validator_||' | sed 's|/k8-manifest-validator||' | tr '_' '-')"
-            tmpfile="/tmp/release_$$_$unique_name"
+            tmpfile="/tmp/$unique_name"
             cp "$src" "$tmpfile"
             echo "  Uploading $unique_name"
             gh release upload "$STABLE_TAG" "$tmpfile" \
