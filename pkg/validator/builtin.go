@@ -772,7 +772,7 @@ func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.E
 	allErrs = append(allErrs, validateLifecycleHooks(&deploy.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — securityContext
-	allErrs = append(allErrs, validatePodSecurityContext(&deploy.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+	allErrs = append(allErrs, validateSecurityContext(&deploy.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — scheduling fields (affinity, tolerations, topologySpreadConstraints, dnsConfig, host booleans, restartPolicy)
 	allErrs = append(allErrs, validateSchedulingFields(&deploy.Spec.Template.Spec, deploy.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
@@ -813,7 +813,7 @@ func (v *BuiltinValidator) validateStatefulSet(ss *appsv1.StatefulSet) field.Err
 	allErrs = append(allErrs, validateLifecycleHooks(&ss.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — securityContext
-	allErrs = append(allErrs, validatePodSecurityContext(&ss.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+	allErrs = append(allErrs, validateSecurityContext(&ss.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — scheduling fields
 	allErrs = append(allErrs, validateSchedulingFields(&ss.Spec.Template.Spec, ss.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
@@ -844,7 +844,7 @@ func (v *BuiltinValidator) validateDaemonSet(ds *appsv1.DaemonSet) field.ErrorLi
 	allErrs = append(allErrs, validateLifecycleHooks(&ds.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — securityContext
-	allErrs = append(allErrs, validatePodSecurityContext(&ds.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+	allErrs = append(allErrs, validateSecurityContext(&ds.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — scheduling fields
 	allErrs = append(allErrs, validateSchedulingFields(&ds.Spec.Template.Spec, ds.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
@@ -879,7 +879,7 @@ func (v *BuiltinValidator) validateReplicaSet(rs *appsv1.ReplicaSet) field.Error
 	allErrs = append(allErrs, validateLifecycleHooks(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — securityContext
-	allErrs = append(allErrs, validatePodSecurityContext(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+	allErrs = append(allErrs, validateSecurityContext(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — scheduling fields
 	allErrs = append(allErrs, validateSchedulingFields(&rs.Spec.Template.Spec, rs.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
@@ -909,7 +909,7 @@ func (v *BuiltinValidator) validateReplicationController(rc *corev1.ReplicationC
 	allErrs = append(allErrs, validateLifecycleHooks(&rc.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — securityContext
-	allErrs = append(allErrs, validatePodSecurityContext(&rc.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+	allErrs = append(allErrs, validateSecurityContext(&rc.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — scheduling fields
 	allErrs = append(allErrs, validateSchedulingFields(&rc.Spec.Template.Spec, rc.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
@@ -931,7 +931,7 @@ func (v *BuiltinValidator) validatePod(pod *corev1.Pod) field.ErrorList {
 	allErrs = append(allErrs, validateLifecycleHooks(&pod.Spec, field.NewPath("spec"))...)
 
 	// Phase 2: semantic layer — securityContext
-	allErrs = append(allErrs, validatePodSecurityContext(&pod.Spec, field.NewPath("spec"))...)
+	allErrs = append(allErrs, validateSecurityContext(&pod.Spec, field.NewPath("spec"))...)
 
 	// Phase 2: semantic layer — scheduling fields
 	allErrs = append(allErrs, validateSchedulingFields(&pod.Spec, pod.Spec.DNSPolicy, field.NewPath("spec"))...)
@@ -1069,7 +1069,7 @@ func (v *BuiltinValidator) validateJob(job *batchv1.Job) field.ErrorList {
 	allErrs = append(allErrs, validateInitContainerResources(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — securityContext
-	allErrs = append(allErrs, validatePodSecurityContext(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+	allErrs = append(allErrs, validateSecurityContext(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
 
 	return allErrs
 }
@@ -1105,7 +1105,7 @@ func (v *BuiltinValidator) validateCronJob(cj *batchv1.CronJob) field.ErrorList 
 	allErrs = append(allErrs, validateInitContainerResources(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"))...)
 
 	// Phase 2: semantic layer — securityContext
-	allErrs = append(allErrs, validatePodSecurityContext(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"))...)
+	allErrs = append(allErrs, validateSecurityContext(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"))...)
 
 	return allErrs
 }
