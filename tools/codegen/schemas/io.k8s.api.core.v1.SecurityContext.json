@@ -1,0 +1,32 @@
+{
+  "description": "SecurityContext defines the security options that a container should run with.",
+  "type": "object",
+  "properties": {
+    "allowPrivilegeEscalation": {
+      "type": "boolean"
+    },
+    "capabilities": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.Capabilities"
+    },
+    "privileged": {
+      "type": "boolean"
+    },
+    "readOnlyRootFilesystem": {
+      "type": "boolean"
+    },
+    "runAsGroup": {
+      "format": "int64",
+      "type": "integer"
+    },
+    "runAsNonRoot": {
+      "type": "boolean"
+    },
+    "runAsUser": {
+      "format": "int64",
+      "type": "integer"
+    },
+    "seLinuxOptions": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.SELinuxOptions"
+    }
+  }
+}

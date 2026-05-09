@@ -1,0 +1,15 @@
+{
+  "description": "Affinity is a group of affinity scheduling rules.",
+  "type": "object",
+  "properties": {
+    "nodeAffinity": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.NodeAffinity"
+    },
+    "podAffinity": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.PodAffinity"
+    },
+    "podAntiAffinity": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.PodAntiAffinity"
+    }
+  }
+}

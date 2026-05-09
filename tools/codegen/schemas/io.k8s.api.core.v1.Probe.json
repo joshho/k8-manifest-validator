@@ -1,0 +1,39 @@
+{
+  "description": "Probe describes a health check to be performed against a container to determine whether it is alive or ready to receive traffic.",
+  "type": "object",
+  "properties": {
+    "exec": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.ExecAction"
+    },
+    "failureThreshold": {
+      "format": "int32",
+      "type": "integer"
+    },
+    "httpGet": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.HTTPGetAction"
+    },
+    "initialDelaySeconds": {
+      "format": "int32",
+      "type": "integer"
+    },
+    "periodSeconds": {
+      "format": "int32",
+      "type": "integer"
+    },
+    "successThreshold": {
+      "format": "int32",
+      "type": "integer"
+    },
+    "tcpSocket": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.TCPSocketAction"
+    },
+    "terminationGracePeriodSeconds": {
+      "format": "int64",
+      "type": "integer"
+    },
+    "timeoutSeconds": {
+      "format": "int32",
+      "type": "integer"
+    }
+  }
+}

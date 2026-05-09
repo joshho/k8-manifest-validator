@@ -1,0 +1,97 @@
+{
+  "description": "PodSpec is a description of a pod",
+  "type": "object",
+  "properties": {
+    "activeDeadlineSeconds": {
+      "format": "int64",
+      "type": "integer"
+    },
+    "affinity": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.Affinity"
+    },
+    "automountServiceAccountToken": {
+      "type": "boolean"
+    },
+    "containers": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.Container"
+      },
+      "type": "array"
+    },
+    "dnsPolicy": {
+      "type": "string"
+    },
+    "dnsConfig": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.PodDNSConfig"
+    },
+    "hostPID": {
+      "type": "boolean"
+    },
+    "hostname": {
+      "format": "string",
+      "type": "string"
+    },
+    "imagePullSecrets": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.LocalObjectReference"
+      },
+      "type": "array"
+    },
+    "initContainers": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.Container"
+      },
+      "type": "array"
+    },
+    "nodeSelector": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "type": "object"
+    },
+    "priority": {
+      "format": "int32",
+      "type": "integer"
+    },
+    "restartPolicy": {
+      "type": "string"
+    },
+    "runtimeClassName": {
+      "type": "string"
+    },
+    "schedulerName": {
+      "type": "string"
+    },
+    "securityContext": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.PodSecurityContext"
+    },
+    "serviceAccountName": {
+      "type": "string"
+    },
+    "subdomain": {
+      "type": "string"
+    },
+    "terminationGracePeriodSeconds": {
+      "format": "int64",
+      "type": "integer"
+    },
+    "tolerations": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.Toleration"
+      },
+      "type": "array"
+    },
+    "topologySpreadConstraints": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.TopologySpreadConstraint"
+      },
+      "type": "array"
+    },
+    "volumes": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.Volume"
+      },
+      "type": "array"
+    }
+  }
+}

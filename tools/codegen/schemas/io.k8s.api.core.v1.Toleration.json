@@ -1,0 +1,27 @@
+{
+  "description": "Toleration represents a pod's toleration for a node's taint.",
+  "type": "object",
+  "properties": {
+    "effect": {
+      "description": "Required. The effect of the toleration.",
+      "type": "string"
+    },
+    "key": {
+      "description": "Key is the taint key that the toleration applies to.",
+      "type": "string"
+    },
+    "operator": {
+      "description": "Operator represents a key's relationship to the value.",
+      "type": "string"
+    },
+    "tolerationSeconds": {
+      "description": "TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint.",
+      "format": "int64",
+      "type": "integer"
+    },
+    "value": {
+      "description": "Value is the taint value that the toleration matches.",
+      "type": "string"
+    }
+  }
+}

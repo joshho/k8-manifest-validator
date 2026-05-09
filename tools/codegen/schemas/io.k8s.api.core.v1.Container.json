@@ -1,0 +1,96 @@
+{
+  "description": "A single application container that you want to run within a pod.",
+  "type": "object",
+  "properties": {
+    "args": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "command": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "env": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.EnvVar"
+      },
+      "type": "array"
+    },
+    "envFrom": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.EnvFromSource"
+      },
+      "type": "array"
+    },
+    "image": {
+      "description": "Docker image name. More info: https://kubernetes.io/docs/concepts/containers/images",
+      "type": "string"
+    },
+    "imagePullPolicy": {
+      "type": "string"
+    },
+    "lifecycle": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.Lifecycle"
+    },
+    "livenessProbe": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.Probe"
+    },
+    "name": {
+      "description": "Name of the container specified as a DNS_LABEL. Each container in a pod must have a unique name (DNS_LABEL). Cannot be updated.",
+      "format": "string",
+      "type": "string"
+    },
+    "ports": {
+      "description": "List of ports to expose from the container. Exposing a port here gives the system additional information about the network the container is part of, but is not required. More info: https://kubernetes.io/docs/concepts/containers/containers#container-ports",
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.ContainerPort"
+      },
+      "type": "array",
+      "x-kubernetes-list-type": "array"
+    },
+    "readinessProbe": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.Probe"
+    },
+    "resources": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.ResourceRequirements"
+    },
+    "securityContext": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.SecurityContext"
+    },
+    "startupProbe": {
+      "$ref": "#/components/schemas/io.k8s.api.core.v1.Probe"
+    },
+    "stdin": {
+      "type": "boolean"
+    },
+    "stdinOnce": {
+      "type": "boolean"
+    },
+    "terminationMessagePath": {
+      "type": "string"
+    },
+    "tty": {
+      "type": "boolean"
+    },
+    "volumeDevices": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.VolumeDevice"
+      },
+      "type": "array"
+    },
+    "volumeMounts": {
+      "items": {
+        "$ref": "#/components/schemas/io.k8s.api.core.v1.VolumeMount"
+      },
+      "type": "array"
+    },
+    "workingDir": {
+      "type": "string"
+    }
+  },
+  "required": ["name"]
+}

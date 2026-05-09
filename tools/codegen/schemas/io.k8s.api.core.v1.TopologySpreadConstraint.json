@@ -1,0 +1,24 @@
+{
+  "description": "TopologySpreadConstraint describes how a group of pods ought to spread across topology domains.",
+  "type": "object",
+  "properties": {
+    "labelSelector": {
+      "description": "LabelSelector is used to find matching pods.",
+      "$ref": "#/components/schemas/io.k8s.apimachinery.pkg.apis.meta.v1.LabelSelector"
+    },
+    "maxSkew": {
+      "description": "MaxSkew describes the degree to which pods may be unevenly distributed.",
+      "format": "int32",
+      "type": "integer"
+    },
+    "topologyKey": {
+      "description": "TopologyKey is the key of node labels.",
+      "type": "string"
+    },
+    "whenUnsatisfiable": {
+      "description": "WhenUnsatisfiable indicates how to deal with a pod if it doesn't satisfy the spread constraint.",
+      "type": "string"
+    }
+  },
+  "required": ["maxSkew", "topologyKey", "whenUnsatisfiable"]
+}
