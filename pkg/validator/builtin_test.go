@@ -4,6 +4,9 @@ import (
 	"testing"
 )
 
+// Helper to verify the test file compiles
+var _ = NewBuiltinValidator
+
 func TestBuiltInKindRoutingDeploymentReturnsValidator(t *testing.T) {
 	manifestYAML := []byte(`apiVersion: apps/v1
 kind: Deployment
@@ -245,4 +248,211 @@ spec:
 	if result.Status != "valid" {
 		t.Errorf("ValidateResource() status = %q, want %q for valid Job", result.Status, "valid")
 	}
+}
+
+// --- AWU-1: TDD failing tests ---
+
+// TestBuiltinValidatorDetectsInvalidContainerNameInDeployment verifies that
+// a Deployment with a container name containing uppercase characters is rejected.
+// This is the AWU-1 TDD test: it currently FAILS because validateDeployment
+// does not call validatePodSpec yet.
+func TestBuiltinValidatorDetectsInvalidContainerNameInDeployment(t *testing.T) {
+	invalidYAML := []byte(`apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-deploy
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      containers:
+      - name: Bad_Name
+        image: nginx
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(invalidYAML)
+	if result.Status != "invalid" {
+		t.Errorf("expected invalid, got %s: %v", result.Status, result.Errors)
+	}
+	if len(result.Errors) > 0 && !containsField(result.Errors[0].Field, "containers[0].name") {
+		t.Errorf("expected error on containers[0].name, got %s", result.Errors[0].Field)
+	}
+}
+
+// TestBuiltinValidatorDetectsDuplicateContainerNameInStatefulSet verifies that
+// a StatefulSet with duplicate container names is rejected.
+func TestBuiltinValidatorDetectsDuplicateContainerNameInStatefulSet(t *testing.T) {
+	invalidYAML := []byte(`apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: test-ss
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.21
+      - name: nginx
+        image: nginx:1.22
+  serviceName: test
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(invalidYAML)
+	if result.Status != "invalid" {
+		t.Errorf("expected invalid, got %s: %v", result.Status, result.Errors)
+	}
+}
+
+// TestBuiltinValidatorDetectsEmptyContainerImageInDaemonSet verifies that
+// a DaemonSet with an empty container image string is rejected.
+func TestBuiltinValidatorDetectsEmptyContainerImageInDaemonSet(t *testing.T) {
+	invalidYAML := []byte(`apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: test-ds
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      containers:
+      - name: app
+        image: ""
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(invalidYAML)
+	if result.Status != "invalid" {
+		t.Errorf("expected invalid, got %s: %v", result.Status, result.Errors)
+	}
+}
+
+// TestBuiltinValidatorAcceptsValidDeployment verifies a valid Deployment passes.
+func TestBuiltinValidatorAcceptsValidDeployment(t *testing.T) {
+	validYAML := []byte(`apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valid-deploy
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: valid
+  template:
+    metadata:
+      labels:
+        app: valid
+    spec:
+      containers:
+      - name: app
+        image: app:1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: FOO
+          value: bar
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(validYAML)
+	if result.Status != "valid" {
+		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
+	}
+}
+
+// TestBuiltinValidatorAcceptsValidStatefulSet verifies a valid StatefulSet passes.
+func TestBuiltinValidatorAcceptsValidStatefulSet(t *testing.T) {
+	validYAML := []byte(`apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: valid-ss
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: valid
+  template:
+    metadata:
+      labels:
+        app: valid
+    spec:
+      containers:
+      - name: app
+        image: app:1.0
+        ports:
+        - containerPort: 8080
+  serviceName: valid
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(validYAML)
+	if result.Status != "valid" {
+		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
+	}
+}
+
+// TestBuiltinValidatorAcceptsValidDaemonSet verifies a valid DaemonSet passes.
+func TestBuiltinValidatorAcceptsValidDaemonSet(t *testing.T) {
+	validYAML := []byte(`apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: valid-ds
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: valid
+  template:
+    metadata:
+      labels:
+        app: valid
+    spec:
+      containers:
+      - name: app
+        image: app:1.0
+        ports:
+        - containerPort: 8080
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(validYAML)
+	if result.Status != "valid" {
+		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
+	}
+}
+
+// containsField checks if the field string contains the given substring.
+func containsField(field, substr string) bool {
+	return len(field) >= len(substr) && field[len(field)-len(substr):] == substr
 }

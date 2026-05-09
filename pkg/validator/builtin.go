@@ -2,6 +2,7 @@ package validator
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -10,6 +11,7 @@ import (
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/api/validation"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -501,6 +503,237 @@ func nameValidator(name string, prefix bool) []string {
 	return utilvalidation.IsQualifiedName(name)
 }
 
+// =============================================================================
+// PodSpec validation (AWU-1): shared helper + sub-helpers
+// =============================================================================
+
+// validatePodSpec validates all Phase 1 fields of a Kubernetes PodSpec.
+// skipProbes, when true, skips liveness/readiness/startup probe validation.
+// extraVolumeNames allows passing additional valid volume names (e.g., from StatefulSet volumeClaimTemplates).
+func validatePodSpec(podSpec *corev1.PodSpec, path *field.Path, skipProbes bool, extraVolumeNames ...map[string]struct{}) field.ErrorList {
+	var allErrs field.ErrorList
+	if podSpec == nil {
+		return allErrs
+	}
+
+	// Validate volumes first to build volume name set for mount validation
+	volumeNames, volErrs := validateVolumes(podSpec.Volumes, path.Child("volumes"), extraVolumeNames...)
+	allErrs = append(allErrs, volErrs...)
+
+	// Validate containers, collecting name set for initContainer cross-check
+	containerNameSet := make(map[string]bool)
+	allErrs = append(allErrs, validateContainers(podSpec.Containers, false, volumeNames, containerNameSet, path.Child("containers"), skipProbes)...)
+
+	// Validate init containers against existing container names
+	allErrs = append(allErrs, validateContainers(podSpec.InitContainers, true, volumeNames, containerNameSet, path.Child("initContainers"), skipProbes)...)
+
+	// Validate serviceAccountName
+	allErrs = append(allErrs, validateServiceAccountName(podSpec.ServiceAccountName, path.Child("serviceAccountName"))...)
+
+	return allErrs
+}
+
+// validateContainerPort validates a single ContainerPort.
+func validateContainerPort(port corev1.ContainerPort, path *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+	if port.ContainerPort < 1 || port.ContainerPort > 65535 {
+		allErrs = append(allErrs, field.Invalid(path.Child("containerPort"), port.ContainerPort, "must be between 1 and 65535"))
+	}
+	if port.HostPort < 0 || port.HostPort > 65535 {
+		allErrs = append(allErrs, field.Invalid(path.Child("hostPort"), port.HostPort, "must be between 0 and 65535"))
+	}
+	if port.Protocol != "" && port.Protocol != corev1.ProtocolTCP && port.Protocol != corev1.ProtocolUDP && port.Protocol != corev1.ProtocolSCTP {
+		allErrs = append(allErrs, field.Invalid(path.Child("protocol"), port.Protocol, "must be one of TCP, UDP, SCTP"))
+	}
+	return allErrs
+}
+
+// validateContainers validates spec.containers or spec.initContainers.
+// initContainer is true when validating initContainers.
+// volumeNames is the set of declared volume names for mount validation.
+// containerNameSet tracks seen names for duplicate detection (cross-container + initContainer).
+// skipProbes, when true, skips probe validation.
+func validateContainers(containers []corev1.Container, initContainer bool, volumeNames map[string]struct{}, containerNameSet map[string]bool, path *field.Path, skipProbes bool) field.ErrorList {
+	var allErrs field.ErrorList
+
+	for i, c := range containers {
+		// Container name: required, DNS-1123 label, unique across containers+initContainers
+		if c.Name == "" {
+			allErrs = append(allErrs, field.Required(path.Index(i).Child("name"), ""))
+		} else {
+			if errs := utilvalidation.IsDNS1123Label(c.Name); len(errs) > 0 {
+				allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), c.Name, errs[0]))
+			} else if containerNameSet[c.Name] {
+				allErrs = append(allErrs, field.Duplicate(path.Index(i).Child("name"), c.Name))
+			}
+			containerNameSet[c.Name] = true
+		}
+
+		// Container image: non-empty
+		if c.Image == "" {
+			allErrs = append(allErrs, field.Required(path.Index(i).Child("image"), ""))
+		}
+
+		// Ports
+		for j, p := range c.Ports {
+			allErrs = append(allErrs, validateContainerPort(p, path.Index(i).Child("ports").Index(j))...)
+		}
+
+		// Env vars
+		allErrs = append(allErrs, validateEnvVar(c.Env, path.Index(i).Child("env"))...)
+
+		// Resources
+		allErrs = append(allErrs, validateResourceRequirements(c.Resources.Limits, c.Resources.Requests, path.Index(i).Child("resources"))...)
+
+		// Volume mounts
+		for j, m := range c.VolumeMounts {
+			allErrs = append(allErrs, validateVolumeMount(m, volumeNames, path.Index(i).Child("volumeMounts").Index(j))...)
+		}
+
+		// Probes (skipped for batch workloads)
+		if !skipProbes {
+			if c.LivenessProbe != nil {
+				allErrs = append(allErrs, validateProbe(c.LivenessProbe, path.Index(i).Child("livenessProbe"))...)
+			}
+			if c.ReadinessProbe != nil {
+				allErrs = append(allErrs, validateProbe(c.ReadinessProbe, path.Index(i).Child("readinessProbe"))...)
+			}
+			if c.StartupProbe != nil {
+				allErrs = append(allErrs, validateProbe(c.StartupProbe, path.Index(i).Child("startupProbe"))...)
+			}
+		}
+	}
+
+	return allErrs
+}
+
+// validateEnvVar validates the env field of a container.
+func validateEnvVar(env []corev1.EnvVar, path *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+	for i, e := range env {
+		if e.Name == "" {
+			allErrs = append(allErrs, field.Required(path.Index(i).Child("name"), ""))
+		} else if len(utilvalidation.IsCIdentifier(e.Name)) > 0 {
+			allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), e.Name, "must be a valid C identifier"))
+		}
+	}
+	return allErrs
+}
+
+// validateProbe validates that exactly one handler is present in a probe.
+func validateProbe(probe *corev1.Probe, path *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+	if probe == nil {
+		return allErrs
+	}
+
+	handlerCount := 0
+	if probe.ProbeHandler.HTTPGet != nil {
+		handlerCount++
+	}
+	if probe.ProbeHandler.TCPSocket != nil {
+		handlerCount++
+	}
+	if probe.ProbeHandler.Exec != nil {
+		handlerCount++
+	}
+	if probe.ProbeHandler.GRPC != nil {
+		handlerCount++
+	}
+
+	if handlerCount == 0 {
+		allErrs = append(allErrs, field.Invalid(path, probe, "exactly one of httpGet, tcpSocket, exec, or grpc must be specified"))
+	} else if handlerCount > 1 {
+		allErrs = append(allErrs, field.Invalid(path, probe, "only one of httpGet, tcpSocket, exec, or grpc can be specified"))
+	}
+
+	return allErrs
+}
+
+// validateResourceRequirements validates that resource limits and requests contain parseable quantities.
+func validateResourceRequirements(limits, requests corev1.ResourceList, path *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	if limits != nil {
+		for k, v := range limits {
+			if _, err := resource.ParseQuantity(v.String()); err != nil {
+				allErrs = append(allErrs, field.Invalid(path.Child("limits").Key(string(k)), v.String(), "unable to parse resource quantity"))
+			}
+		}
+	}
+
+	if requests != nil {
+		for k, v := range requests {
+			if _, err := resource.ParseQuantity(v.String()); err != nil {
+				allErrs = append(allErrs, field.Invalid(path.Child("requests").Key(string(k)), v.String(), "unable to parse resource quantity"))
+			}
+		}
+	}
+
+	return allErrs
+}
+
+// validateServiceAccountName validates the serviceAccountName field (DNS-1123 subdomain).
+func validateServiceAccountName(sa string, path *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+	if sa != "" {
+		if errs := utilvalidation.IsDNS1123Subdomain(sa); len(errs) > 0 {
+			allErrs = append(allErrs, field.Invalid(path, sa, errs[0]))
+		}
+	}
+	return allErrs
+}
+
+// validateVolumeMount validates a single VolumeMount.
+func validateVolumeMount(mount corev1.VolumeMount, volumeNameSet map[string]struct{}, path *field.Path) field.ErrorList {
+	var allErrs field.ErrorList
+
+	// mountPath must be absolute
+	if !strings.HasPrefix(mount.MountPath, "/") {
+		allErrs = append(allErrs, field.Invalid(path.Child("mountPath"), mount.MountPath, "must be an absolute path (start with /)"))
+	}
+
+	// name must reference a declared volume
+	if mount.Name != "" && volumeNameSet != nil {
+		if _, exists := volumeNameSet[mount.Name]; !exists {
+			allErrs = append(allErrs, field.Invalid(path.Child("name"), mount.Name, "not found in volumes"))
+		}
+	}
+
+	return allErrs
+}
+
+// validateVolumes validates volume names (DNS-1123 label, unique) and returns the set of volume names.
+// extraNames allows passing additional valid volume names that aren't in the volumes list (e.g., from StatefulSet volumeClaimTemplates).
+func validateVolumes(volumes []corev1.Volume, path *field.Path, extraNames ...map[string]struct{}) (map[string]struct{}, field.ErrorList) {
+	var allErrs field.ErrorList
+	volumeNames := make(map[string]struct{})
+	seen := make(map[string]bool)
+
+	for i, vol := range volumes {
+		if vol.Name == "" {
+			allErrs = append(allErrs, field.Required(path.Index(i).Child("name"), ""))
+		} else {
+			if errs := utilvalidation.IsDNS1123Label(vol.Name); len(errs) > 0 {
+				allErrs = append(allErrs, field.Invalid(path.Index(i).Child("name"), vol.Name, errs[0]))
+			} else if seen[vol.Name] {
+				allErrs = append(allErrs, field.Duplicate(path.Index(i).Child("name"), vol.Name))
+			}
+			seen[vol.Name] = true
+			volumeNames[vol.Name] = struct{}{}
+		}
+	}
+
+	// Merge extra volume names (e.g., from StatefulSet volumeClaimTemplates)
+	for _, extra := range extraNames {
+		for name := range extra {
+			volumeNames[name] = struct{}{}
+		}
+	}
+
+	return volumeNames, allErrs
+}
+
 // Validation functions using k8s.io/apimachinery/pkg/api/validation
 
 func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.ErrorList {
@@ -528,7 +761,10 @@ func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.E
 	if deploy.Spec.Template.ObjectMeta.Name != "" || deploy.Spec.Template.ObjectMeta.Namespace != "" {
 		allErrs = append(allErrs, validation.ValidateObjectMeta(&deploy.Spec.Template.ObjectMeta, false, nameValidator, field.NewPath("spec", "template", "metadata"))...)
 	}
-	
+
+	// PodSpec validation
+	allErrs = append(allErrs, validatePodSpec(&deploy.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
+
 	return allErrs
 }
 
@@ -548,7 +784,16 @@ func (v *BuiltinValidator) validateStatefulSet(ss *appsv1.StatefulSet) field.Err
 			allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "selector"), ss.Spec.Selector, "must be specified"))
 		}
 	}
-	
+
+	// Collect volumeClaimTemplate names as valid volume names for mount validation
+	vctNames := make(map[string]struct{})
+	for _, vct := range ss.Spec.VolumeClaimTemplates {
+		vctNames[vct.Name] = struct{}{}
+	}
+
+	// PodSpec validation (pass volumeClaimTemplate names as extra valid volume names)
+	allErrs = append(allErrs, validatePodSpec(&ss.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false, vctNames)...)
+
 	return allErrs
 }
 
@@ -564,7 +809,10 @@ func (v *BuiltinValidator) validateDaemonSet(ds *appsv1.DaemonSet) field.ErrorLi
 			allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "selector"), ds.Spec.Selector, "must be specified"))
 		}
 	}
-	
+
+	// PodSpec validation
+	allErrs = append(allErrs, validatePodSpec(&ds.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
+
 	return allErrs
 }
 
