@@ -247,7 +247,7 @@ func (v *BuiltinValidator) decode(data []byte) (runtime.Object, *schema.GroupVer
 // Registration helpers - each creates a decode function using the scheme
 
 func (v *BuiltinValidator) registerDeployment() {
-	v.registerKind("Deployment", "apps/v1", 
+	v.registerKind("Deployment", "apps/v1",
 		func(obj runtime.Object) field.ErrorList {
 			return v.validateDeployment(obj.(*appsv1.Deployment))
 		},
@@ -738,15 +738,15 @@ func validateVolumes(volumes []corev1.Volume, path *field.Path, extraNames ...ma
 
 func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.ErrorList {
 	var allErrs field.ErrorList
-	
+
 	// Validate metadata using the standard k8s validation
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&deploy.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	// Validate spec
 	if deploy.Spec.Replicas != nil && *deploy.Spec.Replicas < 0 {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "replicas"), *deploy.Spec.Replicas, "must be >= 0"))
 	}
-	
+
 	// Validate selector
 	if deploy.Spec.Selector != nil {
 		selector, err := metav1.LabelSelectorAsSelector(deploy.Spec.Selector)
@@ -756,7 +756,7 @@ func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.E
 			allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "selector"), deploy.Spec.Selector, "must be specified"))
 		}
 	}
-	
+
 	// Validate template
 	if deploy.Spec.Template.ObjectMeta.Name != "" || deploy.Spec.Template.ObjectMeta.Namespace != "" {
 		allErrs = append(allErrs, validation.ValidateObjectMeta(&deploy.Spec.Template.ObjectMeta, false, nameValidator, field.NewPath("spec", "template", "metadata"))...)
@@ -771,11 +771,11 @@ func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.E
 func (v *BuiltinValidator) validateStatefulSet(ss *appsv1.StatefulSet) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&ss.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if ss.Spec.Replicas != nil && *ss.Spec.Replicas < 0 {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "replicas"), *ss.Spec.Replicas, "must be >= 0"))
 	}
-	
+
 	if ss.Spec.Selector != nil {
 		selector, err := metav1.LabelSelectorAsSelector(ss.Spec.Selector)
 		if err != nil {
@@ -800,7 +800,7 @@ func (v *BuiltinValidator) validateStatefulSet(ss *appsv1.StatefulSet) field.Err
 func (v *BuiltinValidator) validateDaemonSet(ds *appsv1.DaemonSet) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&ds.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if ds.Spec.Selector != nil {
 		selector, err := metav1.LabelSelectorAsSelector(ds.Spec.Selector)
 		if err != nil {
@@ -819,11 +819,11 @@ func (v *BuiltinValidator) validateDaemonSet(ds *appsv1.DaemonSet) field.ErrorLi
 func (v *BuiltinValidator) validateReplicaSet(rs *appsv1.ReplicaSet) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&rs.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if rs.Spec.Replicas != nil && *rs.Spec.Replicas < 0 {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "replicas"), *rs.Spec.Replicas, "must be >= 0"))
 	}
-	
+
 	if rs.Spec.Selector != nil {
 		selector, err := metav1.LabelSelectorAsSelector(rs.Spec.Selector)
 		if err != nil {
@@ -832,7 +832,7 @@ func (v *BuiltinValidator) validateReplicaSet(rs *appsv1.ReplicaSet) field.Error
 			allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "selector"), rs.Spec.Selector, "must be specified"))
 		}
 	}
-	
+
 	// PodSpec validation
 	allErrs = append(allErrs, validatePodSpec(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
 
@@ -868,7 +868,7 @@ func (v *BuiltinValidator) validatePod(pod *corev1.Pod) field.ErrorList {
 func (v *BuiltinValidator) validateService(svc *corev1.Service) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&svc.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	// Validate service ports
 	for i, port := range svc.Spec.Ports {
 		if port.Port < 0 || port.Port > 65535 {
@@ -878,46 +878,46 @@ func (v *BuiltinValidator) validateService(svc *corev1.Service) field.ErrorList 
 			allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "ports").Index(i).Child("nodePort"), port.NodePort, "must be between 30000 and 32767"))
 		}
 	}
-	
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validateConfigMap(cm *corev1.ConfigMap) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&cm.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	// Validate data keys
 	for k := range cm.Data {
 		for _, msg := range utilvalidation.IsQualifiedName(k) {
 			allErrs = append(allErrs, field.Invalid(field.NewPath("data").Key(k), k, msg))
 		}
 	}
-	
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validateSecret(s *corev1.Secret) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&s.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	// Validate secret type - empty type is allowed but not recommended
 	if s.Type == "" {
 		allErrs = append(allErrs, field.Required(field.NewPath("type"), ""))
 	}
-	
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validatePVC(pvc *corev1.PersistentVolumeClaim) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&pvc.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if pvc.Spec.Resources.Requests != nil {
 		if pvc.Spec.Resources.Requests.Storage() == nil {
 			allErrs = append(allErrs, field.Required(field.NewPath("spec", "resources", "requests", "storage"), ""))
 		}
 	}
-	
+
 	return allErrs
 }
 
@@ -942,30 +942,30 @@ func (v *BuiltinValidator) validateEndpoints(ep *corev1.Endpoints) field.ErrorLi
 func (v *BuiltinValidator) validateIngress(ing *networkingv1.Ingress) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&ing.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	// Validate ingress class
 	if ing.Spec.IngressClassName != nil && *ing.Spec.IngressClassName == "" {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "ingressClassName"), *ing.Spec.IngressClassName, "must be non-empty"))
 	}
-	
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validateNetworkPolicy(np *networkingv1.NetworkPolicy) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&np.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if np.Spec.PolicyTypes == nil || len(np.Spec.PolicyTypes) == 0 {
 		allErrs = append(allErrs, field.Required(field.NewPath("spec", "policyTypes"), "at least one policy type must be specified"))
 	}
-	
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validateJob(job *batchv1.Job) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&job.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if job.Spec.Parallelism != nil && *job.Spec.Parallelism < 0 {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "parallelism"), *job.Spec.Parallelism, "must be >= 0"))
 	}
@@ -975,22 +975,28 @@ func (v *BuiltinValidator) validateJob(job *batchv1.Job) field.ErrorList {
 	if job.Spec.BackoffLimit != nil && *job.Spec.BackoffLimit < 0 {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "backoffLimit"), *job.Spec.BackoffLimit, "must be >= 0"))
 	}
-	
+
+	// AWU-3: validate PodSpec (skipProbes=true for batch workloads)
+	allErrs = append(allErrs, validatePodSpec(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), true)...)
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validateCronJob(cj *batchv1.CronJob) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&cj.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if cj.Spec.Schedule == "" {
 		allErrs = append(allErrs, field.Required(field.NewPath("spec", "schedule"), ""))
 	}
-	
+
 	if cj.Spec.StartingDeadlineSeconds != nil && *cj.Spec.StartingDeadlineSeconds < 0 {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "startingDeadlineSeconds"), *cj.Spec.StartingDeadlineSeconds, "must be >= 0"))
 	}
-	
+
+	// AWU-3: validate PodSpec (skipProbes=true for batch workloads)
+	allErrs = append(allErrs, validatePodSpec(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"), true)...)
+
 	return allErrs
 }
 
@@ -1051,48 +1057,48 @@ func (v *BuiltinValidator) registerList() {
 func (v *BuiltinValidator) validateRole(role *rbacv1.Role) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&role.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	for i, rule := range role.Rules {
 		if len(rule.Verbs) == 0 {
 			allErrs = append(allErrs, field.Required(field.NewPath("rules").Index(i).Child("verbs"), ""))
 		}
 	}
-	
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validateClusterRole(cr *rbacv1.ClusterRole) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&cr.ObjectMeta, false, nameValidator, field.NewPath("metadata"))...)
-	
+
 	for i, rule := range cr.Rules {
 		if len(rule.Verbs) == 0 {
 			allErrs = append(allErrs, field.Required(field.NewPath("rules").Index(i).Child("verbs"), ""))
 		}
 	}
-	
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validateRoleBinding(rb *rbacv1.RoleBinding) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&rb.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if len(rb.Subjects) == 0 {
 		allErrs = append(allErrs, field.Required(field.NewPath("subjects"), "at least one subject must be specified"))
 	}
-	
+
 	return allErrs
 }
 
 func (v *BuiltinValidator) validateClusterRoleBinding(crb *rbacv1.ClusterRoleBinding) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&crb.ObjectMeta, false, nameValidator, field.NewPath("metadata"))...)
-	
+
 	if len(crb.Subjects) == 0 {
 		allErrs = append(allErrs, field.Required(field.NewPath("subjects"), "at least one subject must be specified"))
 	}
-	
+
 	return allErrs
 }
 

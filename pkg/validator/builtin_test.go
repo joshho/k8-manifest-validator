@@ -581,3 +581,139 @@ spec:
 func containsField(field, substr string) bool {
 	return len(field) >= len(substr) && field[len(field)-len(substr):] == substr
 }
+
+// --- AWU-3: TDD failing tests for Job and CronJob PodSpec validation ---
+
+func TestBuiltinValidatorDetectsInvalidContainerInJob(t *testing.T) {
+	invalidYAML := []byte(`apiVersion: batch/v1
+kind: Job
+metadata:
+  name: test-job
+  namespace: default
+spec:
+  parallelism: 1
+  completions: 1
+  backoffLimit: 6
+  template:
+    spec:
+      containers:
+      - name: Bad_Name
+        image: busybox
+      restartPolicy: OnFailure
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(invalidYAML)
+	if result.Status != "invalid" {
+		t.Errorf("expected invalid, got %s: %v", result.Status, result.Errors)
+	}
+	if len(result.Errors) > 0 && !containsField(result.Errors[0].Field, "containers[0].name") {
+		t.Errorf("expected error on containers[0].name, got %s", result.Errors[0].Field)
+	}
+}
+
+func TestBuiltinValidatorDetectsInvalidContainerInCronJob(t *testing.T) {
+	invalidYAML := []byte(`apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: test-cronjob
+  namespace: default
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: Another_Bad-Name
+            image: busybox
+          restartPolicy: OnFailure
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(invalidYAML)
+	if result.Status != "invalid" {
+		t.Errorf("expected invalid, got %s: %v", result.Status, result.Errors)
+	}
+	if len(result.Errors) > 0 && !containsField(result.Errors[0].Field, "containers[0].name") {
+		t.Errorf("expected error on containers[0].name, got %s", result.Errors[0].Field)
+	}
+}
+
+func TestBuiltinValidatorAcceptsValidJob(t *testing.T) {
+	validYAML := []byte(`apiVersion: batch/v1
+kind: Job
+metadata:
+  name: valid-job
+  namespace: default
+spec:
+  parallelism: 1
+  completions: 1
+  backoffLimit: 6
+  template:
+    spec:
+      containers:
+      - name: job
+        image: busybox
+        command: ["echo", "hello"]
+        ports:
+        - containerPort: 8080
+        env:
+        - name: FOO
+          value: bar
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+      restartPolicy: OnFailure
+`)
+
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(validYAML)
+	if result.Status != "valid" {
+		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
+	}
+}
+
+func TestBuiltinValidatorAcceptsValidCronJob(t *testing.T) {
+	validYAML := []byte(`apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: valid-cronjob
+  namespace: default
+spec:
+  schedule: "*/5 * * * *"
+  startingDeadlineSeconds: 100
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: cronjob
+            image: busybox
+            command: ["echo", "hello"]
+            ports:
+            - containerPort: 8080
+            env:
+            - name: FOO
+              value: bar
+            resources:
+              limits:
+                cpu: "1"
+                memory: 512Mi
+              requests:
+                cpu: 100m
+                memory: 128Mi
+          restartPolicy: OnFailure
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(validYAML)
+	if result.Status != "valid" {
+		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
+	}
+}
