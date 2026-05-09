@@ -791,9 +791,9 @@ spec:
 // --- AWU-11.1: TDD test for RunStructuralValidation wire-in ---
 
 func TestRunStructuralValidationWiresIntoDeployment(t *testing.T) {
-	// A PodSpec with topologyKey missing required label in topologySpreadConstraints.
-	// RunStructuralValidation should catch it via the topologyKey deferred field metadata.
-	// This test verifies the wire-in is connected, not the validation logic itself.
+	// A manifest with an empty required topologyKey in topologySpreadConstraints.
+	// RunStructuralValidation should catch the empty required string via deferred field metadata.
+	// This test verifies the wire-in is connected: errors must be produced.
 	manifestYAML := []byte(`apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -811,7 +811,7 @@ spec:
     spec:
       topologySpreadConstraints:
       - maxSkew: 1
-        topologyKey: ""  # required field, empty string
+        topologyKey: ""
         whenUnsatisfiable: DoNotSchedule
         labelSelector:
           matchLabels:
@@ -823,13 +823,11 @@ spec:
 
 	bv := NewBuiltinValidator()
 	result := bv.ValidateResource(manifestYAML)
-	// The wire is in place; structural validation should run.
-	// We don't assert specific invalid vs valid here since the structural layer
-	// only validates deferred fields that have metadata — an empty string for a
-	// required field may or may not be caught depending on the implementation.
-	// The key assertion is: no panic, no crash, and RunStructuralValidation was called.
 	if result == nil {
 		t.Fatal("ValidateResource returned nil")
 	}
-	_ = result
+	// The wire is in place; structural validation must fire and produce errors for empty required field.
+	if len(result.Errors) == 0 {
+		t.Fatal("expected structural validation to produce errors for empty topologyKey, got none")
+	}
 }
