@@ -1,0 +1,166 @@
+{
+  "meta": {
+    "title": "Builtin Validator Exhaustiveness — Phase 1",
+    "prd_src": "Approved PRD: builtin.go per-field PodSpec validation",
+    "wave_logic": "AWUs are ordered by dependency (AWU 1 provides the shared helper that all others consume) and by structural similarity (apps/v1 types share identical PodTemplate.Spec access pattern; batch/v1 types have a nested path; Pod/ReplicaSet are direct-spec access).",
+    "total_awus": 4
+  },
+  "awus": [
+    {
+      "id": "AWU-1",
+      "title": "Add validatePodSpec() shared helper + wire into Deployment, StatefulSet, DaemonSet",
+      "description": "Add a new `validatePodSpec(podSpec *corev1.PodSpec, path *field.Path) field.ErrorList` function to builtin.go that validates all Phase 1 fields. Wire it into `validateDeployment`, `validateStatefulSet`, and `validateDaemonSet` at their PodTemplate.Spec path. These three share the identical `spec.template.spec` access pattern and compose the bulk of coverage.",
+      "dependency": "none",
+      "owned_files": [
+        "pkg/validator/builtin.go"
+      ],
+      "allowed_shared_files": [],
+      "forbidden_files": [
+        "pkg/validator/decoder.go",
+        "pkg/validator/decoder_test.go",
+        "pkg/validator/engine.go",
+        "pkg/validator/engine_test.go",
+        "pkg/validator/validator.go",
+        "pkg/validator/scanner.go",
+        "pkg/validator/crd.go",
+        "pkg/validator/cr.go",
+        "pkg/types/result.go",
+        "cmd/k8-manifest-validator/main.go",
+        "tests/fixtures_test.go"
+      ],
+      "tdd_failing_test_case": {
+        "name": "TestBuiltinValidatorDetectsInvalidContainerNameInDeployment",
+        "scenario": "Deployment with container name containing uppercase (violates DNS-1123 label) should fail",
+        "yaml_snippet": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: test\n  namespace: default\nspec:\n  replicas: 1\n  selector:\n    matchLabels:\n      app: test\n  template:\n    metadata:\n      labels:\n        app: test\n    spec:\n      containers:\n      - name: Bad_Name\n        image: nginx",
+        "expected_error_field": "spec.template.spec.containers[0].name",
+        "passes_when": "validatePodSpec() exists and rejects invalid container names"
+      },
+      "acceptance_criteria": [
+        "validatePodSpec() function exists in builtin.go with signature func(*corev1.PodSpec, *field.Path) field.ErrorList",
+        "validateDeployment calls validatePodSpec(deploy.Spec.Template.Spec, field.NewPath(\"spec\", \"template\", \"spec\"))",
+        "validateStatefulSet calls validatePodSpec(ss.Spec.Template.Spec, field.NewPath(\"spec\", \"template\", \"spec\"))",
+        "validateDaemonSet calls validatePodSpec(ds.Spec.Template.Spec, field.NewPath(\"spec\", \"template\", \"spec\"))",
+        "Deployment with empty container name returns an error",
+        "StatefulSet with duplicate container names returns an error",
+        "DaemonSet with invalid container image (empty) returns an error",
+        "Existing valid manifests for all three types continue to pass",
+        "No existing ObjectMeta validation is removed or changed",
+        "No new dependencies added to go.mod"
+      ]
+    },
+    {
+      "id": "AWU-2",
+      "title": "Wire validatePodSpec into Pod and ReplicaSet",
+      "description": "Wire the shared `validatePodSpec` helper into `validatePod` (path: `spec`) and `validateReplicaSet` (path: `spec.template.spec`). Pod has a direct spec; ReplicaSet uses the PodTemplate.Spec pattern.",
+      "dependency": "AWU-1",
+      "owned_files": [
+        "pkg/validator/builtin.go"
+      ],
+      "allowed_shared_files": [],
+      "forbidden_files": [
+        "pkg/validator/decoder.go",
+        "pkg/validator/decoder_test.go",
+        "pkg/validator/engine.go",
+        "pkg/validator/engine_test.go",
+        "pkg/validator/validator.go",
+        "pkg/validator/scanner.go",
+        "pkg/validator/crd.go",
+        "pkg/validator/cr.go",
+        "pkg/types/result.go",
+        "cmd/k8-manifest-validator/main.go",
+        "tests/fixtures_test.go"
+      ],
+      "tdd_failing_test_case": {
+        "name": "TestBuiltinValidatorDetectsInvalidServiceAccountNameInPod",
+        "scenario": "Pod with invalid serviceAccountName (contains underscore) should fail DNS-1123 subdomain validation",
+        "yaml_snippet": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: test-pod\n  namespace: default\nspec:\n  serviceAccountName: invalid_account\n  containers:\n  - name: test\n    image: busybox",
+        "expected_error_field": "spec.serviceAccountName",
+        "passes_when": "validatePodSpec() rejects invalid serviceAccountName in Pod"
+      },
+      "acceptance_criteria": [
+        "validatePod calls validatePodSpec(pod.Spec, field.NewPath(\"spec\"))",
+        "validateReplicaSet calls validatePodSpec(rs.Spec.Template.Spec, field.NewPath(\"spec\", \"template\", \"spec\"))",
+        "Pod with empty container image returns an error",
+        "ReplicaSet with invalid container port range returns an error",
+        "Existing valid Pod and ReplicaSet manifests continue to pass",
+        "Container name uniqueness check applies across both containers and initContainers"
+      ]
+    },
+    {
+      "id": "AWU-3",
+      "title": "Wire validatePodSpec into Job and CronJob",
+      "description": "Wire the shared `validatePodSpec` helper into `validateJob` (path: `spec.template.spec`) and `validateCronJob` (path: `spec.jobTemplate.spec.template.spec`). Probes may be skipped for batch workloads per PRD.",
+      "dependency": "AWU-1",
+      "owned_files": [
+        "pkg/validator/builtin.go"
+      ],
+      "allowed_shared_files": [],
+      "forbidden_files": [
+        "pkg/validator/decoder.go",
+        "pkg/validator/decoder_test.go",
+        "pkg/validator/engine.go",
+        "pkg/validator/engine_test.go",
+        "pkg/validator/validator.go",
+        "pkg/validator/scanner.go",
+        "pkg/validator/crd.go",
+        "pkg/validator/cr.go",
+        "pkg/types/result.go",
+        "cmd/k8-manifest-validator/main.go",
+        "tests/fixtures_test.go"
+      ],
+      "tdd_failing_test_case": {
+        "name": "TestBuiltinValidatorDetectsInvalidContainerImageInJob",
+        "scenario": "Job with empty container image should fail",
+        "yaml_snippet": "apiVersion: batch/v1\nkind: Job\nmetadata:\n  name: test-job\n  namespace: default\nspec:\n  template:\n    spec:\n      containers:\n      - name: job\n        image: \"\"\n      restartPolicy: OnFailure",
+        "expected_error_field": "spec.template.spec.containers[0].image",
+        "passes_when": "validatePodSpec() rejects empty image in Job"
+      },
+      "acceptance_criteria": [
+        "validateJob calls validatePodSpec(job.Spec.Template.Spec, field.NewPath(\"spec\", \"template\", \"spec\"))",
+        "validateCronJob calls validatePodSpec(cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath(\"spec\", \"jobTemplate\", \"spec\", \"template\", \"spec\"))",
+        "Job with duplicate container names returns an error",
+        "CronJob with invalid container port returns an error",
+        "Existing valid Job and CronJob manifests continue to pass",
+        "Probe validation is skipped for batch workloads (probe fields are not validated in batch context)",
+        "Volume mount name validation against volume names works for Job/CronJob"
+      ]
+    },
+    {
+      "id": "AWU-4",
+      "title": "Wire validatePodSpec into ReplicationController",
+      "description": "Wire the shared `validatePodSpec` helper into `validateReplicationController` (path: `spec.template.spec`). This is the last consumer of the shared helper in Phase 1.",
+      "dependency": "AWU-1",
+      "owned_files": [
+        "pkg/validator/builtin.go"
+      ],
+      "allowed_shared_files": [],
+      "forbidden_files": [
+        "pkg/validator/decoder.go",
+        "pkg/validator/decoder_test.go",
+        "pkg/validator/engine.go",
+        "pkg/validator/engine_test.go",
+        "pkg/validator/validator.go",
+        "pkg/validator/scanner.go",
+        "pkg/validator/crd.go",
+        "pkg/validator/cr.go",
+        "pkg/types/result.go",
+        "cmd/k8-manifest-validator/main.go",
+        "tests/fixtures_test.go"
+      ],
+      "tdd_failing_test_case": {
+        "name": "TestBuiltinValidatorDetectsMissingVolumeNameInReplicationController",
+        "scenario": "ReplicationController with a volume that has no name should fail",
+        "yaml_snippet": "apiVersion: v1\nkind: ReplicationController\nmetadata:\n  name: test-rc\n  namespace: default\nspec:\n  replicas: 1\n  selector:\n    app: test\n  template:\n    metadata:\n      labels:\n        app: test\n    spec:\n      containers:\n      - name: app\n        image: nginx\n        volumeMounts:\n        - name: myvol\n          mountPath: /data\n      volumes:\n      - name: \"\"\n        emptyDir: {}",
+        "expected_error_field": "spec.template.spec.volumes[0].name",
+        "passes_when": "validatePodSpec() rejects empty volume name in ReplicationController"
+      },
+      "acceptance_criteria": [
+        "validateReplicationController calls validatePodSpec(rc.Spec.Template.Spec, field.NewPath(\"spec\", \"template\", \"spec\"))",
+        "ReplicationController with invalid container env name returns an error",
+        "ReplicationController with volume mount referencing non-existent volume returns an error",
+        "Existing valid ReplicationController manifests continue to pass",
+        "All existing ReplicationController validations (replicas, selector) remain intact"
+      ]
+    }
+  ]
+}
