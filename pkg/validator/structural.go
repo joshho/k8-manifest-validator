@@ -18,12 +18,27 @@ import (
 // not .containers[0]).
 // Example: ".spec.template.spec.topologySpreadConstraints[0].topologyKey"
 //  -> ".topologyKey"
+// normalizePath strips array indices and parent path segments from a field.Path,
+// returning the last field name prefixed with "." for index lookup.
+// field.Path.String() uses bracket notation like [spec][template][spec][topologyKey][0][topologyKey].
+// We convert this to just ".topologyKey" to match the deferredFieldIndex keys.
 func normalizePath(p *field.Path) string {
 	s := p.String()
-	// Strip all [N] segments so array element paths resolve to their field name only.
-	// Example: ".containers[0].name[0]" -> ".containers.name"
+	// Strip array indices: [0], [1], etc.
 	re := regexp.MustCompile(`\[\d+\]`)
-	return re.ReplaceAllString(s, "")
+	s = re.ReplaceAllString(s, "")
+
+	// Extract the last bracket-delimited segment: [name]
+	// e.g. [spec][template][spec][topologyKey] -> topologyKey
+	if idx := strings.LastIndex(s, "["); idx >= 0 {
+		end := strings.LastIndex(s, "]")
+		if end > idx {
+			s = s[idx+1 : end]
+		}
+	}
+
+	// Prefix with "." to match deferredFieldIndex keys like ".topologyKey"
+	return "." + s
 }
 
 // RunStructuralValidation performs reflection-based validation of a runtime.Object

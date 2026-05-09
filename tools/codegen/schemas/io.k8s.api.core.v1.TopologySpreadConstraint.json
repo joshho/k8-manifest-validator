@@ -13,7 +13,8 @@
     },
     "topologyKey": {
       "description": "TopologyKey is the key of node labels.",
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "whenUnsatisfiable": {
       "description": "WhenUnsatisfiable indicates how to deal with a pod if it doesn't satisfy the spread constraint.",

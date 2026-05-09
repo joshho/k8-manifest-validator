@@ -28,6 +28,8 @@ type OpenAPISchema struct {
 	Enum        []any                     `json:"enum,omitempty"`
 	Minimum     *float64                  `json:"minimum,omitempty"`
 	Maximum     *float64                  `json:"maximum,omitempty"`
+	MinLength   *int                      `json:"minLength,omitempty"`
+	MaxLength   *int                      `json:"maxLength,omitempty"`
 }
 
 // FieldMetadata encodes a single field's structural validation rules from the k8s OpenAPI schema.
@@ -39,6 +41,8 @@ type FieldMetadata struct {
 	EnumValues []string `json:"enumValues,omitempty" yaml:"enumValues,omitempty"`
 	MinValue   *float64 `json:"minValue,omitempty" yaml:"minValue,omitempty"`
 	MaxValue   *float64 `json:"maxValue,omitempty" yaml:"maxValue,omitempty"`
+	MinLength  *int     `json:"minLength,omitempty" yaml:"minLength,omitempty"`
+	MaxLength  *int     `json:"maxLength,omitempty" yaml:"maxLength,omitempty"`
 }
 
 // SchemaMetadata holds all field metadata for a given struct type.
@@ -116,6 +120,8 @@ func generateOutput(schemas []string) string {
 	sb.WriteString("\tEnumValues []string `json:\"enumValues,omitempty\" yaml:\"enumValues,omitempty\"`\n")
 	sb.WriteString("\tMinValue   *float64 `json:\"minValue,omitempty\" yaml:\"minValue,omitempty\"`\n")
 	sb.WriteString("\tMaxValue   *float64 `json:\"maxValue,omitempty\" yaml:\"maxValue,omitempty\"`\n")
+	sb.WriteString("\tMinLength  *int     `json:\"minLength,omitempty\" yaml:\"minLength,omitempty\"`\n")
+	sb.WriteString("\tMaxLength  *int     `json:\"maxLength,omitempty\" yaml:\"maxLength,omitempty\"`\n")
 	sb.WriteString("}\n\n")
 
 	sb.WriteString("// SchemaMetadata holds all field metadata for a given struct type.\n")
@@ -174,6 +180,12 @@ func generateOutput(schemas []string) string {
 		if m.MaxValue != nil {
 			fmt.Fprintf(&sb, ",MaxValue:%v", floatPtrStr(*m.MaxValue))
 		}
+		if m.MinLength != nil {
+			fmt.Fprintf(&sb, ",MinLength:%v", intPtrStr(*m.MinLength))
+		}
+		if m.MaxLength != nil {
+			fmt.Fprintf(&sb, ",MaxLength:%v", intPtrStr(*m.MaxLength))
+		}
 		sb.WriteString("}\n")
 	}
 
@@ -204,6 +216,12 @@ func generateOutput(schemas []string) string {
 			}
 			if m.MaxValue != nil {
 				fmt.Fprintf(&sb, ",MaxValue:%v", floatPtrStr(*m.MaxValue))
+			}
+			if m.MinLength != nil {
+				fmt.Fprintf(&sb, ",MinLength:%v", intPtrStr(*m.MinLength))
+			}
+			if m.MaxLength != nil {
+				fmt.Fprintf(&sb, ",MaxLength:%v", intPtrStr(*m.MaxLength))
 			}
 			sb.WriteString("},\n")
 		}
@@ -309,6 +327,16 @@ func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix
 			sort.Strings(field.EnumValues)
 		}
 
+		// Handle minLength/maxLength constraints
+		if propSchema.MinLength != nil {
+			minLen := *propSchema.MinLength
+			field.MinLength = &minLen
+		}
+		if propSchema.MaxLength != nil {
+			maxLen := *propSchema.MaxLength
+			field.MaxLength = &maxLen
+		}
+
 		// Handle range constraints
 		if propSchema.Minimum != nil {
 			min := *propSchema.Minimum
@@ -374,4 +402,8 @@ func quotedSlice(ss []string) string {
 
 func floatPtrStr(f float64) string {
 	return fmt.Sprintf("func() *float64 { v := %v; return &v }()", f)
+}
+
+func intPtrStr(i int) string {
+	return fmt.Sprintf("func() *int { v := %v; return &v }()", i)
 }

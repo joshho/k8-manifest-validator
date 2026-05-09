@@ -14,6 +14,8 @@ type FieldMetadata struct {
 	EnumValues []string `json:"enumValues,omitempty" yaml:"enumValues,omitempty"`
 	MinValue   *float64 `json:"minValue,omitempty" yaml:"minValue,omitempty"`
 	MaxValue   *float64 `json:"maxValue,omitempty" yaml:"maxValue,omitempty"`
+	MinLength  *int     `json:"minLength,omitempty" yaml:"minLength,omitempty"`
+	MaxLength  *int     `json:"maxLength,omitempty" yaml:"maxLength,omitempty"`
 }
 
 // SchemaMetadata holds all field metadata for a given struct type.
@@ -146,7 +148,7 @@ func init() {
 		deferredFieldIndex[".timeoutSeconds"] = FieldMetadata{Path:".timeoutSeconds",Type:"integer",Format:"int32",Required:false}
 		deferredFieldIndex[".tolerationSeconds"] = FieldMetadata{Path:".tolerationSeconds",Type:"integer",Format:"int64",Required:false}
 		deferredFieldIndex[".tolerations"] = FieldMetadata{Path:".tolerations",Type:"array",Format:"",Required:false}
-		deferredFieldIndex[".topologyKey"] = FieldMetadata{Path:".topologyKey",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".topologyKey"] = FieldMetadata{Path:".topologyKey",Type:"string",Format:"",Required:true,MinLength:func() *int { v := 1; return &v }()}
 		deferredFieldIndex[".topologySpreadConstraints"] = FieldMetadata{Path:".topologySpreadConstraints",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".tty"] = FieldMetadata{Path:".tty",Type:"boolean",Format:"",Required:false}
 		deferredFieldIndex[".value"] = FieldMetadata{Path:".value",Type:"string",Format:"",Required:false}
@@ -244,7 +246,7 @@ func init() {
 		TopologySpreadConstraintDeferredFields = SchemaMetadata{
 			".labelSelector": FieldMetadata{Path:".labelSelector",Type:"",Format:"",Required:false},
 			".maxSkew": FieldMetadata{Path:".maxSkew",Type:"integer",Format:"int32",Required:true},
-			".topologyKey": FieldMetadata{Path:".topologyKey",Type:"string",Format:"",Required:true},
+			".topologyKey": FieldMetadata{Path:".topologyKey",Type:"string",Format:"",Required:true,MinLength:func() *int { v := 1; return &v }()},
 			".whenUnsatisfiable": FieldMetadata{Path:".whenUnsatisfiable",Type:"string",Format:"",Required:true},
 		}
 		VolumeDeferredFields = SchemaMetadata{
