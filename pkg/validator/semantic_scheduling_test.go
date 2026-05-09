@@ -96,34 +96,34 @@ func TestValidateAffinity(t *testing.T) {
 // 2. validateTolerations
 // ---------------------------------------------------------------------------
 
-func toleration(op corev1.TolerationOperator, key, value, effect string) []corev1.Toleration {
+func toleration(op corev1.TolerationOperator, key, value string, effect corev1.TaintEffect) []corev1.Toleration {
 	return []corev1.Toleration{{Operator: op, Key: key, Value: value, Effect: effect}}
 }
 
 func TestValidateTolerations(t *testing.T) {
 	t.Run("Equal_operator_with_value", func(t *testing.T) {
-		errs := validateTolerations(toleration(corev1.TolerationOpEqual, "key", "value", "NoSchedule"), field.NewPath("tolerations"))
+		errs := validateTolerations(toleration(corev1.TolerationOpEqual, "key", "value", corev1.TaintEffectNoSchedule), field.NewPath("tolerations"))
 		if len(errs) > 0 {
 			t.Errorf("expected no errors for Equal with value, got %v", errs)
 		}
 	})
 
 	t.Run("Equal_operator_no_value", func(t *testing.T) {
-		errs := validateTolerations(toleration(corev1.TolerationOpEqual, "key", "", "NoSchedule"), field.NewPath("tolerations"))
+		errs := validateTolerations(toleration(corev1.TolerationOpEqual, "key", "", corev1.TaintEffectNoSchedule), field.NewPath("tolerations"))
 		if len(errs) == 0 {
 			t.Error("expected errors for Equal with no value, got none")
 		}
 	})
 
 	t.Run("Exists_operator_no_value", func(t *testing.T) {
-		errs := validateTolerations(toleration(corev1.TolerationOpExists, "key", "", "NoSchedule"), field.NewPath("tolerations"))
+		errs := validateTolerations(toleration(corev1.TolerationOpExists, "key", "", corev1.TaintEffectNoSchedule), field.NewPath("tolerations"))
 		if len(errs) > 0 {
 			t.Errorf("expected no errors for Exists with no value, got %v", errs)
 		}
 	})
 
 	t.Run("Exists_operator_with_value", func(t *testing.T) {
-		errs := validateTolerations(toleration(corev1.TolerationOpExists, "key", "value", "NoSchedule"), field.NewPath("tolerations"))
+		errs := validateTolerations(toleration(corev1.TolerationOpExists, "key", "value", corev1.TaintEffectNoSchedule), field.NewPath("tolerations"))
 		if len(errs) == 0 {
 			t.Error("expected errors for Exists with value, got none")
 		}
@@ -148,7 +148,7 @@ func TestValidateTolerations(t *testing.T) {
 // 3. validateTopologySpreadConstraints
 // ---------------------------------------------------------------------------
 
-func topologyConstraint(maxSkew int32, topologyKey string, whenUnsatisfiable corev1.TopologySpreadConstraintType, labelSelector *metav1.LabelSelector) []corev1.TopologySpreadConstraint {
+func topologyConstraint(maxSkew int32, topologyKey string, whenUnsatisfiable corev1.UnsatisfiableConstraintAction, labelSelector *metav1.LabelSelector) []corev1.TopologySpreadConstraint {
 	return []corev1.TopologySpreadConstraint{{
 		MaxSkew:            maxSkew,
 		TopologyKey:        topologyKey,
@@ -188,7 +188,7 @@ func TestValidateTopologySpreadConstraints(t *testing.T) {
 	})
 
 	t.Run("whenUnsatisfiable_valid", func(t *testing.T) {
-		for _, a := range []corev1.TopologySpreadConstraintType{corev1.DoNotSchedule, corev1.ScheduleAnyway} {
+		for _, a := range []corev1.UnsatisfiableConstraintAction{corev1.DoNotSchedule, corev1.ScheduleAnyway} {
 			errs := validateTopologySpreadConstraints(topologyConstraint(1, "kubernetes.io/hostname", a, nil), field.NewPath("topologySpreadConstraints"))
 			if len(errs) > 0 {
 				t.Errorf("whenUnsatisfiable=%s: expected no errors, got %v", a, errs)

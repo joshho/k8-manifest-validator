@@ -41,19 +41,25 @@ func validateAffinity(affinity *corev1.Affinity, path *field.Path) field.ErrorLi
 
 	// podAffinity
 	if affinity.PodAffinity != nil {
-		allErrs = append(allErrs, validatePodAffinityTerms(affinity.PodAffinity.PodAffinityTerm, path.Child("podAffinity"))...)
-		allErrs = append(allErrs, validateWeightedPodAffinityTerms(
+		allErrs = append(allErrs, validatePodAffinityTerms(
 			affinity.PodAffinity.RequiredDuringSchedulingIgnoredDuringExecution,
 			path.Child("podAffinity").Child("requiredDuringSchedulingIgnoredDuringExecution"),
+		)...)
+		allErrs = append(allErrs, validateWeightedPodAffinityTerms(
+			affinity.PodAffinity.PreferredDuringSchedulingIgnoredDuringExecution,
+			path.Child("podAffinity").Child("preferredDuringSchedulingIgnoredDuringExecution"),
 		)...)
 	}
 
 	// podAntiAffinity
 	if affinity.PodAntiAffinity != nil {
-		allErrs = append(allErrs, validatePodAffinityTerms(affinity.PodAntiAffinity.PodAffinityTerm, path.Child("podAntiAffinity"))...)
-		allErrs = append(allErrs, validateWeightedPodAffinityTerms(
+		allErrs = append(allErrs, validatePodAffinityTerms(
 			affinity.PodAntiAffinity.RequiredDuringSchedulingIgnoredDuringExecution,
 			path.Child("podAntiAffinity").Child("requiredDuringSchedulingIgnoredDuringExecution"),
+		)...)
+		allErrs = append(allErrs, validateWeightedPodAffinityTerms(
+			affinity.PodAntiAffinity.PreferredDuringSchedulingIgnoredDuringExecution,
+			path.Child("podAntiAffinity").Child("preferredDuringSchedulingIgnoredDuringExecution"),
 		)...)
 	}
 
@@ -237,7 +243,7 @@ func validateToleration(toleration *corev1.Toleration, path *field.Path) field.E
 	// Effect may be empty (matches all effects) — no validation needed
 	// Effect must be a valid label value if specified
 	if toleration.Effect != "" {
-		if errs := utilvalidation.IsLabelValue(toleration.Effect); len(errs) > 0 {
+		if errs := utilvalidation.IsValidLabelValue(string(toleration.Effect)); len(errs) > 0 {
 			allErrs = append(allErrs, field.Invalid(path.Child("effect"), toleration.Effect, errs[0]))
 		}
 	}
@@ -250,9 +256,9 @@ func validateToleration(toleration *corev1.Toleration, path *field.Path) field.E
 // =============================================================================
 
 // ValidTopologyUnsatisfiableAction lists valid whenUnsatisfiable values.
-var ValidTopologyUnsatisfiableAction = map[corev1.TopologySpreadConstraintType]bool{
-	corev1.DoNotSchedule:            true,
-	corev1.ScheduleAnyway:           true,
+var ValidTopologyUnsatisfiableAction = map[corev1.UnsatisfiableConstraintAction]bool{
+	corev1.DoNotSchedule:   true,
+	corev1.ScheduleAnyway:   true,
 }
 
 // validateTopologySpreadConstraints validates topology spread constraints.
@@ -331,7 +337,7 @@ func validateDNSConfig(dnsConfig *corev1.PodDNSConfig, dnsPolicy corev1.DNSPolic
 		allErrs = append(allErrs, field.TooMany(
 			path.Child("searches"),
 			len(dnsConfig.Searches),
-			"at most 6 search paths are allowed",
+			6,
 		))
 	}
 
