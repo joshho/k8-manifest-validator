@@ -10,8 +10,8 @@ import (
 
 // Engine orchestrates all validators to validate Kubernetes manifests
 type Engine struct {
-	scanner        *Scanner
-	decoder        *Decoder
+	scanner       *Scanner
+	decoder       *Decoder
 	builtin       *BuiltinValidator
 	crd           *CRDValidator
 	cr            *CRValidator
@@ -43,13 +43,13 @@ func NewEngine(opts EngineOptions) *Engine {
 	cr := NewCRValidator(crd)
 
 	return &Engine{
-		scanner:        scanner,
-		decoder:        decoder,
-		builtin:        builtin,
-		crd:            crd,
-		cr:             cr,
-		ignoreMissing:  opts.IgnoreMissing,
-		workers:        opts.Workers,
+		scanner:       scanner,
+		decoder:       decoder,
+		builtin:       builtin,
+		crd:           crd,
+		cr:            cr,
+		ignoreMissing: opts.IgnoreMissing,
+		workers:       opts.Workers,
 	}
 }
 

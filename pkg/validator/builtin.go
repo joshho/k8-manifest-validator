@@ -6,10 +6,10 @@ import (
 	"sync"
 
 	appsv1 "k8s.io/api/apps/v1"
-	corev1 "k8s.io/api/core/v1"
-	networkingv1 "k8s.io/api/networking/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/api/validation"
@@ -17,8 +17,8 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
-	"k8s.io/apimachinery/pkg/util/validation/field"
 	utilvalidation "k8s.io/apimachinery/pkg/util/validation"
+	"k8s.io/apimachinery/pkg/util/validation/field"
 
 	"k8-manifest-validator/pkg/types"
 )
@@ -36,9 +36,9 @@ type routingEntry struct {
 // BuiltinValidator validates Kubernetes built-in resource types using
 // the k8s.io/apimachinery validation packages
 type BuiltinValidator struct {
-	routing     sync.Map // kind string -> routingEntry
-	scheme      *runtime.Scheme
-	decoder     runtime.Decoder
+	routing sync.Map // kind string -> routingEntry
+	scheme  *runtime.Scheme
+	decoder runtime.Decoder
 }
 
 // NewBuiltinValidator creates a new BuiltinValidator with all built-in kinds registered
@@ -836,7 +836,6 @@ func (v *BuiltinValidator) validateReplicaSet(rs *appsv1.ReplicaSet) field.Error
 	// PodSpec validation
 	allErrs = append(allErrs, validatePodSpec(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
 
-
 	return allErrs
 }
 
@@ -844,11 +843,9 @@ func (v *BuiltinValidator) validateReplicationController(rc *corev1.ReplicationC
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&rc.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
 
-
 	if rc.Spec.Replicas != nil && *rc.Spec.Replicas < 0 {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "replicas"), *rc.Spec.Replicas, "must be >= 0"))
 	}
-
 
 	if len(rc.Spec.Selector) == 0 {
 		allErrs = append(allErrs, field.Required(field.NewPath("spec", "selector"), ""))
@@ -1123,6 +1120,7 @@ type ErrorItem struct {
 	Message string
 	Code    string
 }
+
 // isNamespacedKind returns true for Kubernetes resource kinds that are namespaced.
 // Cluster-scoped kinds return false.
 func isNamespacedKind(kind string) bool {
@@ -1131,7 +1129,7 @@ func isNamespacedKind(kind string) bool {
 		"ClusterRole", "ClusterRoleBinding", "StorageClass",
 		"CSIDriver", "CSINode", "PriorityClass",
 		"RuntimeClass", "FlowSchema", "PriorityLevelConfiguration",
-		"EndpointSlice" /* cluster-scoped for service mesh */:
+		"EndpointSlice" /* cluster-scoped for service mesh */ :
 		return false
 	default:
 		return true

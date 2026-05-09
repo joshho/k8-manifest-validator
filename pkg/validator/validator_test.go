@@ -19,7 +19,7 @@ func TestLibraryNewReturnsValidEngine(t *testing.T) {
 func TestLibraryNewWithOptions(t *testing.T) {
 	v := New(Options{
 		IgnoreMissingSchemas: true,
-		Workers:             4,
+		Workers:              4,
 	})
 	if v == nil {
 		t.Fatal("New() with options returned nil")

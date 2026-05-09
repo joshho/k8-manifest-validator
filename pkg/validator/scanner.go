@@ -32,18 +32,18 @@ func (r Resource) Signature() string {
 
 // Scanner discovers Kubernetes manifest files in directories
 type Scanner struct {
-	Extensions    []string  // file extensions to include (e.g., ".yaml", ".yml", ".json")
-	IgnorePattern []*regexp.Regexp
-	MaxBufferSize int64     // maximum buffer size (default 256MB)
-	InitBufferSize int64    // initial buffer size (default 4MB)
+	Extensions     []string // file extensions to include (e.g., ".yaml", ".yml", ".json")
+	IgnorePattern  []*regexp.Regexp
+	MaxBufferSize  int64 // maximum buffer size (default 256MB)
+	InitBufferSize int64 // initial buffer size (default 4MB)
 }
 
 // NewScanner creates a new Scanner with default settings
 func NewScanner() *Scanner {
 	return &Scanner{
-		Extensions:    []string{".yaml", ".yml", ".json"},
-		IgnorePattern: make([]*regexp.Regexp, 0),
-		MaxBufferSize: 256 * 1024 * 1024,
+		Extensions:     []string{".yaml", ".yml", ".json"},
+		IgnorePattern:  make([]*regexp.Regexp, 0),
+		MaxBufferSize:  256 * 1024 * 1024,
 		InitBufferSize: 4 * 1024 * 1024,
 	}
 }

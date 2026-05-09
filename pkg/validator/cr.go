@@ -20,7 +20,7 @@ type CRValidator struct {
 
 // crdSchemaEntry holds the CRD and its schema validator
 type crdSchemaEntry struct {
-	crd            *CRD
+	crd             *CRD
 	schemaValidator validation.SchemaValidator
 }
 
@@ -56,7 +56,7 @@ func (v *CRValidator) RegisterCRD(crdYAML []byte) error {
 		}
 		key := crdKey(crd.Spec.Group, ver.Name, crd.Spec.Names.Kind)
 		v.schemaRegistry.Store(key, &crdSchemaEntry{
-			crd:            crd,
+			crd:             crd,
 			schemaValidator: schemaValidator,
 		})
 	}

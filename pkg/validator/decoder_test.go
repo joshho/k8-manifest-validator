@@ -6,13 +6,13 @@ import (
 
 func TestDecoderExtractsKindFromValidManifest(t *testing.T) {
 	tests := []struct {
-		name       string
-		manifest   string
-		wantKind   string
-		wantAPI    string
-		wantName   string
-		wantNS     string
-		wantErr    bool
+		name     string
+		manifest string
+		wantKind string
+		wantAPI  string
+		wantName string
+		wantNS   string
+		wantErr  bool
 	}{
 		{
 			name: "simple deployment",

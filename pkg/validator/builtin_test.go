@@ -671,7 +671,6 @@ spec:
       restartPolicy: OnFailure
 `)
 
-
 	bv := NewBuiltinValidator()
 	result := bv.ValidateResource(validYAML)
 	if result.Status != "valid" {

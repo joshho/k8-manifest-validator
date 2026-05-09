@@ -11,9 +11,9 @@ func TestScannerDiscoversYAMLFilesRecursively(t *testing.T) {
 	fixturesDir := filepath.Join("..", "..", "tests", "fixtures")
 
 	scanner := &Scanner{
-		Extensions:    []string{".yaml", ".yml", ".json"},
-		IgnorePattern: nil,
-		MaxBufferSize: 256 * 1024 * 1024,
+		Extensions:     []string{".yaml", ".yml", ".json"},
+		IgnorePattern:  nil,
+		MaxBufferSize:  256 * 1024 * 1024,
 		InitBufferSize: 4 * 1024 * 1024,
 	}
 
@@ -77,9 +77,9 @@ func TestScannerRespectsIgnorePatterns(t *testing.T) {
 	}
 
 	scanner := &Scanner{
-		Extensions:    []string{".yaml", ".yml", ".json"},
-		IgnorePattern: nil,
-		MaxBufferSize: 256 * 1024 * 1024,
+		Extensions:     []string{".yaml", ".yml", ".json"},
+		IgnorePattern:  nil,
+		MaxBufferSize:  256 * 1024 * 1024,
 		InitBufferSize: 4 * 1024 * 1024,
 	}
 
@@ -131,9 +131,9 @@ func TestScannerSkipsNonManifestFiles(t *testing.T) {
 	}
 
 	scanner := &Scanner{
-		Extensions:    []string{".yaml", ".yml", ".json"},
-		IgnorePattern: nil,
-		MaxBufferSize: 256 * 1024 * 1024,
+		Extensions:     []string{".yaml", ".yml", ".json"},
+		IgnorePattern:  nil,
+		MaxBufferSize:  256 * 1024 * 1024,
 		InitBufferSize: 4 * 1024 * 1024,
 	}
 
@@ -156,9 +156,9 @@ func TestScannerHandlesHiddenFiles(t *testing.T) {
 	}
 
 	scanner := &Scanner{
-		Extensions:    []string{".yaml", ".yml", ".json"},
-		IgnorePattern: nil,
-		MaxBufferSize: 256 * 1024 * 1024,
+		Extensions:     []string{".yaml", ".yml", ".json"},
+		IgnorePattern:  nil,
+		MaxBufferSize:  256 * 1024 * 1024,
 		InitBufferSize: 4 * 1024 * 1024,
 	}
 
