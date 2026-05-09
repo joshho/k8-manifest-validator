@@ -382,6 +382,10 @@ func validateHostBooleans(spec *corev1.PodSpec, path *field.Path) field.ErrorLis
 // Valid values: Always, OnFailure, Never.
 func validateRestartPolicy(policy corev1.RestartPolicy, path *field.Path) field.ErrorList {
 	var allErrs field.ErrorList
+	if policy == "" {
+		// Kubernetes defaults to Always when not set; treat empty as valid
+		return allErrs
+	}
 	if !ValidRestartPolicyValues[policy] {
 		allErrs = append(allErrs, field.NotSupported(
 			path.Child("restartPolicy"),
