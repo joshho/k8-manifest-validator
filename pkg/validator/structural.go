@@ -187,43 +187,9 @@ func walkStruct(val reflect.Value, path *field.Path, visitor fieldVisitor) {
 			for j := 0; j < fieldVal.Len(); j++ {
 				elem := fieldVal.Index(j)
 				if elem.Kind() == reflect.Struct {
-					// Visit the slice element's own struct fields, but do NOT recurse into
-					// further nested structs within it. Nested struct fields (like Port.Name
-					// inside Container) have different metadata than their parent field
-					// (Container.Name) — recursing from the parent applies wrong metadata.
-					// Use a separate walk that skips nested struct recursion for elements.
-					walkStructShallow(elem, fieldPath.Index(j), visitor)
+					walkStruct(elem, fieldPath.Index(j), visitor)
 				}
 			}
-		}
-	}
-}
-
-// walkStructShallow visits the direct fields of a slice element struct without
-// recursing into further nested structs. This ensures that nested struct fields
-// within slice elements (like Port.Name inside a Container in a containers slice)
-// are visited with their own type's metadata, not the parent field's metadata.
-func walkStructShallow(val reflect.Value, path *field.Path, visitor fieldVisitor) {
-	if val.Kind() != reflect.Struct {
-		return
-	}
-
-	typ := val.Type()
-	for i := 0; i < typ.NumField(); i++ {
-		sf := typ.Field(i)
-
-		if sf.Anonymous {
-			continue
-		}
-
-		fieldVal := val.Field(i)
-
-		lower := strings.ToLower(sf.Name[:1]) + sf.Name[1:]
-		fieldPath := path.Key(lower)
-
-		normalized := normalizePath(fieldPath)
-		if meta, ok := LookupDeferredField(normalized); ok {
-			visitor(fieldPath, meta, fieldVal)
 		}
 	}
 }
