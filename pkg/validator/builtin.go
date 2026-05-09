@@ -833,6 +833,10 @@ func (v *BuiltinValidator) validateReplicaSet(rs *appsv1.ReplicaSet) field.Error
 		}
 	}
 	
+	// PodSpec validation
+	allErrs = append(allErrs, validatePodSpec(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
+
+
 	return allErrs
 }
 
@@ -854,19 +858,10 @@ func (v *BuiltinValidator) validateReplicationController(rc *corev1.ReplicationC
 func (v *BuiltinValidator) validatePod(pod *corev1.Pod) field.ErrorList {
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&pod.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
-	
+
 	// Validate pod spec
-	if pod.Spec.TerminationGracePeriodSeconds != nil && *pod.Spec.TerminationGracePeriodSeconds < 0 {
-		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "terminationGracePeriodSeconds"), *pod.Spec.TerminationGracePeriodSeconds, "must be >= 0"))
-	}
-	
-	// Validate container names
-	for i, c := range pod.Spec.Containers {
-		for _, msg := range utilvalidation.IsQualifiedName(c.Name) {
-			allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "containers").Index(i).Child("name"), c.Name, msg))
-		}
-	}
-	
+	allErrs = append(allErrs, validatePodSpec(&pod.Spec, field.NewPath("spec"), false)...)
+
 	return allErrs
 }
 

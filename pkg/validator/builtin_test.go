@@ -452,6 +452,131 @@ spec:
 	}
 }
 
+// --- AWU-2: TDD failing tests for Pod and ReplicaSet ---
+
+// TestBuiltinValidatorDetectsInvalidServiceAccountNameInPod verifies that
+// a Pod with an invalid serviceAccountName containing underscores is rejected.
+func TestBuiltinValidatorDetectsInvalidServiceAccountNameInPod(t *testing.T) {
+	invalidYAML := []byte(`apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+  namespace: default
+spec:
+  serviceAccountName: invalid_account
+  containers:
+  - name: app
+    image: nginx
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(invalidYAML)
+	if result.Status != "invalid" {
+		t.Errorf("expected invalid, got %s: %v", result.Status, result.Errors)
+	}
+	if len(result.Errors) > 0 && !containsField(result.Errors[0].Field, "serviceAccountName") {
+		t.Errorf("expected error on spec.serviceAccountName, got %s", result.Errors[0].Field)
+	}
+}
+
+// TestBuiltinValidatorDetectsInvalidContainerPortInReplicaSet verifies that
+// a ReplicaSet with an out-of-range container port is rejected.
+func TestBuiltinValidatorDetectsInvalidContainerPortInReplicaSet(t *testing.T) {
+	invalidYAML := []byte(`apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: test-rs
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        ports:
+        - containerPort: 70000
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(invalidYAML)
+	if result.Status != "invalid" {
+		t.Errorf("expected invalid, got %s: %v", result.Status, result.Errors)
+	}
+	if len(result.Errors) > 0 && !containsField(result.Errors[0].Field, "containers[0].ports[0].containerPort") {
+		t.Errorf("expected error on containers[0].ports[0].containerPort, got %s", result.Errors[0].Field)
+	}
+}
+
+// TestBuiltinValidatorAcceptsValidPod verifies a valid Pod passes validation.
+func TestBuiltinValidatorAcceptsValidPod(t *testing.T) {
+	validYAML := []byte(`apiVersion: v1
+kind: Pod
+metadata:
+  name: valid-pod
+  namespace: default
+spec:
+  containers:
+  - name: app
+    image: nginx:1.21
+    ports:
+    - containerPort: 8080
+    env:
+    - name: FOO
+      value: bar
+    resources:
+      limits:
+        cpu: "1"
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(validYAML)
+	if result.Status != "valid" {
+		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
+	}
+}
+
+// TestBuiltinValidatorAcceptsValidReplicaSet verifies a valid ReplicaSet passes validation.
+func TestBuiltinValidatorAcceptsValidReplicaSet(t *testing.T) {
+	validYAML := []byte(`apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: valid-rs
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: valid
+  template:
+    metadata:
+      labels:
+        app: valid
+    spec:
+      containers:
+      - name: app
+        image: nginx:1.21
+        ports:
+        - containerPort: 8080
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(validYAML)
+	if result.Status != "valid" {
+		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
+	}
+}
+
 // containsField checks if the field string contains the given substring.
 func containsField(field, substr string) bool {
 	return len(field) >= len(substr) && field[len(field)-len(substr):] == substr
