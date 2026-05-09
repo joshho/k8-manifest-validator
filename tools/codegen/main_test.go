@@ -14,7 +14,7 @@ func TestCodegenDeterministic(t *testing.T) {
 	toolsDir := filepath.Join("..", "..")
 
 	runCodegen := func() ([]byte, error) {
-		cmd := exec.Command("/tmp/go/bin/go", "run", ".")
+		cmd := exec.Command("go", "run", ".")
 		cmd.Dir = filepath.Join(toolsDir, "tools", "codegen")
 		out, err := cmd.CombinedOutput()
 		if err != nil {
@@ -40,7 +40,7 @@ func TestCodegenDeterministic(t *testing.T) {
 }
 
 func TestCodegenOutputCompiles(t *testing.T) {
-	cmd := exec.Command("/tmp/go/bin/go", "build", "-o", "/dev/null", "./pkg/validator")
+	cmd := exec.Command("go", "build", "-o", "/dev/null", "./pkg/validator")
 	cmd.Dir = filepath.Join("..", "..")
 	if err := cmd.Run(); err != nil {
 		t.Fatalf("generated file does not compile: %v", err)
@@ -59,10 +59,10 @@ func TestCodegenContainerFieldCoverage(t *testing.T) {
 	generated := string(content)
 
 	testCases := []string{
-		`"name"`,   // name field present
-		`"image"`,  // image field present
-		`"ports"`,  // ports field present
-		`"resources"`, // resources field present
+		`".name"`,      // name field present with JSON path
+		`".image"`,     // image field present with JSON path
+		`".ports"`,     // ports field present with JSON path
+		`".resources"`, // resources field present with JSON path
 	}
 
 	for _, tc := range testCases {

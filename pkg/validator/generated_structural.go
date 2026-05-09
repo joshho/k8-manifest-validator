@@ -7,298 +7,298 @@ import "sync"
 
 // FieldMetadata encodes a single field's structural validation rules from the k8s OpenAPI schema.
 type FieldMetadata struct {
-	Path       string
-	Type       string
-	Format     string
-	Required   bool
-	EnumValues []string
-	RangeMin   *float64
-	RangeMax   *float64
+	Path       string   `json:"path" yaml:"path"`
+	Type       string   `json:"type" yaml:"type"`
+	Format     string   `json:"format,omitempty" yaml:"format,omitempty"`
+	Required   bool     `json:"required" yaml:"required"`
+	EnumValues []string `json:"enumValues,omitempty" yaml:"enumValues,omitempty"`
+	MinValue   *float64 `json:"minValue,omitempty" yaml:"minValue,omitempty"`
+	MaxValue   *float64 `json:"maxValue,omitempty" yaml:"maxValue,omitempty"`
 }
 
 // SchemaMetadata holds all field metadata for a given struct type.
 type SchemaMetadata map[string]FieldMetadata
 
-// Affinity contains structural metadata for io.k8s.api.core.v1.Affinity.
-var Affinity SchemaMetadata
+// AffinityDeferredFields contains structural metadata for io.k8s.api.core.v1.Affinity.
+var AffinityDeferredFields SchemaMetadata
 
-// Container contains structural metadata for io.k8s.api.core.v1.Container.
-var Container SchemaMetadata
+// ContainerDeferredFields contains structural metadata for io.k8s.api.core.v1.Container.
+var ContainerDeferredFields SchemaMetadata
 
-// PodDNSConfig contains structural metadata for io.k8s.api.core.v1.PodDNSConfig.
-var PodDNSConfig SchemaMetadata
+// PodDNSConfigDeferredFields contains structural metadata for io.k8s.api.core.v1.PodDNSConfig.
+var PodDNSConfigDeferredFields SchemaMetadata
 
-// PodSpec contains structural metadata for io.k8s.api.core.v1.PodSpec.
-var PodSpec SchemaMetadata
+// PodSpecDeferredFields contains structural metadata for io.k8s.api.core.v1.PodSpec.
+var PodSpecDeferredFields SchemaMetadata
 
-// Probe contains structural metadata for io.k8s.api.core.v1.Probe.
-var Probe SchemaMetadata
+// ProbeDeferredFields contains structural metadata for io.k8s.api.core.v1.Probe.
+var ProbeDeferredFields SchemaMetadata
 
-// SecurityContext contains structural metadata for io.k8s.api.core.v1.SecurityContext.
-var SecurityContext SchemaMetadata
+// SecurityContextDeferredFields contains structural metadata for io.k8s.api.core.v1.SecurityContext.
+var SecurityContextDeferredFields SchemaMetadata
 
-// Toleration contains structural metadata for io.k8s.api.core.v1.Toleration.
-var Toleration SchemaMetadata
+// TolerationDeferredFields contains structural metadata for io.k8s.api.core.v1.Toleration.
+var TolerationDeferredFields SchemaMetadata
 
-// TopologySpreadConstraint contains structural metadata for io.k8s.api.core.v1.TopologySpreadConstraint.
-var TopologySpreadConstraint SchemaMetadata
+// TopologySpreadConstraintDeferredFields contains structural metadata for io.k8s.api.core.v1.TopologySpreadConstraint.
+var TopologySpreadConstraintDeferredFields SchemaMetadata
 
-// Volume contains structural metadata for io.k8s.api.core.v1.Volume.
-var Volume SchemaMetadata
+// VolumeDeferredFields contains structural metadata for io.k8s.api.core.v1.Volume.
+var VolumeDeferredFields SchemaMetadata
 
 var (
-	structuralIndex map[string]FieldMetadata
-	structuralOnce  sync.Once
+	deferredFieldIndex map[string]FieldMetadata
+	deferredFieldInit  sync.Once
 )
 
 func init() {
-	structuralOnce.Do(func() {
-		structuralIndex = make(map[string]FieldMetadata)
-		structuralIndex["activeDeadlineSeconds"] = FieldMetadata{Path:"activeDeadlineSeconds",Type:"integer",Format:"int64",Required:false}
-		structuralIndex["affinity"] = FieldMetadata{Path:"affinity",Type:"",Format:"",Required:false}
-		structuralIndex["allowPrivilegeEscalation"] = FieldMetadata{Path:"allowPrivilegeEscalation",Type:"boolean",Format:"",Required:false}
-		structuralIndex["args"] = FieldMetadata{Path:"args",Type:"array",Format:"",Required:false}
-		structuralIndex["automountServiceAccountToken"] = FieldMetadata{Path:"automountServiceAccountToken",Type:"boolean",Format:"",Required:false}
-		structuralIndex["awsElasticBlockStore"] = FieldMetadata{Path:"awsElasticBlockStore",Type:"",Format:"",Required:false}
-		structuralIndex["azureDisk"] = FieldMetadata{Path:"azureDisk",Type:"",Format:"",Required:false}
-		structuralIndex["azureFile"] = FieldMetadata{Path:"azureFile",Type:"",Format:"",Required:false}
-		structuralIndex["capabilities"] = FieldMetadata{Path:"capabilities",Type:"",Format:"",Required:false}
-		structuralIndex["cephfs"] = FieldMetadata{Path:"cephfs",Type:"",Format:"",Required:false}
-		structuralIndex["cinder"] = FieldMetadata{Path:"cinder",Type:"",Format:"",Required:false}
-		structuralIndex["command"] = FieldMetadata{Path:"command",Type:"array",Format:"",Required:false}
-		structuralIndex["configMap"] = FieldMetadata{Path:"configMap",Type:"",Format:"",Required:false}
-		structuralIndex["containers"] = FieldMetadata{Path:"containers",Type:"array",Format:"",Required:false}
-		structuralIndex["csi"] = FieldMetadata{Path:"csi",Type:"",Format:"",Required:false}
-		structuralIndex["dnsConfig"] = FieldMetadata{Path:"dnsConfig",Type:"",Format:"",Required:false}
-		structuralIndex["dnsPolicy"] = FieldMetadata{Path:"dnsPolicy",Type:"string",Format:"",Required:false}
-		structuralIndex["downwardAPI"] = FieldMetadata{Path:"downwardAPI",Type:"",Format:"",Required:false}
-		structuralIndex["effect"] = FieldMetadata{Path:"effect",Type:"string",Format:"",Required:false}
-		structuralIndex["emptyDir"] = FieldMetadata{Path:"emptyDir",Type:"",Format:"",Required:false}
-		structuralIndex["env"] = FieldMetadata{Path:"env",Type:"array",Format:"",Required:false}
-		structuralIndex["envFrom"] = FieldMetadata{Path:"envFrom",Type:"array",Format:"",Required:false}
-		structuralIndex["ephemeral"] = FieldMetadata{Path:"ephemeral",Type:"",Format:"",Required:false}
-		structuralIndex["exec"] = FieldMetadata{Path:"exec",Type:"",Format:"",Required:false}
-		structuralIndex["failureThreshold"] = FieldMetadata{Path:"failureThreshold",Type:"integer",Format:"int32",Required:false}
-		structuralIndex["fc"] = FieldMetadata{Path:"fc",Type:"",Format:"",Required:false}
-		structuralIndex["flexVolume"] = FieldMetadata{Path:"flexVolume",Type:"",Format:"",Required:false}
-		structuralIndex["flocker"] = FieldMetadata{Path:"flocker",Type:"",Format:"",Required:false}
-		structuralIndex["gcePersistentDisk"] = FieldMetadata{Path:"gcePersistentDisk",Type:"",Format:"",Required:false}
-		structuralIndex["gitRepo"] = FieldMetadata{Path:"gitRepo",Type:"",Format:"",Required:false}
-		structuralIndex["glusterfs"] = FieldMetadata{Path:"glusterfs",Type:"",Format:"",Required:false}
-		structuralIndex["hostPID"] = FieldMetadata{Path:"hostPID",Type:"boolean",Format:"",Required:false}
-		structuralIndex["hostPath"] = FieldMetadata{Path:"hostPath",Type:"",Format:"",Required:false}
-		structuralIndex["hostname"] = FieldMetadata{Path:"hostname",Type:"string",Format:"string",Required:false}
-		structuralIndex["httpGet"] = FieldMetadata{Path:"httpGet",Type:"",Format:"",Required:false}
-		structuralIndex["image"] = FieldMetadata{Path:"image",Type:"string",Format:"",Required:false}
-		structuralIndex["imagePullPolicy"] = FieldMetadata{Path:"imagePullPolicy",Type:"string",Format:"",Required:false}
-		structuralIndex["imagePullSecrets"] = FieldMetadata{Path:"imagePullSecrets",Type:"array",Format:"",Required:false}
-		structuralIndex["initContainers"] = FieldMetadata{Path:"initContainers",Type:"array",Format:"",Required:false}
-		structuralIndex["initialDelaySeconds"] = FieldMetadata{Path:"initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
-		structuralIndex["iscsi"] = FieldMetadata{Path:"iscsi",Type:"",Format:"",Required:false}
-		structuralIndex["key"] = FieldMetadata{Path:"key",Type:"string",Format:"",Required:false}
-		structuralIndex["labelSelector"] = FieldMetadata{Path:"labelSelector",Type:"",Format:"",Required:false}
-		structuralIndex["lifecycle"] = FieldMetadata{Path:"lifecycle",Type:"",Format:"",Required:false}
-		structuralIndex["livenessProbe"] = FieldMetadata{Path:"livenessProbe",Type:"",Format:"",Required:false}
-		structuralIndex["maxSkew"] = FieldMetadata{Path:"maxSkew",Type:"integer",Format:"int32",Required:true}
-		structuralIndex["name"] = FieldMetadata{Path:"name",Type:"string",Format:"string",Required:true}
-		structuralIndex["nameservers"] = FieldMetadata{Path:"nameservers",Type:"array",Format:"",Required:false}
-		structuralIndex["nfs"] = FieldMetadata{Path:"nfs",Type:"",Format:"",Required:false}
-		structuralIndex["nodeAffinity"] = FieldMetadata{Path:"nodeAffinity",Type:"",Format:"",Required:false}
-		structuralIndex["nodeSelector"] = FieldMetadata{Path:"nodeSelector",Type:"object",Format:"",Required:false}
-		structuralIndex["operator"] = FieldMetadata{Path:"operator",Type:"string",Format:"",Required:false}
-		structuralIndex["options"] = FieldMetadata{Path:"options",Type:"array",Format:"",Required:false}
-		structuralIndex["periodSeconds"] = FieldMetadata{Path:"periodSeconds",Type:"integer",Format:"int32",Required:false}
-		structuralIndex["persistentVolumeClaim"] = FieldMetadata{Path:"persistentVolumeClaim",Type:"",Format:"",Required:false}
-		structuralIndex["photonPersistentDisk"] = FieldMetadata{Path:"photonPersistentDisk",Type:"",Format:"",Required:false}
-		structuralIndex["podAffinity"] = FieldMetadata{Path:"podAffinity",Type:"",Format:"",Required:false}
-		structuralIndex["podAntiAffinity"] = FieldMetadata{Path:"podAntiAffinity",Type:"",Format:"",Required:false}
-		structuralIndex["ports"] = FieldMetadata{Path:"ports",Type:"array",Format:"",Required:false}
-		structuralIndex["portworxVolume"] = FieldMetadata{Path:"portworxVolume",Type:"",Format:"",Required:false}
-		structuralIndex["priority"] = FieldMetadata{Path:"priority",Type:"integer",Format:"int32",Required:false}
-		structuralIndex["privileged"] = FieldMetadata{Path:"privileged",Type:"boolean",Format:"",Required:false}
-		structuralIndex["projected"] = FieldMetadata{Path:"projected",Type:"",Format:"",Required:false}
-		structuralIndex["quobyte"] = FieldMetadata{Path:"quobyte",Type:"",Format:"",Required:false}
-		structuralIndex["rbd"] = FieldMetadata{Path:"rbd",Type:"",Format:"",Required:false}
-		structuralIndex["readOnlyRootFilesystem"] = FieldMetadata{Path:"readOnlyRootFilesystem",Type:"boolean",Format:"",Required:false}
-		structuralIndex["readinessProbe"] = FieldMetadata{Path:"readinessProbe",Type:"",Format:"",Required:false}
-		structuralIndex["resources"] = FieldMetadata{Path:"resources",Type:"",Format:"",Required:false}
-		structuralIndex["restartPolicy"] = FieldMetadata{Path:"restartPolicy",Type:"string",Format:"",Required:false}
-		structuralIndex["runAsGroup"] = FieldMetadata{Path:"runAsGroup",Type:"integer",Format:"int64",Required:false}
-		structuralIndex["runAsNonRoot"] = FieldMetadata{Path:"runAsNonRoot",Type:"boolean",Format:"",Required:false}
-		structuralIndex["runAsUser"] = FieldMetadata{Path:"runAsUser",Type:"integer",Format:"int64",Required:false}
-		structuralIndex["runtimeClassName"] = FieldMetadata{Path:"runtimeClassName",Type:"string",Format:"",Required:false}
-		structuralIndex["scaleIO"] = FieldMetadata{Path:"scaleIO",Type:"",Format:"",Required:false}
-		structuralIndex["schedulerName"] = FieldMetadata{Path:"schedulerName",Type:"string",Format:"",Required:false}
-		structuralIndex["seLinuxOptions"] = FieldMetadata{Path:"seLinuxOptions",Type:"",Format:"",Required:false}
-		structuralIndex["searches"] = FieldMetadata{Path:"searches",Type:"array",Format:"",Required:false}
-		structuralIndex["secret"] = FieldMetadata{Path:"secret",Type:"",Format:"",Required:false}
-		structuralIndex["securityContext"] = FieldMetadata{Path:"securityContext",Type:"",Format:"",Required:false}
-		structuralIndex["serviceAccountName"] = FieldMetadata{Path:"serviceAccountName",Type:"string",Format:"",Required:false}
-		structuralIndex["startupProbe"] = FieldMetadata{Path:"startupProbe",Type:"",Format:"",Required:false}
-		structuralIndex["stdin"] = FieldMetadata{Path:"stdin",Type:"boolean",Format:"",Required:false}
-		structuralIndex["stdinOnce"] = FieldMetadata{Path:"stdinOnce",Type:"boolean",Format:"",Required:false}
-		structuralIndex["storageos"] = FieldMetadata{Path:"storageos",Type:"",Format:"",Required:false}
-		structuralIndex["subdomain"] = FieldMetadata{Path:"subdomain",Type:"string",Format:"",Required:false}
-		structuralIndex["successThreshold"] = FieldMetadata{Path:"successThreshold",Type:"integer",Format:"int32",Required:false}
-		structuralIndex["tcpSocket"] = FieldMetadata{Path:"tcpSocket",Type:"",Format:"",Required:false}
-		structuralIndex["terminationGracePeriodSeconds"] = FieldMetadata{Path:"terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false}
-		structuralIndex["terminationMessagePath"] = FieldMetadata{Path:"terminationMessagePath",Type:"string",Format:"",Required:false}
-		structuralIndex["timeoutSeconds"] = FieldMetadata{Path:"timeoutSeconds",Type:"integer",Format:"int32",Required:false}
-		structuralIndex["tolerationSeconds"] = FieldMetadata{Path:"tolerationSeconds",Type:"integer",Format:"int64",Required:false}
-		structuralIndex["tolerations"] = FieldMetadata{Path:"tolerations",Type:"array",Format:"",Required:false}
-		structuralIndex["topologyKey"] = FieldMetadata{Path:"topologyKey",Type:"string",Format:"",Required:true}
-		structuralIndex["topologySpreadConstraints"] = FieldMetadata{Path:"topologySpreadConstraints",Type:"array",Format:"",Required:false}
-		structuralIndex["tty"] = FieldMetadata{Path:"tty",Type:"boolean",Format:"",Required:false}
-		structuralIndex["value"] = FieldMetadata{Path:"value",Type:"string",Format:"",Required:false}
-		structuralIndex["volumeDevices"] = FieldMetadata{Path:"volumeDevices",Type:"array",Format:"",Required:false}
-		structuralIndex["volumeMounts"] = FieldMetadata{Path:"volumeMounts",Type:"array",Format:"",Required:false}
-		structuralIndex["volumes"] = FieldMetadata{Path:"volumes",Type:"array",Format:"",Required:false}
-		structuralIndex["vsphereVolume"] = FieldMetadata{Path:"vsphereVolume",Type:"",Format:"",Required:false}
-		structuralIndex["whenUnsatisfiable"] = FieldMetadata{Path:"whenUnsatisfiable",Type:"string",Format:"",Required:true}
-		structuralIndex["workingDir"] = FieldMetadata{Path:"workingDir",Type:"string",Format:"",Required:false}
-		Affinity = SchemaMetadata{
-			"nodeAffinity": FieldMetadata{Path:"nodeAffinity",Type:"",Format:"",Required:false},
-			"podAffinity": FieldMetadata{Path:"podAffinity",Type:"",Format:"",Required:false},
-			"podAntiAffinity": FieldMetadata{Path:"podAntiAffinity",Type:"",Format:"",Required:false},
+	deferredFieldInit.Do(func() {
+		deferredFieldIndex = make(map[string]FieldMetadata)
+		deferredFieldIndex[".activeDeadlineSeconds"] = FieldMetadata{Path:".activeDeadlineSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".affinity"] = FieldMetadata{Path:".affinity",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".allowPrivilegeEscalation"] = FieldMetadata{Path:".allowPrivilegeEscalation",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".args"] = FieldMetadata{Path:".args",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".automountServiceAccountToken"] = FieldMetadata{Path:".automountServiceAccountToken",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".awsElasticBlockStore"] = FieldMetadata{Path:".awsElasticBlockStore",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".azureDisk"] = FieldMetadata{Path:".azureDisk",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".azureFile"] = FieldMetadata{Path:".azureFile",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".capabilities"] = FieldMetadata{Path:".capabilities",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".cephfs"] = FieldMetadata{Path:".cephfs",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".cinder"] = FieldMetadata{Path:".cinder",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".command"] = FieldMetadata{Path:".command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".configMap"] = FieldMetadata{Path:".configMap",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers"] = FieldMetadata{Path:".containers",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".csi"] = FieldMetadata{Path:".csi",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".dnsConfig"] = FieldMetadata{Path:".dnsConfig",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".dnsPolicy"] = FieldMetadata{Path:".dnsPolicy",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".downwardAPI"] = FieldMetadata{Path:".downwardAPI",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".effect"] = FieldMetadata{Path:".effect",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".emptyDir"] = FieldMetadata{Path:".emptyDir",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".env"] = FieldMetadata{Path:".env",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".envFrom"] = FieldMetadata{Path:".envFrom",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".ephemeral"] = FieldMetadata{Path:".ephemeral",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".exec"] = FieldMetadata{Path:".exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".failureThreshold"] = FieldMetadata{Path:".failureThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".fc"] = FieldMetadata{Path:".fc",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".flexVolume"] = FieldMetadata{Path:".flexVolume",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".flocker"] = FieldMetadata{Path:".flocker",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".gcePersistentDisk"] = FieldMetadata{Path:".gcePersistentDisk",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".gitRepo"] = FieldMetadata{Path:".gitRepo",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".glusterfs"] = FieldMetadata{Path:".glusterfs",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".hostPID"] = FieldMetadata{Path:".hostPID",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".hostPath"] = FieldMetadata{Path:".hostPath",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".hostname"] = FieldMetadata{Path:".hostname",Type:"string",Format:"string",Required:false}
+		deferredFieldIndex[".httpGet"] = FieldMetadata{Path:".httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".image"] = FieldMetadata{Path:".image",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".imagePullPolicy"] = FieldMetadata{Path:".imagePullPolicy",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".imagePullSecrets"] = FieldMetadata{Path:".imagePullSecrets",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers"] = FieldMetadata{Path:".initContainers",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initialDelaySeconds"] = FieldMetadata{Path:".initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".iscsi"] = FieldMetadata{Path:".iscsi",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".key"] = FieldMetadata{Path:".key",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".labelSelector"] = FieldMetadata{Path:".labelSelector",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle"] = FieldMetadata{Path:".lifecycle",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".livenessProbe"] = FieldMetadata{Path:".livenessProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".maxSkew"] = FieldMetadata{Path:".maxSkew",Type:"integer",Format:"int32",Required:true}
+		deferredFieldIndex[".name"] = FieldMetadata{Path:".name",Type:"string",Format:"string",Required:true}
+		deferredFieldIndex[".nameservers"] = FieldMetadata{Path:".nameservers",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".nfs"] = FieldMetadata{Path:".nfs",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".nodeAffinity"] = FieldMetadata{Path:".nodeAffinity",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".nodeSelector"] = FieldMetadata{Path:".nodeSelector",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".operator"] = FieldMetadata{Path:".operator",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".options"] = FieldMetadata{Path:".options",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".periodSeconds"] = FieldMetadata{Path:".periodSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".persistentVolumeClaim"] = FieldMetadata{Path:".persistentVolumeClaim",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".photonPersistentDisk"] = FieldMetadata{Path:".photonPersistentDisk",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".podAffinity"] = FieldMetadata{Path:".podAffinity",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".podAntiAffinity"] = FieldMetadata{Path:".podAntiAffinity",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".ports"] = FieldMetadata{Path:".ports",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".portworxVolume"] = FieldMetadata{Path:".portworxVolume",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".priority"] = FieldMetadata{Path:".priority",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".privileged"] = FieldMetadata{Path:".privileged",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".projected"] = FieldMetadata{Path:".projected",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".quobyte"] = FieldMetadata{Path:".quobyte",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".rbd"] = FieldMetadata{Path:".rbd",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".readOnlyRootFilesystem"] = FieldMetadata{Path:".readOnlyRootFilesystem",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".readinessProbe"] = FieldMetadata{Path:".readinessProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".resources"] = FieldMetadata{Path:".resources",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".restartPolicy"] = FieldMetadata{Path:".restartPolicy",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".runAsGroup"] = FieldMetadata{Path:".runAsGroup",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".runAsNonRoot"] = FieldMetadata{Path:".runAsNonRoot",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".runAsUser"] = FieldMetadata{Path:".runAsUser",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".runtimeClassName"] = FieldMetadata{Path:".runtimeClassName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".scaleIO"] = FieldMetadata{Path:".scaleIO",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".schedulerName"] = FieldMetadata{Path:".schedulerName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".seLinuxOptions"] = FieldMetadata{Path:".seLinuxOptions",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".searches"] = FieldMetadata{Path:".searches",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".secret"] = FieldMetadata{Path:".secret",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".securityContext"] = FieldMetadata{Path:".securityContext",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".serviceAccountName"] = FieldMetadata{Path:".serviceAccountName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".startupProbe"] = FieldMetadata{Path:".startupProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".stdin"] = FieldMetadata{Path:".stdin",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".stdinOnce"] = FieldMetadata{Path:".stdinOnce",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".storageos"] = FieldMetadata{Path:".storageos",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".subdomain"] = FieldMetadata{Path:".subdomain",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".successThreshold"] = FieldMetadata{Path:".successThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".tcpSocket"] = FieldMetadata{Path:".tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".terminationGracePeriodSeconds"] = FieldMetadata{Path:".terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".terminationMessagePath"] = FieldMetadata{Path:".terminationMessagePath",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".timeoutSeconds"] = FieldMetadata{Path:".timeoutSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".tolerationSeconds"] = FieldMetadata{Path:".tolerationSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".tolerations"] = FieldMetadata{Path:".tolerations",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".topologyKey"] = FieldMetadata{Path:".topologyKey",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".topologySpreadConstraints"] = FieldMetadata{Path:".topologySpreadConstraints",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".tty"] = FieldMetadata{Path:".tty",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".value"] = FieldMetadata{Path:".value",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumeDevices"] = FieldMetadata{Path:".volumeDevices",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumeMounts"] = FieldMetadata{Path:".volumeMounts",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes"] = FieldMetadata{Path:".volumes",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".vsphereVolume"] = FieldMetadata{Path:".vsphereVolume",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".whenUnsatisfiable"] = FieldMetadata{Path:".whenUnsatisfiable",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".workingDir"] = FieldMetadata{Path:".workingDir",Type:"string",Format:"",Required:false}
+		AffinityDeferredFields = SchemaMetadata{
+			".nodeAffinity": FieldMetadata{Path:".nodeAffinity",Type:"",Format:"",Required:false},
+			".podAffinity": FieldMetadata{Path:".podAffinity",Type:"",Format:"",Required:false},
+			".podAntiAffinity": FieldMetadata{Path:".podAntiAffinity",Type:"",Format:"",Required:false},
 		}
-		Container = SchemaMetadata{
-			"args": FieldMetadata{Path:"args",Type:"array",Format:"",Required:false},
-			"command": FieldMetadata{Path:"command",Type:"array",Format:"",Required:false},
-			"env": FieldMetadata{Path:"env",Type:"array",Format:"",Required:false},
-			"envFrom": FieldMetadata{Path:"envFrom",Type:"array",Format:"",Required:false},
-			"image": FieldMetadata{Path:"image",Type:"string",Format:"",Required:false},
-			"imagePullPolicy": FieldMetadata{Path:"imagePullPolicy",Type:"string",Format:"",Required:false},
-			"lifecycle": FieldMetadata{Path:"lifecycle",Type:"",Format:"",Required:false},
-			"livenessProbe": FieldMetadata{Path:"livenessProbe",Type:"",Format:"",Required:false},
-			"name": FieldMetadata{Path:"name",Type:"string",Format:"string",Required:true},
-			"ports": FieldMetadata{Path:"ports",Type:"array",Format:"",Required:false},
-			"readinessProbe": FieldMetadata{Path:"readinessProbe",Type:"",Format:"",Required:false},
-			"resources": FieldMetadata{Path:"resources",Type:"",Format:"",Required:false},
-			"securityContext": FieldMetadata{Path:"securityContext",Type:"",Format:"",Required:false},
-			"startupProbe": FieldMetadata{Path:"startupProbe",Type:"",Format:"",Required:false},
-			"stdin": FieldMetadata{Path:"stdin",Type:"boolean",Format:"",Required:false},
-			"stdinOnce": FieldMetadata{Path:"stdinOnce",Type:"boolean",Format:"",Required:false},
-			"terminationMessagePath": FieldMetadata{Path:"terminationMessagePath",Type:"string",Format:"",Required:false},
-			"tty": FieldMetadata{Path:"tty",Type:"boolean",Format:"",Required:false},
-			"volumeDevices": FieldMetadata{Path:"volumeDevices",Type:"array",Format:"",Required:false},
-			"volumeMounts": FieldMetadata{Path:"volumeMounts",Type:"array",Format:"",Required:false},
-			"workingDir": FieldMetadata{Path:"workingDir",Type:"string",Format:"",Required:false},
+		ContainerDeferredFields = SchemaMetadata{
+			".args": FieldMetadata{Path:".args",Type:"array",Format:"",Required:false},
+			".command": FieldMetadata{Path:".command",Type:"array",Format:"",Required:false},
+			".env": FieldMetadata{Path:".env",Type:"array",Format:"",Required:false},
+			".envFrom": FieldMetadata{Path:".envFrom",Type:"array",Format:"",Required:false},
+			".image": FieldMetadata{Path:".image",Type:"string",Format:"",Required:false},
+			".imagePullPolicy": FieldMetadata{Path:".imagePullPolicy",Type:"string",Format:"",Required:false},
+			".lifecycle": FieldMetadata{Path:".lifecycle",Type:"",Format:"",Required:false},
+			".livenessProbe": FieldMetadata{Path:".livenessProbe",Type:"",Format:"",Required:false},
+			".name": FieldMetadata{Path:".name",Type:"string",Format:"string",Required:true},
+			".ports": FieldMetadata{Path:".ports",Type:"array",Format:"",Required:false},
+			".readinessProbe": FieldMetadata{Path:".readinessProbe",Type:"",Format:"",Required:false},
+			".resources": FieldMetadata{Path:".resources",Type:"",Format:"",Required:false},
+			".securityContext": FieldMetadata{Path:".securityContext",Type:"",Format:"",Required:false},
+			".startupProbe": FieldMetadata{Path:".startupProbe",Type:"",Format:"",Required:false},
+			".stdin": FieldMetadata{Path:".stdin",Type:"boolean",Format:"",Required:false},
+			".stdinOnce": FieldMetadata{Path:".stdinOnce",Type:"boolean",Format:"",Required:false},
+			".terminationMessagePath": FieldMetadata{Path:".terminationMessagePath",Type:"string",Format:"",Required:false},
+			".tty": FieldMetadata{Path:".tty",Type:"boolean",Format:"",Required:false},
+			".volumeDevices": FieldMetadata{Path:".volumeDevices",Type:"array",Format:"",Required:false},
+			".volumeMounts": FieldMetadata{Path:".volumeMounts",Type:"array",Format:"",Required:false},
+			".workingDir": FieldMetadata{Path:".workingDir",Type:"string",Format:"",Required:false},
 		}
-		PodDNSConfig = SchemaMetadata{
-			"nameservers": FieldMetadata{Path:"nameservers",Type:"array",Format:"",Required:false},
-			"options": FieldMetadata{Path:"options",Type:"array",Format:"",Required:false},
-			"searches": FieldMetadata{Path:"searches",Type:"array",Format:"",Required:false},
+		PodDNSConfigDeferredFields = SchemaMetadata{
+			".nameservers": FieldMetadata{Path:".nameservers",Type:"array",Format:"",Required:false},
+			".options": FieldMetadata{Path:".options",Type:"array",Format:"",Required:false},
+			".searches": FieldMetadata{Path:".searches",Type:"array",Format:"",Required:false},
 		}
-		PodSpec = SchemaMetadata{
-			"activeDeadlineSeconds": FieldMetadata{Path:"activeDeadlineSeconds",Type:"integer",Format:"int64",Required:false},
-			"affinity": FieldMetadata{Path:"affinity",Type:"",Format:"",Required:false},
-			"automountServiceAccountToken": FieldMetadata{Path:"automountServiceAccountToken",Type:"boolean",Format:"",Required:false},
-			"containers": FieldMetadata{Path:"containers",Type:"array",Format:"",Required:false},
-			"dnsConfig": FieldMetadata{Path:"dnsConfig",Type:"",Format:"",Required:false},
-			"dnsPolicy": FieldMetadata{Path:"dnsPolicy",Type:"string",Format:"",Required:false},
-			"hostPID": FieldMetadata{Path:"hostPID",Type:"boolean",Format:"",Required:false},
-			"hostname": FieldMetadata{Path:"hostname",Type:"string",Format:"string",Required:false},
-			"imagePullSecrets": FieldMetadata{Path:"imagePullSecrets",Type:"array",Format:"",Required:false},
-			"initContainers": FieldMetadata{Path:"initContainers",Type:"array",Format:"",Required:false},
-			"nodeSelector": FieldMetadata{Path:"nodeSelector",Type:"object",Format:"",Required:false},
-			"priority": FieldMetadata{Path:"priority",Type:"integer",Format:"int32",Required:false},
-			"restartPolicy": FieldMetadata{Path:"restartPolicy",Type:"string",Format:"",Required:false},
-			"runtimeClassName": FieldMetadata{Path:"runtimeClassName",Type:"string",Format:"",Required:false},
-			"schedulerName": FieldMetadata{Path:"schedulerName",Type:"string",Format:"",Required:false},
-			"securityContext": FieldMetadata{Path:"securityContext",Type:"",Format:"",Required:false},
-			"serviceAccountName": FieldMetadata{Path:"serviceAccountName",Type:"string",Format:"",Required:false},
-			"subdomain": FieldMetadata{Path:"subdomain",Type:"string",Format:"",Required:false},
-			"terminationGracePeriodSeconds": FieldMetadata{Path:"terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
-			"tolerations": FieldMetadata{Path:"tolerations",Type:"array",Format:"",Required:false},
-			"topologySpreadConstraints": FieldMetadata{Path:"topologySpreadConstraints",Type:"array",Format:"",Required:false},
-			"volumes": FieldMetadata{Path:"volumes",Type:"array",Format:"",Required:false},
+		PodSpecDeferredFields = SchemaMetadata{
+			".activeDeadlineSeconds": FieldMetadata{Path:".activeDeadlineSeconds",Type:"integer",Format:"int64",Required:false},
+			".affinity": FieldMetadata{Path:".affinity",Type:"",Format:"",Required:false},
+			".automountServiceAccountToken": FieldMetadata{Path:".automountServiceAccountToken",Type:"boolean",Format:"",Required:false},
+			".containers": FieldMetadata{Path:".containers",Type:"array",Format:"",Required:false},
+			".dnsConfig": FieldMetadata{Path:".dnsConfig",Type:"",Format:"",Required:false},
+			".dnsPolicy": FieldMetadata{Path:".dnsPolicy",Type:"string",Format:"",Required:false},
+			".hostPID": FieldMetadata{Path:".hostPID",Type:"boolean",Format:"",Required:false},
+			".hostname": FieldMetadata{Path:".hostname",Type:"string",Format:"string",Required:false},
+			".imagePullSecrets": FieldMetadata{Path:".imagePullSecrets",Type:"array",Format:"",Required:false},
+			".initContainers": FieldMetadata{Path:".initContainers",Type:"array",Format:"",Required:false},
+			".nodeSelector": FieldMetadata{Path:".nodeSelector",Type:"object",Format:"",Required:false},
+			".priority": FieldMetadata{Path:".priority",Type:"integer",Format:"int32",Required:false},
+			".restartPolicy": FieldMetadata{Path:".restartPolicy",Type:"string",Format:"",Required:false},
+			".runtimeClassName": FieldMetadata{Path:".runtimeClassName",Type:"string",Format:"",Required:false},
+			".schedulerName": FieldMetadata{Path:".schedulerName",Type:"string",Format:"",Required:false},
+			".securityContext": FieldMetadata{Path:".securityContext",Type:"",Format:"",Required:false},
+			".serviceAccountName": FieldMetadata{Path:".serviceAccountName",Type:"string",Format:"",Required:false},
+			".subdomain": FieldMetadata{Path:".subdomain",Type:"string",Format:"",Required:false},
+			".terminationGracePeriodSeconds": FieldMetadata{Path:".terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
+			".tolerations": FieldMetadata{Path:".tolerations",Type:"array",Format:"",Required:false},
+			".topologySpreadConstraints": FieldMetadata{Path:".topologySpreadConstraints",Type:"array",Format:"",Required:false},
+			".volumes": FieldMetadata{Path:".volumes",Type:"array",Format:"",Required:false},
 		}
-		Probe = SchemaMetadata{
-			"exec": FieldMetadata{Path:"exec",Type:"",Format:"",Required:false},
-			"failureThreshold": FieldMetadata{Path:"failureThreshold",Type:"integer",Format:"int32",Required:false},
-			"httpGet": FieldMetadata{Path:"httpGet",Type:"",Format:"",Required:false},
-			"initialDelaySeconds": FieldMetadata{Path:"initialDelaySeconds",Type:"integer",Format:"int32",Required:false},
-			"periodSeconds": FieldMetadata{Path:"periodSeconds",Type:"integer",Format:"int32",Required:false},
-			"successThreshold": FieldMetadata{Path:"successThreshold",Type:"integer",Format:"int32",Required:false},
-			"tcpSocket": FieldMetadata{Path:"tcpSocket",Type:"",Format:"",Required:false},
-			"terminationGracePeriodSeconds": FieldMetadata{Path:"terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
-			"timeoutSeconds": FieldMetadata{Path:"timeoutSeconds",Type:"integer",Format:"int32",Required:false},
+		ProbeDeferredFields = SchemaMetadata{
+			".exec": FieldMetadata{Path:".exec",Type:"",Format:"",Required:false},
+			".failureThreshold": FieldMetadata{Path:".failureThreshold",Type:"integer",Format:"int32",Required:false},
+			".httpGet": FieldMetadata{Path:".httpGet",Type:"",Format:"",Required:false},
+			".initialDelaySeconds": FieldMetadata{Path:".initialDelaySeconds",Type:"integer",Format:"int32",Required:false},
+			".periodSeconds": FieldMetadata{Path:".periodSeconds",Type:"integer",Format:"int32",Required:false},
+			".successThreshold": FieldMetadata{Path:".successThreshold",Type:"integer",Format:"int32",Required:false},
+			".tcpSocket": FieldMetadata{Path:".tcpSocket",Type:"",Format:"",Required:false},
+			".terminationGracePeriodSeconds": FieldMetadata{Path:".terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
+			".timeoutSeconds": FieldMetadata{Path:".timeoutSeconds",Type:"integer",Format:"int32",Required:false},
 		}
-		SecurityContext = SchemaMetadata{
-			"allowPrivilegeEscalation": FieldMetadata{Path:"allowPrivilegeEscalation",Type:"boolean",Format:"",Required:false},
-			"capabilities": FieldMetadata{Path:"capabilities",Type:"",Format:"",Required:false},
-			"privileged": FieldMetadata{Path:"privileged",Type:"boolean",Format:"",Required:false},
-			"readOnlyRootFilesystem": FieldMetadata{Path:"readOnlyRootFilesystem",Type:"boolean",Format:"",Required:false},
-			"runAsGroup": FieldMetadata{Path:"runAsGroup",Type:"integer",Format:"int64",Required:false},
-			"runAsNonRoot": FieldMetadata{Path:"runAsNonRoot",Type:"boolean",Format:"",Required:false},
-			"runAsUser": FieldMetadata{Path:"runAsUser",Type:"integer",Format:"int64",Required:false},
-			"seLinuxOptions": FieldMetadata{Path:"seLinuxOptions",Type:"",Format:"",Required:false},
+		SecurityContextDeferredFields = SchemaMetadata{
+			".allowPrivilegeEscalation": FieldMetadata{Path:".allowPrivilegeEscalation",Type:"boolean",Format:"",Required:false},
+			".capabilities": FieldMetadata{Path:".capabilities",Type:"",Format:"",Required:false},
+			".privileged": FieldMetadata{Path:".privileged",Type:"boolean",Format:"",Required:false},
+			".readOnlyRootFilesystem": FieldMetadata{Path:".readOnlyRootFilesystem",Type:"boolean",Format:"",Required:false},
+			".runAsGroup": FieldMetadata{Path:".runAsGroup",Type:"integer",Format:"int64",Required:false},
+			".runAsNonRoot": FieldMetadata{Path:".runAsNonRoot",Type:"boolean",Format:"",Required:false},
+			".runAsUser": FieldMetadata{Path:".runAsUser",Type:"integer",Format:"int64",Required:false},
+			".seLinuxOptions": FieldMetadata{Path:".seLinuxOptions",Type:"",Format:"",Required:false},
 		}
-		Toleration = SchemaMetadata{
-			"effect": FieldMetadata{Path:"effect",Type:"string",Format:"",Required:false},
-			"key": FieldMetadata{Path:"key",Type:"string",Format:"",Required:false},
-			"operator": FieldMetadata{Path:"operator",Type:"string",Format:"",Required:false},
-			"tolerationSeconds": FieldMetadata{Path:"tolerationSeconds",Type:"integer",Format:"int64",Required:false},
-			"value": FieldMetadata{Path:"value",Type:"string",Format:"",Required:false},
+		TolerationDeferredFields = SchemaMetadata{
+			".effect": FieldMetadata{Path:".effect",Type:"string",Format:"",Required:false},
+			".key": FieldMetadata{Path:".key",Type:"string",Format:"",Required:false},
+			".operator": FieldMetadata{Path:".operator",Type:"string",Format:"",Required:false},
+			".tolerationSeconds": FieldMetadata{Path:".tolerationSeconds",Type:"integer",Format:"int64",Required:false},
+			".value": FieldMetadata{Path:".value",Type:"string",Format:"",Required:false},
 		}
-		TopologySpreadConstraint = SchemaMetadata{
-			"labelSelector": FieldMetadata{Path:"labelSelector",Type:"",Format:"",Required:false},
-			"maxSkew": FieldMetadata{Path:"maxSkew",Type:"integer",Format:"int32",Required:true},
-			"topologyKey": FieldMetadata{Path:"topologyKey",Type:"string",Format:"",Required:true},
-			"whenUnsatisfiable": FieldMetadata{Path:"whenUnsatisfiable",Type:"string",Format:"",Required:true},
+		TopologySpreadConstraintDeferredFields = SchemaMetadata{
+			".labelSelector": FieldMetadata{Path:".labelSelector",Type:"",Format:"",Required:false},
+			".maxSkew": FieldMetadata{Path:".maxSkew",Type:"integer",Format:"int32",Required:true},
+			".topologyKey": FieldMetadata{Path:".topologyKey",Type:"string",Format:"",Required:true},
+			".whenUnsatisfiable": FieldMetadata{Path:".whenUnsatisfiable",Type:"string",Format:"",Required:true},
 		}
-		Volume = SchemaMetadata{
-			"awsElasticBlockStore": FieldMetadata{Path:"awsElasticBlockStore",Type:"",Format:"",Required:false},
-			"azureDisk": FieldMetadata{Path:"azureDisk",Type:"",Format:"",Required:false},
-			"azureFile": FieldMetadata{Path:"azureFile",Type:"",Format:"",Required:false},
-			"cephfs": FieldMetadata{Path:"cephfs",Type:"",Format:"",Required:false},
-			"cinder": FieldMetadata{Path:"cinder",Type:"",Format:"",Required:false},
-			"configMap": FieldMetadata{Path:"configMap",Type:"",Format:"",Required:false},
-			"csi": FieldMetadata{Path:"csi",Type:"",Format:"",Required:false},
-			"downwardAPI": FieldMetadata{Path:"downwardAPI",Type:"",Format:"",Required:false},
-			"emptyDir": FieldMetadata{Path:"emptyDir",Type:"",Format:"",Required:false},
-			"ephemeral": FieldMetadata{Path:"ephemeral",Type:"",Format:"",Required:false},
-			"fc": FieldMetadata{Path:"fc",Type:"",Format:"",Required:false},
-			"flexVolume": FieldMetadata{Path:"flexVolume",Type:"",Format:"",Required:false},
-			"flocker": FieldMetadata{Path:"flocker",Type:"",Format:"",Required:false},
-			"gcePersistentDisk": FieldMetadata{Path:"gcePersistentDisk",Type:"",Format:"",Required:false},
-			"gitRepo": FieldMetadata{Path:"gitRepo",Type:"",Format:"",Required:false},
-			"glusterfs": FieldMetadata{Path:"glusterfs",Type:"",Format:"",Required:false},
-			"hostPath": FieldMetadata{Path:"hostPath",Type:"",Format:"",Required:false},
-			"iscsi": FieldMetadata{Path:"iscsi",Type:"",Format:"",Required:false},
-			"name": FieldMetadata{Path:"name",Type:"string",Format:"string",Required:true},
-			"nfs": FieldMetadata{Path:"nfs",Type:"",Format:"",Required:false},
-			"persistentVolumeClaim": FieldMetadata{Path:"persistentVolumeClaim",Type:"",Format:"",Required:false},
-			"photonPersistentDisk": FieldMetadata{Path:"photonPersistentDisk",Type:"",Format:"",Required:false},
-			"portworxVolume": FieldMetadata{Path:"portworxVolume",Type:"",Format:"",Required:false},
-			"projected": FieldMetadata{Path:"projected",Type:"",Format:"",Required:false},
-			"quobyte": FieldMetadata{Path:"quobyte",Type:"",Format:"",Required:false},
-			"rbd": FieldMetadata{Path:"rbd",Type:"",Format:"",Required:false},
-			"scaleIO": FieldMetadata{Path:"scaleIO",Type:"",Format:"",Required:false},
-			"secret": FieldMetadata{Path:"secret",Type:"",Format:"",Required:false},
-			"storageos": FieldMetadata{Path:"storageos",Type:"",Format:"",Required:false},
-			"vsphereVolume": FieldMetadata{Path:"vsphereVolume",Type:"",Format:"",Required:false},
+		VolumeDeferredFields = SchemaMetadata{
+			".awsElasticBlockStore": FieldMetadata{Path:".awsElasticBlockStore",Type:"",Format:"",Required:false},
+			".azureDisk": FieldMetadata{Path:".azureDisk",Type:"",Format:"",Required:false},
+			".azureFile": FieldMetadata{Path:".azureFile",Type:"",Format:"",Required:false},
+			".cephfs": FieldMetadata{Path:".cephfs",Type:"",Format:"",Required:false},
+			".cinder": FieldMetadata{Path:".cinder",Type:"",Format:"",Required:false},
+			".configMap": FieldMetadata{Path:".configMap",Type:"",Format:"",Required:false},
+			".csi": FieldMetadata{Path:".csi",Type:"",Format:"",Required:false},
+			".downwardAPI": FieldMetadata{Path:".downwardAPI",Type:"",Format:"",Required:false},
+			".emptyDir": FieldMetadata{Path:".emptyDir",Type:"",Format:"",Required:false},
+			".ephemeral": FieldMetadata{Path:".ephemeral",Type:"",Format:"",Required:false},
+			".fc": FieldMetadata{Path:".fc",Type:"",Format:"",Required:false},
+			".flexVolume": FieldMetadata{Path:".flexVolume",Type:"",Format:"",Required:false},
+			".flocker": FieldMetadata{Path:".flocker",Type:"",Format:"",Required:false},
+			".gcePersistentDisk": FieldMetadata{Path:".gcePersistentDisk",Type:"",Format:"",Required:false},
+			".gitRepo": FieldMetadata{Path:".gitRepo",Type:"",Format:"",Required:false},
+			".glusterfs": FieldMetadata{Path:".glusterfs",Type:"",Format:"",Required:false},
+			".hostPath": FieldMetadata{Path:".hostPath",Type:"",Format:"",Required:false},
+			".iscsi": FieldMetadata{Path:".iscsi",Type:"",Format:"",Required:false},
+			".name": FieldMetadata{Path:".name",Type:"string",Format:"string",Required:true},
+			".nfs": FieldMetadata{Path:".nfs",Type:"",Format:"",Required:false},
+			".persistentVolumeClaim": FieldMetadata{Path:".persistentVolumeClaim",Type:"",Format:"",Required:false},
+			".photonPersistentDisk": FieldMetadata{Path:".photonPersistentDisk",Type:"",Format:"",Required:false},
+			".portworxVolume": FieldMetadata{Path:".portworxVolume",Type:"",Format:"",Required:false},
+			".projected": FieldMetadata{Path:".projected",Type:"",Format:"",Required:false},
+			".quobyte": FieldMetadata{Path:".quobyte",Type:"",Format:"",Required:false},
+			".rbd": FieldMetadata{Path:".rbd",Type:"",Format:"",Required:false},
+			".scaleIO": FieldMetadata{Path:".scaleIO",Type:"",Format:"",Required:false},
+			".secret": FieldMetadata{Path:".secret",Type:"",Format:"",Required:false},
+			".storageos": FieldMetadata{Path:".storageos",Type:"",Format:"",Required:false},
+			".vsphereVolume": FieldMetadata{Path:".vsphereVolume",Type:"",Format:"",Required:false},
 		}
 	})
 }
 
-// LookupStructural returns the FieldMetadata for a given path, or false if not found.
-func LookupStructural(path string) (FieldMetadata, bool) {
-	m, ok := structuralIndex[path]
+// LookupDeferredField returns the FieldMetadata for a given path, or false if not found.
+func LookupDeferredField(path string) (FieldMetadata, bool) {
+	m, ok := deferredFieldIndex[path]
 	return m, ok
 }
 
 // GetAllSchemas returns all registered schema metadata (for testing).
 func GetAllSchemas() map[string]SchemaMetadata {
 	return map[string]SchemaMetadata{
-		"io.k8s.api.core.v1.Affinity": Affinity,
-		"io.k8s.api.core.v1.Container": Container,
-		"io.k8s.api.core.v1.PodDNSConfig": PodDNSConfig,
-		"io.k8s.api.core.v1.PodSpec": PodSpec,
-		"io.k8s.api.core.v1.Probe": Probe,
-		"io.k8s.api.core.v1.SecurityContext": SecurityContext,
-		"io.k8s.api.core.v1.Toleration": Toleration,
-		"io.k8s.api.core.v1.TopologySpreadConstraint": TopologySpreadConstraint,
-		"io.k8s.api.core.v1.Volume": Volume,
+		"io.k8s.api.core.v1.Affinity": AffinityDeferredFields,
+		"io.k8s.api.core.v1.Container": ContainerDeferredFields,
+		"io.k8s.api.core.v1.PodDNSConfig": PodDNSConfigDeferredFields,
+		"io.k8s.api.core.v1.PodSpec": PodSpecDeferredFields,
+		"io.k8s.api.core.v1.Probe": ProbeDeferredFields,
+		"io.k8s.api.core.v1.SecurityContext": SecurityContextDeferredFields,
+		"io.k8s.api.core.v1.Toleration": TolerationDeferredFields,
+		"io.k8s.api.core.v1.TopologySpreadConstraint": TopologySpreadConstraintDeferredFields,
+		"io.k8s.api.core.v1.Volume": VolumeDeferredFields,
 	}
 }

@@ -19,26 +19,26 @@ var schemaFS embed.FS
 
 // OpenAPISchema represents the structure of an OpenAPI v3 schema file.
 type OpenAPISchema struct {
-	Type        string                 `json:"type,omitempty"`
-	Format      string                 `json:"format,omitempty"`
-	Description string                 `json:"description,omitempty"`
+	Type        string                    `json:"type,omitempty"`
+	Format      string                    `json:"format,omitempty"`
+	Description string                    `json:"description,omitempty"`
 	Properties  map[string]*OpenAPISchema `json:"properties,omitempty"`
-	Items       *OpenAPISchema         `json:"items,omitempty"`
-	Required    []string               `json:"required,omitempty"`
-	Enum        []any                  `json:"enum,omitempty"`
-	Minimum     *float64               `json:"minimum,omitempty"`
-	Maximum     *float64               `json:"maximum,omitempty"`
+	Items       *OpenAPISchema            `json:"items,omitempty"`
+	Required    []string                  `json:"required,omitempty"`
+	Enum        []any                     `json:"enum,omitempty"`
+	Minimum     *float64                  `json:"minimum,omitempty"`
+	Maximum     *float64                  `json:"maximum,omitempty"`
 }
 
 // FieldMetadata encodes a single field's structural validation rules from the k8s OpenAPI schema.
 type FieldMetadata struct {
-	Path       string
-	Type       string
-	Format     string
-	Required   bool
-	EnumValues []string
-	RangeMin   *float64
-	RangeMax   *float64
+	Path       string   `json:"path" yaml:"path"`
+	Type       string   `json:"type" yaml:"type"`
+	Format     string   `json:"format,omitempty" yaml:"format,omitempty"`
+	Required   bool     `json:"required" yaml:"required"`
+	EnumValues []string `json:"enumValues,omitempty" yaml:"enumValues,omitempty"`
+	MinValue   *float64 `json:"minValue,omitempty" yaml:"minValue,omitempty"`
+	MaxValue   *float64 `json:"maxValue,omitempty" yaml:"maxValue,omitempty"`
 }
 
 // SchemaMetadata holds all field metadata for a given struct type.
@@ -109,13 +109,13 @@ func generateOutput(schemas []string) string {
 	// Write type definitions
 	sb.WriteString("// FieldMetadata encodes a single field's structural validation rules from the k8s OpenAPI schema.\n")
 	sb.WriteString("type FieldMetadata struct {\n")
-	sb.WriteString("\tPath       string\n")
-	sb.WriteString("\tType       string\n")
-	sb.WriteString("\tFormat     string\n")
-	sb.WriteString("\tRequired   bool\n")
-	sb.WriteString("\tEnumValues []string\n")
-	sb.WriteString("\tRangeMin   *float64\n")
-	sb.WriteString("\tRangeMax   *float64\n")
+	sb.WriteString("\tPath       string   `json:\"path\" yaml:\"path\"`\n")
+	sb.WriteString("\tType       string   `json:\"type\" yaml:\"type\"`\n")
+	sb.WriteString("\tFormat     string   `json:\"format,omitempty\" yaml:\"format,omitempty\"`\n")
+	sb.WriteString("\tRequired   bool     `json:\"required\" yaml:\"required\"`\n")
+	sb.WriteString("\tEnumValues []string `json:\"enumValues,omitempty\" yaml:\"enumValues,omitempty\"`\n")
+	sb.WriteString("\tMinValue   *float64 `json:\"minValue,omitempty\" yaml:\"minValue,omitempty\"`\n")
+	sb.WriteString("\tMaxValue   *float64 `json:\"maxValue,omitempty\" yaml:\"maxValue,omitempty\"`\n")
 	sb.WriteString("}\n\n")
 
 	sb.WriteString("// SchemaMetadata holds all field metadata for a given struct type.\n")
@@ -136,18 +136,18 @@ func generateOutput(schemas []string) string {
 	typeNames := sortedTypes(allMetadata)
 	for _, typeName := range typeNames {
 		upperName := toUpperName(typeName)
-		sb.WriteString(fmt.Sprintf("// %s contains structural metadata for %s.\n", upperName, typeName))
-		sb.WriteString(fmt.Sprintf("var %s SchemaMetadata\n\n", upperName))
+		sb.WriteString(fmt.Sprintf("// %sDeferredFields contains structural metadata for %s.\n", upperName, typeName))
+		sb.WriteString(fmt.Sprintf("var %sDeferredFields SchemaMetadata\n\n", upperName))
 	}
 
 	// Write init function that populates both the flat index AND the per-schema vars
 	sb.WriteString("var (\n")
-	sb.WriteString("\tstructuralIndex map[string]FieldMetadata\n")
-	sb.WriteString("\tstructuralOnce  sync.Once\n")
+	sb.WriteString("\tdeferredFieldIndex map[string]FieldMetadata\n")
+	sb.WriteString("\tdeferredFieldInit  sync.Once\n")
 	sb.WriteString(")\n\n")
 	sb.WriteString("func init() {\n")
-	sb.WriteString("\tstructuralOnce.Do(func() {\n")
-	sb.WriteString("\t\tstructuralIndex = make(map[string]FieldMetadata)\n")
+	sb.WriteString("\tdeferredFieldInit.Do(func() {\n")
+	sb.WriteString("\t\tdeferredFieldIndex = make(map[string]FieldMetadata)\n")
 
 	// Collect entries sorted by path for determinism
 	type initEntry struct {
@@ -164,15 +164,15 @@ func generateOutput(schemas []string) string {
 
 	for _, e := range allEntries {
 		m := e.meta
-		fmt.Fprintf(&sb, "\t\tstructuralIndex[%q] = FieldMetadata{Path:%q,Type:%q,Format:%q,Required:%v", e.path, e.path, m.Type, m.Format, m.Required)
+		fmt.Fprintf(&sb, "\t\tdeferredFieldIndex[%q] = FieldMetadata{Path:%q,Type:%q,Format:%q,Required:%v", e.path, e.path, m.Type, m.Format, m.Required)
 		if len(m.EnumValues) > 0 {
 			fmt.Fprintf(&sb, ",EnumValues:%v", quotedSlice(m.EnumValues))
 		}
-		if m.RangeMin != nil {
-			fmt.Fprintf(&sb, ",RangeMin:%v", floatPtrStr(*m.RangeMin))
+		if m.MinValue != nil {
+			fmt.Fprintf(&sb, ",MinValue:%v", floatPtrStr(*m.MinValue))
 		}
-		if m.RangeMax != nil {
-			fmt.Fprintf(&sb, ",RangeMax:%v", floatPtrStr(*m.RangeMax))
+		if m.MaxValue != nil {
+			fmt.Fprintf(&sb, ",MaxValue:%v", floatPtrStr(*m.MaxValue))
 		}
 		sb.WriteString("}\n")
 	}
@@ -184,7 +184,7 @@ func generateOutput(schemas []string) string {
 		if len(metadata) == 0 {
 			continue
 		}
-		sb.WriteString(fmt.Sprintf("\t\t%s = SchemaMetadata{\n", upperName))
+		sb.WriteString(fmt.Sprintf("\t\t%sDeferredFields = SchemaMetadata{\n", upperName))
 		// Sort entries by path
 		entries := make([]initEntry, 0, len(metadata))
 		for path, meta := range metadata {
@@ -199,11 +199,11 @@ func generateOutput(schemas []string) string {
 			if len(m.EnumValues) > 0 {
 				fmt.Fprintf(&sb, ",EnumValues:%v", quotedSlice(m.EnumValues))
 			}
-			if m.RangeMin != nil {
-				fmt.Fprintf(&sb, ",RangeMin:%v", floatPtrStr(*m.RangeMin))
+			if m.MinValue != nil {
+				fmt.Fprintf(&sb, ",MinValue:%v", floatPtrStr(*m.MinValue))
 			}
-			if m.RangeMax != nil {
-				fmt.Fprintf(&sb, ",RangeMax:%v", floatPtrStr(*m.RangeMax))
+			if m.MaxValue != nil {
+				fmt.Fprintf(&sb, ",MaxValue:%v", floatPtrStr(*m.MaxValue))
 			}
 			sb.WriteString("},\n")
 		}
@@ -213,10 +213,10 @@ func generateOutput(schemas []string) string {
 	sb.WriteString("\t})\n")
 	sb.WriteString("}\n\n")
 
-	// Write LookupStructural function
-	sb.WriteString("// LookupStructural returns the FieldMetadata for a given path, or false if not found.\n")
-	sb.WriteString("func LookupStructural(path string) (FieldMetadata, bool) {\n")
-	sb.WriteString("\tm, ok := structuralIndex[path]\n")
+	// Write LookupDeferredField function
+	sb.WriteString("// LookupDeferredField returns the FieldMetadata for a given path, or false if not found.\n")
+	sb.WriteString("func LookupDeferredField(path string) (FieldMetadata, bool) {\n")
+	sb.WriteString("\tm, ok := deferredFieldIndex[path]\n")
 	sb.WriteString("\treturn m, ok\n")
 	sb.WriteString("}\n\n")
 
@@ -226,7 +226,7 @@ func generateOutput(schemas []string) string {
 	sb.WriteString("\treturn map[string]SchemaMetadata{\n")
 	for _, typeName := range typeNames {
 		upperName := toUpperName(typeName)
-		fmt.Fprintf(&sb, "\t\t%q: %s,\n", typeName, upperName)
+		fmt.Fprintf(&sb, "\t\t%q: %sDeferredFields,\n", typeName, upperName)
 	}
 	sb.WriteString("\t}\n")
 	sb.WriteString("}\n")
@@ -277,7 +277,11 @@ func extractMetadata(typeName string, schema *OpenAPISchema, prefix string) Sche
 
 func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix string, requiredSet map[string]bool, metadata SchemaMetadata) {
 	for propName, propSchema := range properties {
-		path := propName
+		// Issue 1 fix: construct full JSON paths from schema root.
+		// Prefix starts as "." (the type root), so first-level fields get paths like ".name".
+		// Nested object fields get paths like ".affinity.podAffinity".
+		// Array item fields get paths like ".containers[*].name".
+		path := "." + propName
 		if prefix != "" {
 			path = prefix + "." + propName
 		}
@@ -308,11 +312,11 @@ func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix
 		// Handle range constraints
 		if propSchema.Minimum != nil {
 			min := *propSchema.Minimum
-			field.RangeMin = &min
+			field.MinValue = &min
 		}
 		if propSchema.Maximum != nil {
 			max := *propSchema.Maximum
-			field.RangeMax = &max
+			field.MaxValue = &max
 		}
 
 		metadata[path] = field
