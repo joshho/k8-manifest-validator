@@ -132,7 +132,14 @@ func generateOutput(schemas []string) string {
 	allPaths := make(map[string]FieldMetadata) // path -> first metadata seen
 	for _, typeName := range sortedTypes(allMetadata) {
 		metadata := allMetadata[typeName]
-		for path, meta := range metadata {
+		// Sort keys for deterministic iteration (Go map iteration is randomized)
+		paths := make([]string, 0, len(metadata))
+		for p := range metadata {
+			paths = append(paths, p)
+		}
+		sort.Strings(paths)
+		for _, path := range paths {
+			meta := metadata[path]
 			if _, exists := allPaths[path]; !exists {
 				allPaths[path] = meta
 			}
@@ -389,7 +396,10 @@ func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix
 			}
 		}
 
-		// Resolve $ref by loading the referenced schema and recursing
+		// Resolve $ref by loading the referenced schema and recursing.
+		// Use fresh cycle-detection maps so the same referenced type can be
+		// extracted under multiple field prefixes (e.g. livenessProbe, readinessProbe,
+		// and startupProbe all $ref Probe).
 		if propSchema.Ref != "" {
 			refTypeName := strings.TrimPrefix(propSchema.Ref, "#/components/schemas/")
 			if refTypeName != propSchema.Ref {
@@ -399,7 +409,9 @@ func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix
 					for _, req := range refSchema.Required {
 						refRequired[req] = true
 					}
-					extractFields(refTypeName, refSchema.Properties, path, refRequired, metadata, processing, finished)
+					refProcessing := make(map[string]bool)
+					refFinished := make(map[string]bool)
+					extractFields(refTypeName, refSchema.Properties, path, refRequired, metadata, refProcessing, refFinished)
 				}
 			}
 		}
