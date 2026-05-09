@@ -765,6 +765,9 @@ func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.E
 	// PodSpec validation
 	allErrs = append(allErrs, validatePodSpec(&deploy.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
 
+	// Phase 2: structural validation for deferred fields
+	allErrs = append(allErrs, RunStructuralValidation(deploy, field.NewPath(""))...)
+
 	return allErrs
 }
 
@@ -794,6 +797,9 @@ func (v *BuiltinValidator) validateStatefulSet(ss *appsv1.StatefulSet) field.Err
 	// PodSpec validation (pass volumeClaimTemplate names as extra valid volume names)
 	allErrs = append(allErrs, validatePodSpec(&ss.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false, vctNames)...)
 
+	// Phase 2: structural validation for deferred fields
+	allErrs = append(allErrs, RunStructuralValidation(ss, field.NewPath(""))...)
+
 	return allErrs
 }
 
@@ -812,6 +818,9 @@ func (v *BuiltinValidator) validateDaemonSet(ds *appsv1.DaemonSet) field.ErrorLi
 
 	// PodSpec validation
 	allErrs = append(allErrs, validatePodSpec(&ds.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
+
+	// Phase 2: structural validation for deferred fields
+	allErrs = append(allErrs, RunStructuralValidation(ds, field.NewPath(""))...)
 
 	return allErrs
 }
@@ -836,6 +845,9 @@ func (v *BuiltinValidator) validateReplicaSet(rs *appsv1.ReplicaSet) field.Error
 	// PodSpec validation
 	allErrs = append(allErrs, validatePodSpec(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
 
+	// Phase 2: structural validation for deferred fields
+	allErrs = append(allErrs, RunStructuralValidation(rs, field.NewPath(""))...)
+
 	return allErrs
 }
 
@@ -854,6 +866,9 @@ func (v *BuiltinValidator) validateReplicationController(rc *corev1.ReplicationC
 	// AWU-4: validate PodSpec (skipProbes=false for long-running workload)
 	allErrs = append(allErrs, validatePodSpec(&rc.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
 
+	// Phase 2: structural validation for deferred fields
+	allErrs = append(allErrs, RunStructuralValidation(rc, field.NewPath(""))...)
+
 	return allErrs
 }
 
@@ -863,6 +878,9 @@ func (v *BuiltinValidator) validatePod(pod *corev1.Pod) field.ErrorList {
 
 	// Validate pod spec
 	allErrs = append(allErrs, validatePodSpec(&pod.Spec, field.NewPath("spec"), false)...)
+
+	// Phase 2: structural validation for deferred fields
+	allErrs = append(allErrs, RunStructuralValidation(pod, field.NewPath(""))...)
 
 	return allErrs
 }
@@ -981,6 +999,9 @@ func (v *BuiltinValidator) validateJob(job *batchv1.Job) field.ErrorList {
 	// AWU-3: validate PodSpec (skipProbes=true for batch workloads)
 	allErrs = append(allErrs, validatePodSpec(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), true)...)
 
+	// Phase 2: structural validation for deferred fields
+	allErrs = append(allErrs, RunStructuralValidation(job, field.NewPath(""))...)
+
 	return allErrs
 }
 
@@ -998,6 +1019,9 @@ func (v *BuiltinValidator) validateCronJob(cj *batchv1.CronJob) field.ErrorList 
 
 	// AWU-3: validate PodSpec (skipProbes=true for batch workloads)
 	allErrs = append(allErrs, validatePodSpec(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"), true)...)
+
+	// Phase 2: structural validation for deferred fields
+	allErrs = append(allErrs, RunStructuralValidation(cj, field.NewPath(""))...)
 
 	return allErrs
 }

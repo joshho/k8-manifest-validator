@@ -2,6 +2,7 @@ package validator
 
 import (
 	"reflect"
+	"strings"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/validation/field"
@@ -118,7 +119,9 @@ func walkStruct(val reflect.Value, path *field.Path, visitor fieldVisitor) {
 		fieldVal := val.Field(i)
 
 		// Construct JSON-path-like field path from struct field (lowerCamelCase -> .lowerCamelCase).
-		fieldPath := path.Key(sf.Name)
+		// Normalize: Go struct fields are TitleCase, but deferredFieldIndex uses lowercase keys.
+		lower := strings.ToLower(sf.Name[:1]) + sf.Name[1:]
+		fieldPath := path.Key(lower)
 
 		// Look up in deferred field index.
 		key := fieldPath.String()
