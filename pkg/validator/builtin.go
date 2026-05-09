@@ -844,13 +844,18 @@ func (v *BuiltinValidator) validateReplicationController(rc *corev1.ReplicationC
 	var allErrs field.ErrorList
 	allErrs = append(allErrs, validation.ValidateObjectMeta(&rc.ObjectMeta, true, nameValidator, field.NewPath("metadata"))...)
 
+
 	if rc.Spec.Replicas != nil && *rc.Spec.Replicas < 0 {
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "replicas"), *rc.Spec.Replicas, "must be >= 0"))
 	}
 
+
 	if len(rc.Spec.Selector) == 0 {
 		allErrs = append(allErrs, field.Required(field.NewPath("spec", "selector"), ""))
 	}
+
+	// AWU-4: validate PodSpec (skipProbes=false for long-running workload)
+	allErrs = append(allErrs, validatePodSpec(&rc.Spec.Template.Spec, field.NewPath("spec", "template", "spec"), false)...)
 
 	return allErrs
 }

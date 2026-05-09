@@ -717,3 +717,74 @@ spec:
 		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
 	}
 }
+
+// --- AWU-4: TDD failing tests for ReplicationController PodSpec validation ---
+
+func TestBuiltinValidatorDetectsInvalidContainerInReplicationController(t *testing.T) {
+	invalidYAML := []byte(`apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: test-rc
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    app: test
+  template:
+    metadata:
+      labels:
+        app: test
+    spec:
+      containers:
+      - name: Bad_Name
+        image: nginx
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(invalidYAML)
+	if result.Status != "invalid" {
+		t.Errorf("expected invalid, got %s: %v", result.Status, result.Errors)
+	}
+	if len(result.Errors) > 0 && !containsField(result.Errors[0].Field, "containers[0].name") {
+		t.Errorf("expected error on containers[0].name, got %s", result.Errors[0].Field)
+	}
+}
+
+func TestBuiltinValidatorAcceptsValidReplicationController(t *testing.T) {
+	validYAML := []byte(`apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: valid-rc
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    app: valid
+  template:
+    metadata:
+      labels:
+        app: valid
+    spec:
+      containers:
+      - name: app
+        image: nginx:1.21
+        ports:
+        - containerPort: 8080
+        env:
+        - name: FOO
+          value: bar
+        resources:
+          limits:
+            cpu: "1"
+            memory: 512Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+`)
+
+	bv := NewBuiltinValidator()
+	result := bv.ValidateResource(validYAML)
+	if result.Status != "valid" {
+		t.Errorf("expected valid, got %s: %v", result.Status, result.Errors)
+	}
+}
