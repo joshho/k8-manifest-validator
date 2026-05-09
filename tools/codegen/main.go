@@ -19,6 +19,7 @@ var schemaFS embed.FS
 
 // OpenAPISchema represents the structure of an OpenAPI v3 schema file.
 type OpenAPISchema struct {
+	Ref         string                    `json:"$ref,omitempty"`
 	Type        string                    `json:"type,omitempty"`
 	Format      string                    `json:"format,omitempty"`
 	Description string                    `json:"description,omitempty"`
@@ -288,12 +289,38 @@ func extractMetadata(typeName string, schema *OpenAPISchema, prefix string) Sche
 		requiredSet[req] = true
 	}
 
-	extractFields(typeName, schema.Properties, prefix, requiredSet, metadata)
+	processing := make(map[string]bool)
+	finished := make(map[string]bool)
+	extractFields(typeName, schema.Properties, prefix, requiredSet, metadata, processing, finished)
 
 	return metadata
 }
 
-func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix string, requiredSet map[string]bool, metadata SchemaMetadata) {
+// loadSchema loads a schema from the embedded fs by type name.
+// The typeName is expected to be in the format "io.k8s.api.core.v1.TypeName".
+func loadSchemaFromName(typeName string) (*OpenAPISchema, string, error) {
+	fileName := typeName + ".json"
+	schema, err := loadSchema(fileName)
+	if err != nil {
+		return nil, "", err
+	}
+	return schema, typeName, nil
+}
+
+func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix string, requiredSet map[string]bool, metadata SchemaMetadata, processing, finished map[string]bool) {
+	// Cycle detection
+	if finished[typeName] {
+		return
+	}
+	if processing[typeName] {
+		return
+	}
+	processing[typeName] = true
+	defer func() {
+		processing[typeName] = false
+		finished[typeName] = true
+	}()
+
 	for propName, propSchema := range properties {
 		// Issue 1 fix: construct full JSON paths from schema root.
 		// Prefix starts as "." (the type root), so first-level fields get paths like ".name".
@@ -351,14 +378,29 @@ func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix
 
 		// Recurse into nested objects
 		if fieldType == "object" && propSchema.Properties != nil {
-			extractFields(typeName, propSchema.Properties, path, requiredSet, metadata)
+			extractFields(typeName, propSchema.Properties, path, requiredSet, metadata, processing, finished)
 		}
 
 		// Handle array items - recurse into items' properties
 		if propType := propSchema.Type; propType == "array" && propSchema.Items != nil {
 			if propSchema.Items.Properties != nil {
 				nestedPrefix := path + "[*]"
-				extractFields(typeName, propSchema.Items.Properties, nestedPrefix, requiredSet, metadata)
+				extractFields(typeName, propSchema.Items.Properties, nestedPrefix, requiredSet, metadata, processing, finished)
+			}
+		}
+
+		// Resolve $ref by loading the referenced schema and recursing
+		if propSchema.Ref != "" {
+			refTypeName := strings.TrimPrefix(propSchema.Ref, "#/components/schemas/")
+			if refTypeName != propSchema.Ref {
+				refSchema, _, err := loadSchemaFromName(refTypeName)
+				if err == nil && refSchema.Properties != nil {
+					refRequired := make(map[string]bool)
+					for _, req := range refSchema.Required {
+						refRequired[req] = true
+					}
+					extractFields(refTypeName, refSchema.Properties, path, refRequired, metadata, processing, finished)
+				}
 			}
 		}
 	}
