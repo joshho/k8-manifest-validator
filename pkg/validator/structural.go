@@ -154,17 +154,16 @@ func walkStruct(val reflect.Value, path *field.Path, visitor fieldVisitor) {
 	typ := val.Type()
 	for i := 0; i < typ.NumField(); i++ {
 		sf := typ.Field(i)
+		fieldVal := val.Field(i)
 
-		// Skip anonymous/embedded struct fields to avoid double-visiting inherited
-		// ObjectMeta fields. Only recurse into named (non-embedded) struct fields.
-		if sf.Anonymous {
+		if sf.Anonymous && fieldVal.Kind() == reflect.Struct {
+			// Recurse into anonymous embedded structs to follow chains
+			// like Volume -> VolumeSource -> AzureFile.
+			walkStruct(fieldVal, path, visitor)
 			continue
 		}
 
-		fieldVal := val.Field(i)
-
-		// Construct JSON-path-like field path from struct field (lowerCamelCase -> .lowerCamelCase).
-		// Normalize: Go struct fields are TitleCase, but deferredFieldIndex uses lowercase keys.
+		// Construct the JSON-path-like field path from struct field (lowerCamelCase -> .lowerCamelCase).
 		lower := strings.ToLower(sf.Name[:1]) + sf.Name[1:]
 		fieldPath := path.Key(lower)
 
