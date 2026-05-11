@@ -348,10 +348,149 @@ func init() {
 		deferredFieldIndex[".configMap.name"] = FieldMetadata{Path:".configMap.name",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".configMap.optional"] = FieldMetadata{Path:".configMap.optional",Type:"boolean",Format:"",Required:false}
 		deferredFieldIndex[".configMapKeyRef"] = FieldMetadata{Path:".configMapKeyRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".configMapKeyRef.key"] = FieldMetadata{Path:".configMapKeyRef.key",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".configMapKeyRef.name"] = FieldMetadata{Path:".configMapKeyRef.name",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".configMapKeyRef.optional"] = FieldMetadata{Path:".configMapKeyRef.optional",Type:"boolean",Format:"",Required:false}
 		deferredFieldIndex[".configMapRef"] = FieldMetadata{Path:".configMapRef",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".containerName"] = FieldMetadata{Path:".containerName",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".containerPort"] = FieldMetadata{Path:".containerPort",Type:"integer",Format:"",Required:true}
 		deferredFieldIndex[".containers"] = FieldMetadata{Path:".containers",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].args"] = FieldMetadata{Path:".containers[*].args",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].command"] = FieldMetadata{Path:".containers[*].command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].env"] = FieldMetadata{Path:".containers[*].env",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].envFrom"] = FieldMetadata{Path:".containers[*].envFrom",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].envFrom[*].configMapRef"] = FieldMetadata{Path:".containers[*].envFrom[*].configMapRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].envFrom[*].prefix"] = FieldMetadata{Path:".containers[*].envFrom[*].prefix",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].envFrom[*].secretRef"] = FieldMetadata{Path:".containers[*].envFrom[*].secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].env[*].name"] = FieldMetadata{Path:".containers[*].env[*].name",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].env[*].value"] = FieldMetadata{Path:".containers[*].env[*].value",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].env[*].valueFrom"] = FieldMetadata{Path:".containers[*].env[*].valueFrom",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].image"] = FieldMetadata{Path:".containers[*].image",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].imagePullPolicy"] = FieldMetadata{Path:".containers[*].imagePullPolicy",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle"] = FieldMetadata{Path:".containers[*].lifecycle",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart"] = FieldMetadata{Path:".containers[*].lifecycle.postStart",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.exec"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.exec.command"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.httpGet"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.httpGet.host"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.httpGet.httpHeaders"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.httpGet.path"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.httpGet.port"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.httpGet.scheme"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.sleep"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.sleep",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.tcpSocket"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.tcpSocket.host"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.postStart.tcpSocket.port"] = FieldMetadata{Path:".containers[*].lifecycle.postStart.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].lifecycle.preStop"] = FieldMetadata{Path:".containers[*].lifecycle.preStop",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.exec"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.exec.command"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.httpGet"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.httpGet.host"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.httpGet.httpHeaders"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.httpGet.path"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.httpGet.port"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.httpGet.scheme"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.sleep"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.sleep",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.tcpSocket"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.tcpSocket.host"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].lifecycle.preStop.tcpSocket.port"] = FieldMetadata{Path:".containers[*].lifecycle.preStop.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].lifecycle.stopSignal"] = FieldMetadata{Path:".containers[*].lifecycle.stopSignal",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe"] = FieldMetadata{Path:".containers[*].livenessProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.exec"] = FieldMetadata{Path:".containers[*].livenessProbe.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.exec.command"] = FieldMetadata{Path:".containers[*].livenessProbe.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.failureThreshold"] = FieldMetadata{Path:".containers[*].livenessProbe.failureThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.httpGet"] = FieldMetadata{Path:".containers[*].livenessProbe.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.httpGet.host"] = FieldMetadata{Path:".containers[*].livenessProbe.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.httpGet.httpHeaders"] = FieldMetadata{Path:".containers[*].livenessProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.httpGet.path"] = FieldMetadata{Path:".containers[*].livenessProbe.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.httpGet.port"] = FieldMetadata{Path:".containers[*].livenessProbe.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].livenessProbe.httpGet.scheme"] = FieldMetadata{Path:".containers[*].livenessProbe.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.initialDelaySeconds"] = FieldMetadata{Path:".containers[*].livenessProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.periodSeconds"] = FieldMetadata{Path:".containers[*].livenessProbe.periodSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.successThreshold"] = FieldMetadata{Path:".containers[*].livenessProbe.successThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.tcpSocket"] = FieldMetadata{Path:".containers[*].livenessProbe.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.tcpSocket.host"] = FieldMetadata{Path:".containers[*].livenessProbe.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.tcpSocket.port"] = FieldMetadata{Path:".containers[*].livenessProbe.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].livenessProbe.terminationGracePeriodSeconds"] = FieldMetadata{Path:".containers[*].livenessProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".containers[*].livenessProbe.timeoutSeconds"] = FieldMetadata{Path:".containers[*].livenessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].name"] = FieldMetadata{Path:".containers[*].name",Type:"string",Format:"string",Required:true}
+		deferredFieldIndex[".containers[*].ports"] = FieldMetadata{Path:".containers[*].ports",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].ports[*].containerPort"] = FieldMetadata{Path:".containers[*].ports[*].containerPort",Type:"integer",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].ports[*].hostIP"] = FieldMetadata{Path:".containers[*].ports[*].hostIP",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].ports[*].hostPort"] = FieldMetadata{Path:".containers[*].ports[*].hostPort",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].ports[*].name"] = FieldMetadata{Path:".containers[*].ports[*].name",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].ports[*].protocol"] = FieldMetadata{Path:".containers[*].ports[*].protocol",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe"] = FieldMetadata{Path:".containers[*].readinessProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.exec"] = FieldMetadata{Path:".containers[*].readinessProbe.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.exec.command"] = FieldMetadata{Path:".containers[*].readinessProbe.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.failureThreshold"] = FieldMetadata{Path:".containers[*].readinessProbe.failureThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.httpGet"] = FieldMetadata{Path:".containers[*].readinessProbe.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.httpGet.host"] = FieldMetadata{Path:".containers[*].readinessProbe.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.httpGet.httpHeaders"] = FieldMetadata{Path:".containers[*].readinessProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.httpGet.path"] = FieldMetadata{Path:".containers[*].readinessProbe.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.httpGet.port"] = FieldMetadata{Path:".containers[*].readinessProbe.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].readinessProbe.httpGet.scheme"] = FieldMetadata{Path:".containers[*].readinessProbe.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.initialDelaySeconds"] = FieldMetadata{Path:".containers[*].readinessProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.periodSeconds"] = FieldMetadata{Path:".containers[*].readinessProbe.periodSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.successThreshold"] = FieldMetadata{Path:".containers[*].readinessProbe.successThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.tcpSocket"] = FieldMetadata{Path:".containers[*].readinessProbe.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.tcpSocket.host"] = FieldMetadata{Path:".containers[*].readinessProbe.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.tcpSocket.port"] = FieldMetadata{Path:".containers[*].readinessProbe.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].readinessProbe.terminationGracePeriodSeconds"] = FieldMetadata{Path:".containers[*].readinessProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".containers[*].readinessProbe.timeoutSeconds"] = FieldMetadata{Path:".containers[*].readinessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].resources"] = FieldMetadata{Path:".containers[*].resources",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].resources.claims"] = FieldMetadata{Path:".containers[*].resources.claims",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].resources.limits"] = FieldMetadata{Path:".containers[*].resources.limits",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].resources.requests"] = FieldMetadata{Path:".containers[*].resources.requests",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext"] = FieldMetadata{Path:".containers[*].securityContext",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.allowPrivilegeEscalation"] = FieldMetadata{Path:".containers[*].securityContext.allowPrivilegeEscalation",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.capabilities"] = FieldMetadata{Path:".containers[*].securityContext.capabilities",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.capabilities.add"] = FieldMetadata{Path:".containers[*].securityContext.capabilities.add",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.capabilities.drop"] = FieldMetadata{Path:".containers[*].securityContext.capabilities.drop",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.privileged"] = FieldMetadata{Path:".containers[*].securityContext.privileged",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.readOnlyRootFilesystem"] = FieldMetadata{Path:".containers[*].securityContext.readOnlyRootFilesystem",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.runAsGroup"] = FieldMetadata{Path:".containers[*].securityContext.runAsGroup",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.runAsNonRoot"] = FieldMetadata{Path:".containers[*].securityContext.runAsNonRoot",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.runAsUser"] = FieldMetadata{Path:".containers[*].securityContext.runAsUser",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.seLinuxOptions"] = FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.seLinuxOptions.level"] = FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions.level",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.seLinuxOptions.role"] = FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions.role",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.seLinuxOptions.type"] = FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions.type",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].securityContext.seLinuxOptions.user"] = FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions.user",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe"] = FieldMetadata{Path:".containers[*].startupProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.exec"] = FieldMetadata{Path:".containers[*].startupProbe.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.exec.command"] = FieldMetadata{Path:".containers[*].startupProbe.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.failureThreshold"] = FieldMetadata{Path:".containers[*].startupProbe.failureThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.httpGet"] = FieldMetadata{Path:".containers[*].startupProbe.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.httpGet.host"] = FieldMetadata{Path:".containers[*].startupProbe.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.httpGet.httpHeaders"] = FieldMetadata{Path:".containers[*].startupProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.httpGet.path"] = FieldMetadata{Path:".containers[*].startupProbe.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.httpGet.port"] = FieldMetadata{Path:".containers[*].startupProbe.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].startupProbe.httpGet.scheme"] = FieldMetadata{Path:".containers[*].startupProbe.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.initialDelaySeconds"] = FieldMetadata{Path:".containers[*].startupProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.periodSeconds"] = FieldMetadata{Path:".containers[*].startupProbe.periodSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.successThreshold"] = FieldMetadata{Path:".containers[*].startupProbe.successThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.tcpSocket"] = FieldMetadata{Path:".containers[*].startupProbe.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.tcpSocket.host"] = FieldMetadata{Path:".containers[*].startupProbe.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.tcpSocket.port"] = FieldMetadata{Path:".containers[*].startupProbe.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].startupProbe.terminationGracePeriodSeconds"] = FieldMetadata{Path:".containers[*].startupProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".containers[*].startupProbe.timeoutSeconds"] = FieldMetadata{Path:".containers[*].startupProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".containers[*].stdin"] = FieldMetadata{Path:".containers[*].stdin",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].stdinOnce"] = FieldMetadata{Path:".containers[*].stdinOnce",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].terminationMessagePath"] = FieldMetadata{Path:".containers[*].terminationMessagePath",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].tty"] = FieldMetadata{Path:".containers[*].tty",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].volumeDevices"] = FieldMetadata{Path:".containers[*].volumeDevices",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].volumeDevices[*].devicePath"] = FieldMetadata{Path:".containers[*].volumeDevices[*].devicePath",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].volumeDevices[*].name"] = FieldMetadata{Path:".containers[*].volumeDevices[*].name",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].volumeMounts"] = FieldMetadata{Path:".containers[*].volumeMounts",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].volumeMounts[*].mountPath"] = FieldMetadata{Path:".containers[*].volumeMounts[*].mountPath",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].volumeMounts[*].mountPropagation"] = FieldMetadata{Path:".containers[*].volumeMounts[*].mountPropagation",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].volumeMounts[*].name"] = FieldMetadata{Path:".containers[*].volumeMounts[*].name",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".containers[*].volumeMounts[*].readOnly"] = FieldMetadata{Path:".containers[*].volumeMounts[*].readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].volumeMounts[*].recursiveReadOnly"] = FieldMetadata{Path:".containers[*].volumeMounts[*].recursiveReadOnly",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].volumeMounts[*].subPath"] = FieldMetadata{Path:".containers[*].volumeMounts[*].subPath",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].volumeMounts[*].subPathExpr"] = FieldMetadata{Path:".containers[*].volumeMounts[*].subPathExpr",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".containers[*].workingDir"] = FieldMetadata{Path:".containers[*].workingDir",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".csi"] = FieldMetadata{Path:".csi",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".csi.driver"] = FieldMetadata{Path:".csi.driver",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".csi.fsType"] = FieldMetadata{Path:".csi.fsType",Type:"string",Format:"",Required:false}
@@ -371,6 +510,8 @@ func init() {
 		deferredFieldIndex[".dnsConfig"] = FieldMetadata{Path:".dnsConfig",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".dnsConfig.nameservers"] = FieldMetadata{Path:".dnsConfig.nameservers",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".dnsConfig.options"] = FieldMetadata{Path:".dnsConfig.options",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".dnsConfig.options[*].name"] = FieldMetadata{Path:".dnsConfig.options[*].name",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".dnsConfig.options[*].value"] = FieldMetadata{Path:".dnsConfig.options[*].value",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".dnsConfig.searches"] = FieldMetadata{Path:".dnsConfig.searches",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".dnsPolicy"] = FieldMetadata{Path:".dnsPolicy",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".downwardAPI"] = FieldMetadata{Path:".downwardAPI",Type:"",Format:"",Required:false}
@@ -385,6 +526,12 @@ func init() {
 		deferredFieldIndex[".endpoints"] = FieldMetadata{Path:".endpoints",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".env"] = FieldMetadata{Path:".env",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".envFrom"] = FieldMetadata{Path:".envFrom",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".envFrom[*].configMapRef"] = FieldMetadata{Path:".envFrom[*].configMapRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".envFrom[*].prefix"] = FieldMetadata{Path:".envFrom[*].prefix",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".envFrom[*].secretRef"] = FieldMetadata{Path:".envFrom[*].secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".env[*].name"] = FieldMetadata{Path:".env[*].name",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".env[*].value"] = FieldMetadata{Path:".env[*].value",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".env[*].valueFrom"] = FieldMetadata{Path:".env[*].valueFrom",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".ephemeral"] = FieldMetadata{Path:".ephemeral",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".ephemeral.volumeClaimTemplate"] = FieldMetadata{Path:".ephemeral.volumeClaimTemplate",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".exec"] = FieldMetadata{Path:".exec",Type:"",Format:"",Required:false}
@@ -448,7 +595,144 @@ func init() {
 		deferredFieldIndex[".image"] = FieldMetadata{Path:".image",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".imagePullPolicy"] = FieldMetadata{Path:".imagePullPolicy",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".imagePullSecrets"] = FieldMetadata{Path:".imagePullSecrets",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".imagePullSecrets[*].name"] = FieldMetadata{Path:".imagePullSecrets[*].name",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".initContainers"] = FieldMetadata{Path:".initContainers",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].args"] = FieldMetadata{Path:".initContainers[*].args",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].command"] = FieldMetadata{Path:".initContainers[*].command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].env"] = FieldMetadata{Path:".initContainers[*].env",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].envFrom"] = FieldMetadata{Path:".initContainers[*].envFrom",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].envFrom[*].configMapRef"] = FieldMetadata{Path:".initContainers[*].envFrom[*].configMapRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].envFrom[*].prefix"] = FieldMetadata{Path:".initContainers[*].envFrom[*].prefix",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].envFrom[*].secretRef"] = FieldMetadata{Path:".initContainers[*].envFrom[*].secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].env[*].name"] = FieldMetadata{Path:".initContainers[*].env[*].name",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].env[*].value"] = FieldMetadata{Path:".initContainers[*].env[*].value",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].env[*].valueFrom"] = FieldMetadata{Path:".initContainers[*].env[*].valueFrom",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].image"] = FieldMetadata{Path:".initContainers[*].image",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].imagePullPolicy"] = FieldMetadata{Path:".initContainers[*].imagePullPolicy",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle"] = FieldMetadata{Path:".initContainers[*].lifecycle",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.exec"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.exec.command"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.httpGet"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.httpGet.host"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.httpGet.httpHeaders"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.httpGet.path"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.httpGet.port"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.httpGet.scheme"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.sleep"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.sleep",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.tcpSocket"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.tcpSocket.host"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.postStart.tcpSocket.port"] = FieldMetadata{Path:".initContainers[*].lifecycle.postStart.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.exec"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.exec.command"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.httpGet"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.httpGet.host"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.httpGet.httpHeaders"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.httpGet.path"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.httpGet.port"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.httpGet.scheme"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.sleep"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.sleep",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.tcpSocket"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.tcpSocket.host"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].lifecycle.preStop.tcpSocket.port"] = FieldMetadata{Path:".initContainers[*].lifecycle.preStop.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].lifecycle.stopSignal"] = FieldMetadata{Path:".initContainers[*].lifecycle.stopSignal",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe"] = FieldMetadata{Path:".initContainers[*].livenessProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.exec"] = FieldMetadata{Path:".initContainers[*].livenessProbe.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.exec.command"] = FieldMetadata{Path:".initContainers[*].livenessProbe.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.failureThreshold"] = FieldMetadata{Path:".initContainers[*].livenessProbe.failureThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.httpGet"] = FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.httpGet.host"] = FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.httpGet.httpHeaders"] = FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.httpGet.path"] = FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.httpGet.port"] = FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].livenessProbe.httpGet.scheme"] = FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.initialDelaySeconds"] = FieldMetadata{Path:".initContainers[*].livenessProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.periodSeconds"] = FieldMetadata{Path:".initContainers[*].livenessProbe.periodSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.successThreshold"] = FieldMetadata{Path:".initContainers[*].livenessProbe.successThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.tcpSocket"] = FieldMetadata{Path:".initContainers[*].livenessProbe.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.tcpSocket.host"] = FieldMetadata{Path:".initContainers[*].livenessProbe.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.tcpSocket.port"] = FieldMetadata{Path:".initContainers[*].livenessProbe.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].livenessProbe.terminationGracePeriodSeconds"] = FieldMetadata{Path:".initContainers[*].livenessProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".initContainers[*].livenessProbe.timeoutSeconds"] = FieldMetadata{Path:".initContainers[*].livenessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].name"] = FieldMetadata{Path:".initContainers[*].name",Type:"string",Format:"string",Required:true}
+		deferredFieldIndex[".initContainers[*].ports"] = FieldMetadata{Path:".initContainers[*].ports",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].ports[*].containerPort"] = FieldMetadata{Path:".initContainers[*].ports[*].containerPort",Type:"integer",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].ports[*].hostIP"] = FieldMetadata{Path:".initContainers[*].ports[*].hostIP",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].ports[*].hostPort"] = FieldMetadata{Path:".initContainers[*].ports[*].hostPort",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].ports[*].name"] = FieldMetadata{Path:".initContainers[*].ports[*].name",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].ports[*].protocol"] = FieldMetadata{Path:".initContainers[*].ports[*].protocol",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe"] = FieldMetadata{Path:".initContainers[*].readinessProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.exec"] = FieldMetadata{Path:".initContainers[*].readinessProbe.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.exec.command"] = FieldMetadata{Path:".initContainers[*].readinessProbe.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.failureThreshold"] = FieldMetadata{Path:".initContainers[*].readinessProbe.failureThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.httpGet"] = FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.httpGet.host"] = FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.httpGet.httpHeaders"] = FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.httpGet.path"] = FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.httpGet.port"] = FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].readinessProbe.httpGet.scheme"] = FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.initialDelaySeconds"] = FieldMetadata{Path:".initContainers[*].readinessProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.periodSeconds"] = FieldMetadata{Path:".initContainers[*].readinessProbe.periodSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.successThreshold"] = FieldMetadata{Path:".initContainers[*].readinessProbe.successThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.tcpSocket"] = FieldMetadata{Path:".initContainers[*].readinessProbe.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.tcpSocket.host"] = FieldMetadata{Path:".initContainers[*].readinessProbe.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.tcpSocket.port"] = FieldMetadata{Path:".initContainers[*].readinessProbe.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].readinessProbe.terminationGracePeriodSeconds"] = FieldMetadata{Path:".initContainers[*].readinessProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".initContainers[*].readinessProbe.timeoutSeconds"] = FieldMetadata{Path:".initContainers[*].readinessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].resources"] = FieldMetadata{Path:".initContainers[*].resources",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].resources.claims"] = FieldMetadata{Path:".initContainers[*].resources.claims",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].resources.limits"] = FieldMetadata{Path:".initContainers[*].resources.limits",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].resources.requests"] = FieldMetadata{Path:".initContainers[*].resources.requests",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext"] = FieldMetadata{Path:".initContainers[*].securityContext",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.allowPrivilegeEscalation"] = FieldMetadata{Path:".initContainers[*].securityContext.allowPrivilegeEscalation",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.capabilities"] = FieldMetadata{Path:".initContainers[*].securityContext.capabilities",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.capabilities.add"] = FieldMetadata{Path:".initContainers[*].securityContext.capabilities.add",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.capabilities.drop"] = FieldMetadata{Path:".initContainers[*].securityContext.capabilities.drop",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.privileged"] = FieldMetadata{Path:".initContainers[*].securityContext.privileged",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.readOnlyRootFilesystem"] = FieldMetadata{Path:".initContainers[*].securityContext.readOnlyRootFilesystem",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.runAsGroup"] = FieldMetadata{Path:".initContainers[*].securityContext.runAsGroup",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.runAsNonRoot"] = FieldMetadata{Path:".initContainers[*].securityContext.runAsNonRoot",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.runAsUser"] = FieldMetadata{Path:".initContainers[*].securityContext.runAsUser",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.seLinuxOptions"] = FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.seLinuxOptions.level"] = FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions.level",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.seLinuxOptions.role"] = FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions.role",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.seLinuxOptions.type"] = FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions.type",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].securityContext.seLinuxOptions.user"] = FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions.user",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe"] = FieldMetadata{Path:".initContainers[*].startupProbe",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.exec"] = FieldMetadata{Path:".initContainers[*].startupProbe.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.exec.command"] = FieldMetadata{Path:".initContainers[*].startupProbe.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.failureThreshold"] = FieldMetadata{Path:".initContainers[*].startupProbe.failureThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.httpGet"] = FieldMetadata{Path:".initContainers[*].startupProbe.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.httpGet.host"] = FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.httpGet.httpHeaders"] = FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.httpGet.path"] = FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.httpGet.port"] = FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].startupProbe.httpGet.scheme"] = FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.initialDelaySeconds"] = FieldMetadata{Path:".initContainers[*].startupProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.periodSeconds"] = FieldMetadata{Path:".initContainers[*].startupProbe.periodSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.successThreshold"] = FieldMetadata{Path:".initContainers[*].startupProbe.successThreshold",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.tcpSocket"] = FieldMetadata{Path:".initContainers[*].startupProbe.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.tcpSocket.host"] = FieldMetadata{Path:".initContainers[*].startupProbe.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.tcpSocket.port"] = FieldMetadata{Path:".initContainers[*].startupProbe.tcpSocket.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].startupProbe.terminationGracePeriodSeconds"] = FieldMetadata{Path:".initContainers[*].startupProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".initContainers[*].startupProbe.timeoutSeconds"] = FieldMetadata{Path:".initContainers[*].startupProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false}
+		deferredFieldIndex[".initContainers[*].stdin"] = FieldMetadata{Path:".initContainers[*].stdin",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].stdinOnce"] = FieldMetadata{Path:".initContainers[*].stdinOnce",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].terminationMessagePath"] = FieldMetadata{Path:".initContainers[*].terminationMessagePath",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].tty"] = FieldMetadata{Path:".initContainers[*].tty",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].volumeDevices"] = FieldMetadata{Path:".initContainers[*].volumeDevices",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].volumeDevices[*].devicePath"] = FieldMetadata{Path:".initContainers[*].volumeDevices[*].devicePath",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].volumeDevices[*].name"] = FieldMetadata{Path:".initContainers[*].volumeDevices[*].name",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].volumeMounts"] = FieldMetadata{Path:".initContainers[*].volumeMounts",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].volumeMounts[*].mountPath"] = FieldMetadata{Path:".initContainers[*].volumeMounts[*].mountPath",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].volumeMounts[*].mountPropagation"] = FieldMetadata{Path:".initContainers[*].volumeMounts[*].mountPropagation",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].volumeMounts[*].name"] = FieldMetadata{Path:".initContainers[*].volumeMounts[*].name",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".initContainers[*].volumeMounts[*].readOnly"] = FieldMetadata{Path:".initContainers[*].volumeMounts[*].readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].volumeMounts[*].recursiveReadOnly"] = FieldMetadata{Path:".initContainers[*].volumeMounts[*].recursiveReadOnly",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].volumeMounts[*].subPath"] = FieldMetadata{Path:".initContainers[*].volumeMounts[*].subPath",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].volumeMounts[*].subPathExpr"] = FieldMetadata{Path:".initContainers[*].volumeMounts[*].subPathExpr",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".initContainers[*].workingDir"] = FieldMetadata{Path:".initContainers[*].workingDir",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".initialDelaySeconds"] = FieldMetadata{Path:".initialDelaySeconds",Type:"integer",Format:"int32",Required:false}
 		deferredFieldIndex[".initiatorName"] = FieldMetadata{Path:".initiatorName",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".iqn"] = FieldMetadata{Path:".iqn",Type:"string",Format:"",Required:true}
@@ -475,7 +759,31 @@ func init() {
 		deferredFieldIndex[".level"] = FieldMetadata{Path:".level",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".lifecycle"] = FieldMetadata{Path:".lifecycle",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".lifecycle.postStart"] = FieldMetadata{Path:".lifecycle.postStart",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.exec"] = FieldMetadata{Path:".lifecycle.postStart.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.exec.command"] = FieldMetadata{Path:".lifecycle.postStart.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.httpGet"] = FieldMetadata{Path:".lifecycle.postStart.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.httpGet.host"] = FieldMetadata{Path:".lifecycle.postStart.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.httpGet.httpHeaders"] = FieldMetadata{Path:".lifecycle.postStart.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.httpGet.path"] = FieldMetadata{Path:".lifecycle.postStart.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.httpGet.port"] = FieldMetadata{Path:".lifecycle.postStart.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".lifecycle.postStart.httpGet.scheme"] = FieldMetadata{Path:".lifecycle.postStart.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.sleep"] = FieldMetadata{Path:".lifecycle.postStart.sleep",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.tcpSocket"] = FieldMetadata{Path:".lifecycle.postStart.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.tcpSocket.host"] = FieldMetadata{Path:".lifecycle.postStart.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.postStart.tcpSocket.port"] = FieldMetadata{Path:".lifecycle.postStart.tcpSocket.port",Type:"",Format:"",Required:true}
 		deferredFieldIndex[".lifecycle.preStop"] = FieldMetadata{Path:".lifecycle.preStop",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.exec"] = FieldMetadata{Path:".lifecycle.preStop.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.exec.command"] = FieldMetadata{Path:".lifecycle.preStop.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.httpGet"] = FieldMetadata{Path:".lifecycle.preStop.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.httpGet.host"] = FieldMetadata{Path:".lifecycle.preStop.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.httpGet.httpHeaders"] = FieldMetadata{Path:".lifecycle.preStop.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.httpGet.path"] = FieldMetadata{Path:".lifecycle.preStop.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.httpGet.port"] = FieldMetadata{Path:".lifecycle.preStop.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".lifecycle.preStop.httpGet.scheme"] = FieldMetadata{Path:".lifecycle.preStop.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.sleep"] = FieldMetadata{Path:".lifecycle.preStop.sleep",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.tcpSocket"] = FieldMetadata{Path:".lifecycle.preStop.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.tcpSocket.host"] = FieldMetadata{Path:".lifecycle.preStop.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".lifecycle.preStop.tcpSocket.port"] = FieldMetadata{Path:".lifecycle.preStop.tcpSocket.port",Type:"",Format:"",Required:true}
 		deferredFieldIndex[".lifecycle.stopSignal"] = FieldMetadata{Path:".lifecycle.stopSignal",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".limits"] = FieldMetadata{Path:".limits",Type:"object",Format:"",Required:false}
 		deferredFieldIndex[".livenessProbe"] = FieldMetadata{Path:".livenessProbe",Type:"",Format:"",Required:false}
@@ -528,6 +836,8 @@ func init() {
 		deferredFieldIndex[".operator"] = FieldMetadata{Path:".operator",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".optional"] = FieldMetadata{Path:".optional",Type:"boolean",Format:"",Required:false}
 		deferredFieldIndex[".options"] = FieldMetadata{Path:".options",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".options[*].name"] = FieldMetadata{Path:".options[*].name",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".options[*].value"] = FieldMetadata{Path:".options[*].value",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".partition"] = FieldMetadata{Path:".partition",Type:"integer",Format:"",Required:false}
 		deferredFieldIndex[".path"] = FieldMetadata{Path:".path",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".pdID"] = FieldMetadata{Path:".pdID",Type:"string",Format:"",Required:true}
@@ -543,6 +853,12 @@ func init() {
 		deferredFieldIndex[".podAffinity.preferredDuringSchedulingIgnoredDuringExecution"] = FieldMetadata{Path:".podAffinity.preferredDuringSchedulingIgnoredDuringExecution",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".podAffinity.requiredDuringSchedulingIgnoredDuringExecution"] = FieldMetadata{Path:".podAffinity.requiredDuringSchedulingIgnoredDuringExecution",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".podAffinityTerm"] = FieldMetadata{Path:".podAffinityTerm",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".podAffinityTerm.labelSelector"] = FieldMetadata{Path:".podAffinityTerm.labelSelector",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".podAffinityTerm.matchLabelKeys"] = FieldMetadata{Path:".podAffinityTerm.matchLabelKeys",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".podAffinityTerm.mismatchLabelKeys"] = FieldMetadata{Path:".podAffinityTerm.mismatchLabelKeys",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".podAffinityTerm.namespaceSelector"] = FieldMetadata{Path:".podAffinityTerm.namespaceSelector",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".podAffinityTerm.namespaces"] = FieldMetadata{Path:".podAffinityTerm.namespaces",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".podAffinityTerm.topologyKey"] = FieldMetadata{Path:".podAffinityTerm.topologyKey",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".podAntiAffinity"] = FieldMetadata{Path:".podAntiAffinity",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution"] = FieldMetadata{Path:".podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution"] = FieldMetadata{Path:".podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution",Type:"array",Format:"",Required:false}
@@ -551,12 +867,41 @@ func init() {
 		deferredFieldIndex[".port"] = FieldMetadata{Path:".port",Type:"",Format:"",Required:true}
 		deferredFieldIndex[".portals"] = FieldMetadata{Path:".portals",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".ports"] = FieldMetadata{Path:".ports",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".ports[*].containerPort"] = FieldMetadata{Path:".ports[*].containerPort",Type:"integer",Format:"",Required:true}
+		deferredFieldIndex[".ports[*].hostIP"] = FieldMetadata{Path:".ports[*].hostIP",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".ports[*].hostPort"] = FieldMetadata{Path:".ports[*].hostPort",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".ports[*].name"] = FieldMetadata{Path:".ports[*].name",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".ports[*].protocol"] = FieldMetadata{Path:".ports[*].protocol",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".portworxVolume"] = FieldMetadata{Path:".portworxVolume",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".portworxVolume.fsType"] = FieldMetadata{Path:".portworxVolume.fsType",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".portworxVolume.readOnly"] = FieldMetadata{Path:".portworxVolume.readOnly",Type:"boolean",Format:"",Required:false}
 		deferredFieldIndex[".portworxVolume.volumeID"] = FieldMetadata{Path:".portworxVolume.volumeID",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".postStart"] = FieldMetadata{Path:".postStart",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".postStart.exec"] = FieldMetadata{Path:".postStart.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".postStart.exec.command"] = FieldMetadata{Path:".postStart.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".postStart.httpGet"] = FieldMetadata{Path:".postStart.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".postStart.httpGet.host"] = FieldMetadata{Path:".postStart.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".postStart.httpGet.httpHeaders"] = FieldMetadata{Path:".postStart.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".postStart.httpGet.path"] = FieldMetadata{Path:".postStart.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".postStart.httpGet.port"] = FieldMetadata{Path:".postStart.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".postStart.httpGet.scheme"] = FieldMetadata{Path:".postStart.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".postStart.sleep"] = FieldMetadata{Path:".postStart.sleep",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".postStart.tcpSocket"] = FieldMetadata{Path:".postStart.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".postStart.tcpSocket.host"] = FieldMetadata{Path:".postStart.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".postStart.tcpSocket.port"] = FieldMetadata{Path:".postStart.tcpSocket.port",Type:"",Format:"",Required:true}
 		deferredFieldIndex[".preStop"] = FieldMetadata{Path:".preStop",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".preStop.exec"] = FieldMetadata{Path:".preStop.exec",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".preStop.exec.command"] = FieldMetadata{Path:".preStop.exec.command",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".preStop.httpGet"] = FieldMetadata{Path:".preStop.httpGet",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".preStop.httpGet.host"] = FieldMetadata{Path:".preStop.httpGet.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".preStop.httpGet.httpHeaders"] = FieldMetadata{Path:".preStop.httpGet.httpHeaders",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".preStop.httpGet.path"] = FieldMetadata{Path:".preStop.httpGet.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".preStop.httpGet.port"] = FieldMetadata{Path:".preStop.httpGet.port",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".preStop.httpGet.scheme"] = FieldMetadata{Path:".preStop.httpGet.scheme",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".preStop.sleep"] = FieldMetadata{Path:".preStop.sleep",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".preStop.tcpSocket"] = FieldMetadata{Path:".preStop.tcpSocket",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".preStop.tcpSocket.host"] = FieldMetadata{Path:".preStop.tcpSocket.host",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".preStop.tcpSocket.port"] = FieldMetadata{Path:".preStop.tcpSocket.port",Type:"",Format:"",Required:true}
 		deferredFieldIndex[".preference"] = FieldMetadata{Path:".preference",Type:"",Format:"",Required:true}
 		deferredFieldIndex[".preferredDuringSchedulingIgnoredDuringExecution"] = FieldMetadata{Path:".preferredDuringSchedulingIgnoredDuringExecution",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".prefix"] = FieldMetadata{Path:".prefix",Type:"string",Format:"",Required:false}
@@ -644,6 +989,8 @@ func init() {
 		deferredFieldIndex[".seLinuxOptions.user"] = FieldMetadata{Path:".seLinuxOptions.user",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".searches"] = FieldMetadata{Path:".searches",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".seccompProfile"] = FieldMetadata{Path:".seccompProfile",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".seccompProfile.localhostProfile"] = FieldMetadata{Path:".seccompProfile.localhostProfile",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".seccompProfile.type"] = FieldMetadata{Path:".seccompProfile.type",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".secret"] = FieldMetadata{Path:".secret",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".secret.defaultMode"] = FieldMetadata{Path:".secret.defaultMode",Type:"integer",Format:"",Required:false}
 		deferredFieldIndex[".secret.items"] = FieldMetadata{Path:".secret.items",Type:"array",Format:"",Required:false}
@@ -651,6 +998,9 @@ func init() {
 		deferredFieldIndex[".secret.secretName"] = FieldMetadata{Path:".secret.secretName",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".secretFile"] = FieldMetadata{Path:".secretFile",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".secretKeyRef"] = FieldMetadata{Path:".secretKeyRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".secretKeyRef.key"] = FieldMetadata{Path:".secretKeyRef.key",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".secretKeyRef.name"] = FieldMetadata{Path:".secretKeyRef.name",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".secretKeyRef.optional"] = FieldMetadata{Path:".secretKeyRef.optional",Type:"boolean",Format:"",Required:false}
 		deferredFieldIndex[".secretName"] = FieldMetadata{Path:".secretName",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".secretRef"] = FieldMetadata{Path:".secretRef",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".securityContext"] = FieldMetadata{Path:".securityContext",Type:"",Format:"",Required:false}
@@ -673,6 +1023,8 @@ func init() {
 		deferredFieldIndex[".securityContext.seLinuxOptions.type"] = FieldMetadata{Path:".securityContext.seLinuxOptions.type",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".securityContext.seLinuxOptions.user"] = FieldMetadata{Path:".securityContext.seLinuxOptions.user",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".securityContext.seccompProfile"] = FieldMetadata{Path:".securityContext.seccompProfile",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".securityContext.seccompProfile.localhostProfile"] = FieldMetadata{Path:".securityContext.seccompProfile.localhostProfile",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".securityContext.seccompProfile.type"] = FieldMetadata{Path:".securityContext.seccompProfile.type",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".securityContext.supplementalGroups"] = FieldMetadata{Path:".securityContext.supplementalGroups",Type:"array",Format:"",Required:false}
 		deferredFieldIndex[".securityContext.supplementalGroupsPolicy"] = FieldMetadata{Path:".securityContext.supplementalGroupsPolicy",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".securityContext.sysctls"] = FieldMetadata{Path:".securityContext.sysctls",Type:"array",Format:"",Required:false}
@@ -738,8 +1090,19 @@ func init() {
 		deferredFieldIndex[".timeoutSeconds"] = FieldMetadata{Path:".timeoutSeconds",Type:"integer",Format:"int32",Required:false}
 		deferredFieldIndex[".tolerationSeconds"] = FieldMetadata{Path:".tolerationSeconds",Type:"integer",Format:"int64",Required:false}
 		deferredFieldIndex[".tolerations"] = FieldMetadata{Path:".tolerations",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".tolerations[*].effect"] = FieldMetadata{Path:".tolerations[*].effect",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".tolerations[*].key"] = FieldMetadata{Path:".tolerations[*].key",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".tolerations[*].operator"] = FieldMetadata{Path:".tolerations[*].operator",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".tolerations[*].tolerationSeconds"] = FieldMetadata{Path:".tolerations[*].tolerationSeconds",Type:"integer",Format:"int64",Required:false}
+		deferredFieldIndex[".tolerations[*].value"] = FieldMetadata{Path:".tolerations[*].value",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".topologyKey"] = FieldMetadata{Path:".topologyKey",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".topologySpreadConstraints"] = FieldMetadata{Path:".topologySpreadConstraints",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".topologySpreadConstraints[*].labelSelector"] = FieldMetadata{Path:".topologySpreadConstraints[*].labelSelector",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".topologySpreadConstraints[*].labelSelector.matchExpressions"] = FieldMetadata{Path:".topologySpreadConstraints[*].labelSelector.matchExpressions",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".topologySpreadConstraints[*].labelSelector.matchLabels"] = FieldMetadata{Path:".topologySpreadConstraints[*].labelSelector.matchLabels",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".topologySpreadConstraints[*].maxSkew"] = FieldMetadata{Path:".topologySpreadConstraints[*].maxSkew",Type:"integer",Format:"int32",Required:true}
+		deferredFieldIndex[".topologySpreadConstraints[*].topologyKey"] = FieldMetadata{Path:".topologySpreadConstraints[*].topologyKey",Type:"string",Format:"",Required:true,MinLength:func() *int { v := 1; return &v }()}
+		deferredFieldIndex[".topologySpreadConstraints[*].whenUnsatisfiable"] = FieldMetadata{Path:".topologySpreadConstraints[*].whenUnsatisfiable",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".tty"] = FieldMetadata{Path:".tty",Type:"boolean",Format:"",Required:false}
 		deferredFieldIndex[".type"] = FieldMetadata{Path:".type",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".user"] = FieldMetadata{Path:".user",Type:"string",Format:"",Required:false}
@@ -751,13 +1114,173 @@ func init() {
 		deferredFieldIndex[".volumeAttributesClassName"] = FieldMetadata{Path:".volumeAttributesClassName",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".volumeClaimTemplate"] = FieldMetadata{Path:".volumeClaimTemplate",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".volumeDevices"] = FieldMetadata{Path:".volumeDevices",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumeDevices[*].devicePath"] = FieldMetadata{Path:".volumeDevices[*].devicePath",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumeDevices[*].name"] = FieldMetadata{Path:".volumeDevices[*].name",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".volumeID"] = FieldMetadata{Path:".volumeID",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".volumeMode"] = FieldMetadata{Path:".volumeMode",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".volumeMounts"] = FieldMetadata{Path:".volumeMounts",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumeMounts[*].mountPath"] = FieldMetadata{Path:".volumeMounts[*].mountPath",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumeMounts[*].mountPropagation"] = FieldMetadata{Path:".volumeMounts[*].mountPropagation",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumeMounts[*].name"] = FieldMetadata{Path:".volumeMounts[*].name",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumeMounts[*].readOnly"] = FieldMetadata{Path:".volumeMounts[*].readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumeMounts[*].recursiveReadOnly"] = FieldMetadata{Path:".volumeMounts[*].recursiveReadOnly",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumeMounts[*].subPath"] = FieldMetadata{Path:".volumeMounts[*].subPath",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumeMounts[*].subPathExpr"] = FieldMetadata{Path:".volumeMounts[*].subPathExpr",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".volumeName"] = FieldMetadata{Path:".volumeName",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".volumeNamespace"] = FieldMetadata{Path:".volumeNamespace",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".volumePath"] = FieldMetadata{Path:".volumePath",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".volumes"] = FieldMetadata{Path:".volumes",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].awsElasticBlockStore"] = FieldMetadata{Path:".volumes[*].awsElasticBlockStore",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].awsElasticBlockStore.fsType"] = FieldMetadata{Path:".volumes[*].awsElasticBlockStore.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].awsElasticBlockStore.partition"] = FieldMetadata{Path:".volumes[*].awsElasticBlockStore.partition",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].awsElasticBlockStore.readOnly"] = FieldMetadata{Path:".volumes[*].awsElasticBlockStore.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].awsElasticBlockStore.volumeID"] = FieldMetadata{Path:".volumes[*].awsElasticBlockStore.volumeID",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].azureDisk"] = FieldMetadata{Path:".volumes[*].azureDisk",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].azureDisk.cachingMode"] = FieldMetadata{Path:".volumes[*].azureDisk.cachingMode",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].azureDisk.diskName"] = FieldMetadata{Path:".volumes[*].azureDisk.diskName",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].azureDisk.diskURI"] = FieldMetadata{Path:".volumes[*].azureDisk.diskURI",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].azureDisk.fsType"] = FieldMetadata{Path:".volumes[*].azureDisk.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].azureDisk.kind"] = FieldMetadata{Path:".volumes[*].azureDisk.kind",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].azureDisk.readOnly"] = FieldMetadata{Path:".volumes[*].azureDisk.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].azureFile"] = FieldMetadata{Path:".volumes[*].azureFile",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].azureFile.readOnly"] = FieldMetadata{Path:".volumes[*].azureFile.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].azureFile.secretName"] = FieldMetadata{Path:".volumes[*].azureFile.secretName",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].azureFile.shareName"] = FieldMetadata{Path:".volumes[*].azureFile.shareName",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].cephfs"] = FieldMetadata{Path:".volumes[*].cephfs",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cephfs.monitors"] = FieldMetadata{Path:".volumes[*].cephfs.monitors",Type:"array",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].cephfs.path"] = FieldMetadata{Path:".volumes[*].cephfs.path",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cephfs.readOnly"] = FieldMetadata{Path:".volumes[*].cephfs.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cephfs.secretFile"] = FieldMetadata{Path:".volumes[*].cephfs.secretFile",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cephfs.secretRef"] = FieldMetadata{Path:".volumes[*].cephfs.secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cephfs.user"] = FieldMetadata{Path:".volumes[*].cephfs.user",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cinder"] = FieldMetadata{Path:".volumes[*].cinder",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cinder.fsType"] = FieldMetadata{Path:".volumes[*].cinder.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cinder.readOnly"] = FieldMetadata{Path:".volumes[*].cinder.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cinder.secretRef"] = FieldMetadata{Path:".volumes[*].cinder.secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].cinder.volumeID"] = FieldMetadata{Path:".volumes[*].cinder.volumeID",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].configMap"] = FieldMetadata{Path:".volumes[*].configMap",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].configMap.defaultMode"] = FieldMetadata{Path:".volumes[*].configMap.defaultMode",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].configMap.items"] = FieldMetadata{Path:".volumes[*].configMap.items",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].configMap.name"] = FieldMetadata{Path:".volumes[*].configMap.name",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].configMap.optional"] = FieldMetadata{Path:".volumes[*].configMap.optional",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].csi"] = FieldMetadata{Path:".volumes[*].csi",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].csi.driver"] = FieldMetadata{Path:".volumes[*].csi.driver",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].csi.fsType"] = FieldMetadata{Path:".volumes[*].csi.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].csi.nodePublishSecretRef"] = FieldMetadata{Path:".volumes[*].csi.nodePublishSecretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].csi.readOnly"] = FieldMetadata{Path:".volumes[*].csi.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].csi.volumeAttributes"] = FieldMetadata{Path:".volumes[*].csi.volumeAttributes",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].downwardAPI"] = FieldMetadata{Path:".volumes[*].downwardAPI",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].downwardAPI.defaultMode"] = FieldMetadata{Path:".volumes[*].downwardAPI.defaultMode",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].downwardAPI.items"] = FieldMetadata{Path:".volumes[*].downwardAPI.items",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].emptyDir"] = FieldMetadata{Path:".volumes[*].emptyDir",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].emptyDir.medium"] = FieldMetadata{Path:".volumes[*].emptyDir.medium",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].emptyDir.sizeLimit"] = FieldMetadata{Path:".volumes[*].emptyDir.sizeLimit",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].ephemeral"] = FieldMetadata{Path:".volumes[*].ephemeral",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].ephemeral.volumeClaimTemplate"] = FieldMetadata{Path:".volumes[*].ephemeral.volumeClaimTemplate",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].fc"] = FieldMetadata{Path:".volumes[*].fc",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].fc.fsType"] = FieldMetadata{Path:".volumes[*].fc.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].fc.lun"] = FieldMetadata{Path:".volumes[*].fc.lun",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].fc.readOnly"] = FieldMetadata{Path:".volumes[*].fc.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].fc.targetWWNs"] = FieldMetadata{Path:".volumes[*].fc.targetWWNs",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].fc.wwids"] = FieldMetadata{Path:".volumes[*].fc.wwids",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].flexVolume"] = FieldMetadata{Path:".volumes[*].flexVolume",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].flexVolume.driver"] = FieldMetadata{Path:".volumes[*].flexVolume.driver",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].flexVolume.fsType"] = FieldMetadata{Path:".volumes[*].flexVolume.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].flexVolume.options"] = FieldMetadata{Path:".volumes[*].flexVolume.options",Type:"object",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].flexVolume.readOnly"] = FieldMetadata{Path:".volumes[*].flexVolume.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].flexVolume.secretRef"] = FieldMetadata{Path:".volumes[*].flexVolume.secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].flocker"] = FieldMetadata{Path:".volumes[*].flocker",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].flocker.datasetName"] = FieldMetadata{Path:".volumes[*].flocker.datasetName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].flocker.datasetUUID"] = FieldMetadata{Path:".volumes[*].flocker.datasetUUID",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].gcePersistentDisk"] = FieldMetadata{Path:".volumes[*].gcePersistentDisk",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].gcePersistentDisk.fsType"] = FieldMetadata{Path:".volumes[*].gcePersistentDisk.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].gcePersistentDisk.partition"] = FieldMetadata{Path:".volumes[*].gcePersistentDisk.partition",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].gcePersistentDisk.pdName"] = FieldMetadata{Path:".volumes[*].gcePersistentDisk.pdName",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].gcePersistentDisk.readOnly"] = FieldMetadata{Path:".volumes[*].gcePersistentDisk.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].gitRepo"] = FieldMetadata{Path:".volumes[*].gitRepo",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].gitRepo.directory"] = FieldMetadata{Path:".volumes[*].gitRepo.directory",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].gitRepo.repository"] = FieldMetadata{Path:".volumes[*].gitRepo.repository",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].gitRepo.revision"] = FieldMetadata{Path:".volumes[*].gitRepo.revision",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].glusterfs"] = FieldMetadata{Path:".volumes[*].glusterfs",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].glusterfs.endpoints"] = FieldMetadata{Path:".volumes[*].glusterfs.endpoints",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].glusterfs.path"] = FieldMetadata{Path:".volumes[*].glusterfs.path",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].glusterfs.readOnly"] = FieldMetadata{Path:".volumes[*].glusterfs.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].hostPath"] = FieldMetadata{Path:".volumes[*].hostPath",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].hostPath.path"] = FieldMetadata{Path:".volumes[*].hostPath.path",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].hostPath.type"] = FieldMetadata{Path:".volumes[*].hostPath.type",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi"] = FieldMetadata{Path:".volumes[*].iscsi",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.chapAuthDiscovery"] = FieldMetadata{Path:".volumes[*].iscsi.chapAuthDiscovery",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.chapAuthSession"] = FieldMetadata{Path:".volumes[*].iscsi.chapAuthSession",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.fsType"] = FieldMetadata{Path:".volumes[*].iscsi.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.initiatorName"] = FieldMetadata{Path:".volumes[*].iscsi.initiatorName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.iqn"] = FieldMetadata{Path:".volumes[*].iscsi.iqn",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].iscsi.iscsiInterface"] = FieldMetadata{Path:".volumes[*].iscsi.iscsiInterface",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.lun"] = FieldMetadata{Path:".volumes[*].iscsi.lun",Type:"integer",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].iscsi.portals"] = FieldMetadata{Path:".volumes[*].iscsi.portals",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.readOnly"] = FieldMetadata{Path:".volumes[*].iscsi.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.secretRef"] = FieldMetadata{Path:".volumes[*].iscsi.secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].iscsi.targetPortal"] = FieldMetadata{Path:".volumes[*].iscsi.targetPortal",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].name"] = FieldMetadata{Path:".volumes[*].name",Type:"string",Format:"string",Required:true}
+		deferredFieldIndex[".volumes[*].nfs"] = FieldMetadata{Path:".volumes[*].nfs",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].nfs.path"] = FieldMetadata{Path:".volumes[*].nfs.path",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].nfs.readOnly"] = FieldMetadata{Path:".volumes[*].nfs.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].nfs.server"] = FieldMetadata{Path:".volumes[*].nfs.server",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].persistentVolumeClaim"] = FieldMetadata{Path:".volumes[*].persistentVolumeClaim",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].persistentVolumeClaim.claimName"] = FieldMetadata{Path:".volumes[*].persistentVolumeClaim.claimName",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].persistentVolumeClaim.readOnly"] = FieldMetadata{Path:".volumes[*].persistentVolumeClaim.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].photonPersistentDisk"] = FieldMetadata{Path:".volumes[*].photonPersistentDisk",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].photonPersistentDisk.fsType"] = FieldMetadata{Path:".volumes[*].photonPersistentDisk.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].photonPersistentDisk.pdID"] = FieldMetadata{Path:".volumes[*].photonPersistentDisk.pdID",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].portworxVolume"] = FieldMetadata{Path:".volumes[*].portworxVolume",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].portworxVolume.fsType"] = FieldMetadata{Path:".volumes[*].portworxVolume.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].portworxVolume.readOnly"] = FieldMetadata{Path:".volumes[*].portworxVolume.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].portworxVolume.volumeID"] = FieldMetadata{Path:".volumes[*].portworxVolume.volumeID",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].projected"] = FieldMetadata{Path:".volumes[*].projected",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].projected.defaultMode"] = FieldMetadata{Path:".volumes[*].projected.defaultMode",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].projected.sources"] = FieldMetadata{Path:".volumes[*].projected.sources",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].quobyte"] = FieldMetadata{Path:".volumes[*].quobyte",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].quobyte.group"] = FieldMetadata{Path:".volumes[*].quobyte.group",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].quobyte.readOnly"] = FieldMetadata{Path:".volumes[*].quobyte.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].quobyte.registry"] = FieldMetadata{Path:".volumes[*].quobyte.registry",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].quobyte.tenant"] = FieldMetadata{Path:".volumes[*].quobyte.tenant",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].quobyte.user"] = FieldMetadata{Path:".volumes[*].quobyte.user",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].quobyte.volume"] = FieldMetadata{Path:".volumes[*].quobyte.volume",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].rbd"] = FieldMetadata{Path:".volumes[*].rbd",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].rbd.fsType"] = FieldMetadata{Path:".volumes[*].rbd.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].rbd.image"] = FieldMetadata{Path:".volumes[*].rbd.image",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].rbd.keyring"] = FieldMetadata{Path:".volumes[*].rbd.keyring",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].rbd.monitors"] = FieldMetadata{Path:".volumes[*].rbd.monitors",Type:"array",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].rbd.pool"] = FieldMetadata{Path:".volumes[*].rbd.pool",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].rbd.readOnly"] = FieldMetadata{Path:".volumes[*].rbd.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].rbd.secretRef"] = FieldMetadata{Path:".volumes[*].rbd.secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].rbd.user"] = FieldMetadata{Path:".volumes[*].rbd.user",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].scaleIO"] = FieldMetadata{Path:".volumes[*].scaleIO",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].scaleIO.fsType"] = FieldMetadata{Path:".volumes[*].scaleIO.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].scaleIO.gateway"] = FieldMetadata{Path:".volumes[*].scaleIO.gateway",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].scaleIO.protectionDomain"] = FieldMetadata{Path:".volumes[*].scaleIO.protectionDomain",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].scaleIO.readOnly"] = FieldMetadata{Path:".volumes[*].scaleIO.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].scaleIO.secretRef"] = FieldMetadata{Path:".volumes[*].scaleIO.secretRef",Type:"",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].scaleIO.sslEnabled"] = FieldMetadata{Path:".volumes[*].scaleIO.sslEnabled",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].scaleIO.storageMode"] = FieldMetadata{Path:".volumes[*].scaleIO.storageMode",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].scaleIO.storagePool"] = FieldMetadata{Path:".volumes[*].scaleIO.storagePool",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].scaleIO.system"] = FieldMetadata{Path:".volumes[*].scaleIO.system",Type:"string",Format:"",Required:true}
+		deferredFieldIndex[".volumes[*].scaleIO.volumeName"] = FieldMetadata{Path:".volumes[*].scaleIO.volumeName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].secret"] = FieldMetadata{Path:".volumes[*].secret",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].secret.defaultMode"] = FieldMetadata{Path:".volumes[*].secret.defaultMode",Type:"integer",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].secret.items"] = FieldMetadata{Path:".volumes[*].secret.items",Type:"array",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].secret.optional"] = FieldMetadata{Path:".volumes[*].secret.optional",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].secret.secretName"] = FieldMetadata{Path:".volumes[*].secret.secretName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].storageos"] = FieldMetadata{Path:".volumes[*].storageos",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].storageos.fsType"] = FieldMetadata{Path:".volumes[*].storageos.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].storageos.readOnly"] = FieldMetadata{Path:".volumes[*].storageos.readOnly",Type:"boolean",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].storageos.secretRef"] = FieldMetadata{Path:".volumes[*].storageos.secretRef",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].storageos.volumeName"] = FieldMetadata{Path:".volumes[*].storageos.volumeName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].storageos.volumeNamespace"] = FieldMetadata{Path:".volumes[*].storageos.volumeNamespace",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].vsphereVolume"] = FieldMetadata{Path:".volumes[*].vsphereVolume",Type:"",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].vsphereVolume.fsType"] = FieldMetadata{Path:".volumes[*].vsphereVolume.fsType",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].vsphereVolume.storagePolicyID"] = FieldMetadata{Path:".volumes[*].vsphereVolume.storagePolicyID",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].vsphereVolume.storagePolicyName"] = FieldMetadata{Path:".volumes[*].vsphereVolume.storagePolicyName",Type:"string",Format:"",Required:false}
+		deferredFieldIndex[".volumes[*].vsphereVolume.volumePath"] = FieldMetadata{Path:".volumes[*].vsphereVolume.volumePath",Type:"string",Format:"",Required:true}
 		deferredFieldIndex[".vsphereVolume"] = FieldMetadata{Path:".vsphereVolume",Type:"",Format:"",Required:false}
 		deferredFieldIndex[".vsphereVolume.fsType"] = FieldMetadata{Path:".vsphereVolume.fsType",Type:"string",Format:"",Required:false}
 		deferredFieldIndex[".vsphereVolume.storagePolicyID"] = FieldMetadata{Path:".vsphereVolume.storagePolicyID",Type:"string",Format:"",Required:false}
@@ -848,11 +1371,41 @@ func init() {
 			".command": FieldMetadata{Path:".command",Type:"array",Format:"",Required:false},
 			".env": FieldMetadata{Path:".env",Type:"array",Format:"",Required:false},
 			".envFrom": FieldMetadata{Path:".envFrom",Type:"array",Format:"",Required:false},
+			".envFrom[*].configMapRef": FieldMetadata{Path:".envFrom[*].configMapRef",Type:"",Format:"",Required:false},
+			".envFrom[*].prefix": FieldMetadata{Path:".envFrom[*].prefix",Type:"string",Format:"",Required:false},
+			".envFrom[*].secretRef": FieldMetadata{Path:".envFrom[*].secretRef",Type:"",Format:"",Required:false},
+			".env[*].name": FieldMetadata{Path:".env[*].name",Type:"string",Format:"",Required:true},
+			".env[*].value": FieldMetadata{Path:".env[*].value",Type:"string",Format:"",Required:false},
+			".env[*].valueFrom": FieldMetadata{Path:".env[*].valueFrom",Type:"",Format:"",Required:false},
 			".image": FieldMetadata{Path:".image",Type:"string",Format:"",Required:false},
 			".imagePullPolicy": FieldMetadata{Path:".imagePullPolicy",Type:"string",Format:"",Required:false},
 			".lifecycle": FieldMetadata{Path:".lifecycle",Type:"",Format:"",Required:false},
 			".lifecycle.postStart": FieldMetadata{Path:".lifecycle.postStart",Type:"",Format:"",Required:false},
+			".lifecycle.postStart.exec": FieldMetadata{Path:".lifecycle.postStart.exec",Type:"",Format:"",Required:false},
+			".lifecycle.postStart.exec.command": FieldMetadata{Path:".lifecycle.postStart.exec.command",Type:"array",Format:"",Required:false},
+			".lifecycle.postStart.httpGet": FieldMetadata{Path:".lifecycle.postStart.httpGet",Type:"",Format:"",Required:false},
+			".lifecycle.postStart.httpGet.host": FieldMetadata{Path:".lifecycle.postStart.httpGet.host",Type:"string",Format:"",Required:false},
+			".lifecycle.postStart.httpGet.httpHeaders": FieldMetadata{Path:".lifecycle.postStart.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".lifecycle.postStart.httpGet.path": FieldMetadata{Path:".lifecycle.postStart.httpGet.path",Type:"string",Format:"",Required:false},
+			".lifecycle.postStart.httpGet.port": FieldMetadata{Path:".lifecycle.postStart.httpGet.port",Type:"",Format:"",Required:true},
+			".lifecycle.postStart.httpGet.scheme": FieldMetadata{Path:".lifecycle.postStart.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".lifecycle.postStart.sleep": FieldMetadata{Path:".lifecycle.postStart.sleep",Type:"",Format:"",Required:false},
+			".lifecycle.postStart.tcpSocket": FieldMetadata{Path:".lifecycle.postStart.tcpSocket",Type:"",Format:"",Required:false},
+			".lifecycle.postStart.tcpSocket.host": FieldMetadata{Path:".lifecycle.postStart.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".lifecycle.postStart.tcpSocket.port": FieldMetadata{Path:".lifecycle.postStart.tcpSocket.port",Type:"",Format:"",Required:true},
 			".lifecycle.preStop": FieldMetadata{Path:".lifecycle.preStop",Type:"",Format:"",Required:false},
+			".lifecycle.preStop.exec": FieldMetadata{Path:".lifecycle.preStop.exec",Type:"",Format:"",Required:false},
+			".lifecycle.preStop.exec.command": FieldMetadata{Path:".lifecycle.preStop.exec.command",Type:"array",Format:"",Required:false},
+			".lifecycle.preStop.httpGet": FieldMetadata{Path:".lifecycle.preStop.httpGet",Type:"",Format:"",Required:false},
+			".lifecycle.preStop.httpGet.host": FieldMetadata{Path:".lifecycle.preStop.httpGet.host",Type:"string",Format:"",Required:false},
+			".lifecycle.preStop.httpGet.httpHeaders": FieldMetadata{Path:".lifecycle.preStop.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".lifecycle.preStop.httpGet.path": FieldMetadata{Path:".lifecycle.preStop.httpGet.path",Type:"string",Format:"",Required:false},
+			".lifecycle.preStop.httpGet.port": FieldMetadata{Path:".lifecycle.preStop.httpGet.port",Type:"",Format:"",Required:true},
+			".lifecycle.preStop.httpGet.scheme": FieldMetadata{Path:".lifecycle.preStop.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".lifecycle.preStop.sleep": FieldMetadata{Path:".lifecycle.preStop.sleep",Type:"",Format:"",Required:false},
+			".lifecycle.preStop.tcpSocket": FieldMetadata{Path:".lifecycle.preStop.tcpSocket",Type:"",Format:"",Required:false},
+			".lifecycle.preStop.tcpSocket.host": FieldMetadata{Path:".lifecycle.preStop.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".lifecycle.preStop.tcpSocket.port": FieldMetadata{Path:".lifecycle.preStop.tcpSocket.port",Type:"",Format:"",Required:true},
 			".lifecycle.stopSignal": FieldMetadata{Path:".lifecycle.stopSignal",Type:"string",Format:"",Required:false},
 			".livenessProbe": FieldMetadata{Path:".livenessProbe",Type:"",Format:"",Required:false},
 			".livenessProbe.exec": FieldMetadata{Path:".livenessProbe.exec",Type:"",Format:"",Required:false},
@@ -874,6 +1427,11 @@ func init() {
 			".livenessProbe.timeoutSeconds": FieldMetadata{Path:".livenessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false},
 			".name": FieldMetadata{Path:".name",Type:"string",Format:"string",Required:true},
 			".ports": FieldMetadata{Path:".ports",Type:"array",Format:"",Required:false},
+			".ports[*].containerPort": FieldMetadata{Path:".ports[*].containerPort",Type:"integer",Format:"",Required:true},
+			".ports[*].hostIP": FieldMetadata{Path:".ports[*].hostIP",Type:"string",Format:"",Required:false},
+			".ports[*].hostPort": FieldMetadata{Path:".ports[*].hostPort",Type:"integer",Format:"",Required:false},
+			".ports[*].name": FieldMetadata{Path:".ports[*].name",Type:"string",Format:"",Required:false},
+			".ports[*].protocol": FieldMetadata{Path:".ports[*].protocol",Type:"string",Format:"",Required:false},
 			".readinessProbe": FieldMetadata{Path:".readinessProbe",Type:"",Format:"",Required:false},
 			".readinessProbe.exec": FieldMetadata{Path:".readinessProbe.exec",Type:"",Format:"",Required:false},
 			".readinessProbe.exec.command": FieldMetadata{Path:".readinessProbe.exec.command",Type:"array",Format:"",Required:false},
@@ -934,7 +1492,16 @@ func init() {
 			".terminationMessagePath": FieldMetadata{Path:".terminationMessagePath",Type:"string",Format:"",Required:false},
 			".tty": FieldMetadata{Path:".tty",Type:"boolean",Format:"",Required:false},
 			".volumeDevices": FieldMetadata{Path:".volumeDevices",Type:"array",Format:"",Required:false},
+			".volumeDevices[*].devicePath": FieldMetadata{Path:".volumeDevices[*].devicePath",Type:"string",Format:"",Required:true},
+			".volumeDevices[*].name": FieldMetadata{Path:".volumeDevices[*].name",Type:"string",Format:"",Required:true},
 			".volumeMounts": FieldMetadata{Path:".volumeMounts",Type:"array",Format:"",Required:false},
+			".volumeMounts[*].mountPath": FieldMetadata{Path:".volumeMounts[*].mountPath",Type:"string",Format:"",Required:true},
+			".volumeMounts[*].mountPropagation": FieldMetadata{Path:".volumeMounts[*].mountPropagation",Type:"string",Format:"",Required:false},
+			".volumeMounts[*].name": FieldMetadata{Path:".volumeMounts[*].name",Type:"string",Format:"",Required:true},
+			".volumeMounts[*].readOnly": FieldMetadata{Path:".volumeMounts[*].readOnly",Type:"boolean",Format:"",Required:false},
+			".volumeMounts[*].recursiveReadOnly": FieldMetadata{Path:".volumeMounts[*].recursiveReadOnly",Type:"string",Format:"",Required:false},
+			".volumeMounts[*].subPath": FieldMetadata{Path:".volumeMounts[*].subPath",Type:"string",Format:"",Required:false},
+			".volumeMounts[*].subPathExpr": FieldMetadata{Path:".volumeMounts[*].subPathExpr",Type:"string",Format:"",Required:false},
 			".workingDir": FieldMetadata{Path:".workingDir",Type:"string",Format:"",Required:false},
 		}
 		ContainerPortDeferredFields = SchemaMetadata{
@@ -973,10 +1540,16 @@ func init() {
 		}
 		EnvVarSourceDeferredFields = SchemaMetadata{
 			".configMapKeyRef": FieldMetadata{Path:".configMapKeyRef",Type:"",Format:"",Required:false},
+			".configMapKeyRef.key": FieldMetadata{Path:".configMapKeyRef.key",Type:"string",Format:"",Required:true},
+			".configMapKeyRef.name": FieldMetadata{Path:".configMapKeyRef.name",Type:"string",Format:"",Required:false},
+			".configMapKeyRef.optional": FieldMetadata{Path:".configMapKeyRef.optional",Type:"boolean",Format:"",Required:false},
 			".fieldRef": FieldMetadata{Path:".fieldRef",Type:"",Format:"",Required:false},
 			".fileKeyRef": FieldMetadata{Path:".fileKeyRef",Type:"",Format:"",Required:false},
 			".resourceFieldRef": FieldMetadata{Path:".resourceFieldRef",Type:"",Format:"",Required:false},
 			".secretKeyRef": FieldMetadata{Path:".secretKeyRef",Type:"",Format:"",Required:false},
+			".secretKeyRef.key": FieldMetadata{Path:".secretKeyRef.key",Type:"string",Format:"",Required:true},
+			".secretKeyRef.name": FieldMetadata{Path:".secretKeyRef.name",Type:"string",Format:"",Required:false},
+			".secretKeyRef.optional": FieldMetadata{Path:".secretKeyRef.optional",Type:"boolean",Format:"",Required:false},
 		}
 		EphemeralVolumeSourceDeferredFields = SchemaMetadata{
 			".volumeClaimTemplate": FieldMetadata{Path:".volumeClaimTemplate",Type:"",Format:"",Required:false},
@@ -1044,14 +1617,46 @@ func init() {
 		}
 		LifecycleDeferredFields = SchemaMetadata{
 			".postStart": FieldMetadata{Path:".postStart",Type:"",Format:"",Required:false},
+			".postStart.exec": FieldMetadata{Path:".postStart.exec",Type:"",Format:"",Required:false},
+			".postStart.exec.command": FieldMetadata{Path:".postStart.exec.command",Type:"array",Format:"",Required:false},
+			".postStart.httpGet": FieldMetadata{Path:".postStart.httpGet",Type:"",Format:"",Required:false},
+			".postStart.httpGet.host": FieldMetadata{Path:".postStart.httpGet.host",Type:"string",Format:"",Required:false},
+			".postStart.httpGet.httpHeaders": FieldMetadata{Path:".postStart.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".postStart.httpGet.path": FieldMetadata{Path:".postStart.httpGet.path",Type:"string",Format:"",Required:false},
+			".postStart.httpGet.port": FieldMetadata{Path:".postStart.httpGet.port",Type:"",Format:"",Required:true},
+			".postStart.httpGet.scheme": FieldMetadata{Path:".postStart.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".postStart.sleep": FieldMetadata{Path:".postStart.sleep",Type:"",Format:"",Required:false},
+			".postStart.tcpSocket": FieldMetadata{Path:".postStart.tcpSocket",Type:"",Format:"",Required:false},
+			".postStart.tcpSocket.host": FieldMetadata{Path:".postStart.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".postStart.tcpSocket.port": FieldMetadata{Path:".postStart.tcpSocket.port",Type:"",Format:"",Required:true},
 			".preStop": FieldMetadata{Path:".preStop",Type:"",Format:"",Required:false},
+			".preStop.exec": FieldMetadata{Path:".preStop.exec",Type:"",Format:"",Required:false},
+			".preStop.exec.command": FieldMetadata{Path:".preStop.exec.command",Type:"array",Format:"",Required:false},
+			".preStop.httpGet": FieldMetadata{Path:".preStop.httpGet",Type:"",Format:"",Required:false},
+			".preStop.httpGet.host": FieldMetadata{Path:".preStop.httpGet.host",Type:"string",Format:"",Required:false},
+			".preStop.httpGet.httpHeaders": FieldMetadata{Path:".preStop.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".preStop.httpGet.path": FieldMetadata{Path:".preStop.httpGet.path",Type:"string",Format:"",Required:false},
+			".preStop.httpGet.port": FieldMetadata{Path:".preStop.httpGet.port",Type:"",Format:"",Required:true},
+			".preStop.httpGet.scheme": FieldMetadata{Path:".preStop.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".preStop.sleep": FieldMetadata{Path:".preStop.sleep",Type:"",Format:"",Required:false},
+			".preStop.tcpSocket": FieldMetadata{Path:".preStop.tcpSocket",Type:"",Format:"",Required:false},
+			".preStop.tcpSocket.host": FieldMetadata{Path:".preStop.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".preStop.tcpSocket.port": FieldMetadata{Path:".preStop.tcpSocket.port",Type:"",Format:"",Required:true},
 			".stopSignal": FieldMetadata{Path:".stopSignal",Type:"string",Format:"",Required:false},
 		}
 		LifecycleHandlerDeferredFields = SchemaMetadata{
 			".exec": FieldMetadata{Path:".exec",Type:"",Format:"",Required:false},
+			".exec.command": FieldMetadata{Path:".exec.command",Type:"array",Format:"",Required:false},
 			".httpGet": FieldMetadata{Path:".httpGet",Type:"",Format:"",Required:false},
+			".httpGet.host": FieldMetadata{Path:".httpGet.host",Type:"string",Format:"",Required:false},
+			".httpGet.httpHeaders": FieldMetadata{Path:".httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".httpGet.path": FieldMetadata{Path:".httpGet.path",Type:"string",Format:"",Required:false},
+			".httpGet.port": FieldMetadata{Path:".httpGet.port",Type:"",Format:"",Required:true},
+			".httpGet.scheme": FieldMetadata{Path:".httpGet.scheme",Type:"string",Format:"",Required:false},
 			".sleep": FieldMetadata{Path:".sleep",Type:"",Format:"",Required:false},
 			".tcpSocket": FieldMetadata{Path:".tcpSocket",Type:"",Format:"",Required:false},
+			".tcpSocket.host": FieldMetadata{Path:".tcpSocket.host",Type:"string",Format:"",Required:false},
+			".tcpSocket.port": FieldMetadata{Path:".tcpSocket.port",Type:"",Format:"",Required:true},
 		}
 		LocalObjectReferenceDeferredFields = SchemaMetadata{
 			".name": FieldMetadata{Path:".name",Type:"string",Format:"",Required:false},
@@ -1123,6 +1728,8 @@ func init() {
 		PodDNSConfigDeferredFields = SchemaMetadata{
 			".nameservers": FieldMetadata{Path:".nameservers",Type:"array",Format:"",Required:false},
 			".options": FieldMetadata{Path:".options",Type:"array",Format:"",Required:false},
+			".options[*].name": FieldMetadata{Path:".options[*].name",Type:"string",Format:"",Required:false},
+			".options[*].value": FieldMetadata{Path:".options[*].value",Type:"string",Format:"",Required:false},
 			".searches": FieldMetadata{Path:".searches",Type:"array",Format:"",Required:false},
 		}
 		PodDNSConfigOptionDeferredFields = SchemaMetadata{
@@ -1139,6 +1746,8 @@ func init() {
 			".seLinuxChangePolicy": FieldMetadata{Path:".seLinuxChangePolicy",Type:"string",Format:"",Required:false},
 			".seLinuxOptions": FieldMetadata{Path:".seLinuxOptions",Type:"",Format:"",Required:false},
 			".seccompProfile": FieldMetadata{Path:".seccompProfile",Type:"",Format:"",Required:false},
+			".seccompProfile.localhostProfile": FieldMetadata{Path:".seccompProfile.localhostProfile",Type:"string",Format:"",Required:false},
+			".seccompProfile.type": FieldMetadata{Path:".seccompProfile.type",Type:"string",Format:"",Required:true},
 			".supplementalGroups": FieldMetadata{Path:".supplementalGroups",Type:"array",Format:"",Required:false},
 			".supplementalGroupsPolicy": FieldMetadata{Path:".supplementalGroupsPolicy",Type:"string",Format:"",Required:false},
 			".sysctls": FieldMetadata{Path:".sysctls",Type:"array",Format:"",Required:false},
@@ -1158,15 +1767,290 @@ func init() {
 			".affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution": FieldMetadata{Path:".affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution",Type:"array",Format:"",Required:false},
 			".automountServiceAccountToken": FieldMetadata{Path:".automountServiceAccountToken",Type:"boolean",Format:"",Required:false},
 			".containers": FieldMetadata{Path:".containers",Type:"array",Format:"",Required:false},
+			".containers[*].args": FieldMetadata{Path:".containers[*].args",Type:"array",Format:"",Required:false},
+			".containers[*].command": FieldMetadata{Path:".containers[*].command",Type:"array",Format:"",Required:false},
+			".containers[*].env": FieldMetadata{Path:".containers[*].env",Type:"array",Format:"",Required:false},
+			".containers[*].envFrom": FieldMetadata{Path:".containers[*].envFrom",Type:"array",Format:"",Required:false},
+			".containers[*].envFrom[*].configMapRef": FieldMetadata{Path:".containers[*].envFrom[*].configMapRef",Type:"",Format:"",Required:false},
+			".containers[*].envFrom[*].prefix": FieldMetadata{Path:".containers[*].envFrom[*].prefix",Type:"string",Format:"",Required:false},
+			".containers[*].envFrom[*].secretRef": FieldMetadata{Path:".containers[*].envFrom[*].secretRef",Type:"",Format:"",Required:false},
+			".containers[*].env[*].name": FieldMetadata{Path:".containers[*].env[*].name",Type:"string",Format:"",Required:true},
+			".containers[*].env[*].value": FieldMetadata{Path:".containers[*].env[*].value",Type:"string",Format:"",Required:false},
+			".containers[*].env[*].valueFrom": FieldMetadata{Path:".containers[*].env[*].valueFrom",Type:"",Format:"",Required:false},
+			".containers[*].image": FieldMetadata{Path:".containers[*].image",Type:"string",Format:"",Required:false},
+			".containers[*].imagePullPolicy": FieldMetadata{Path:".containers[*].imagePullPolicy",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle": FieldMetadata{Path:".containers[*].lifecycle",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.postStart": FieldMetadata{Path:".containers[*].lifecycle.postStart",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.exec": FieldMetadata{Path:".containers[*].lifecycle.postStart.exec",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.exec.command": FieldMetadata{Path:".containers[*].lifecycle.postStart.exec.command",Type:"array",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.httpGet": FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.httpGet.host": FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.host",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.httpGet.httpHeaders": FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.httpGet.path": FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.path",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.httpGet.port": FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.port",Type:"",Format:"",Required:true},
+			".containers[*].lifecycle.postStart.httpGet.scheme": FieldMetadata{Path:".containers[*].lifecycle.postStart.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.sleep": FieldMetadata{Path:".containers[*].lifecycle.postStart.sleep",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.tcpSocket": FieldMetadata{Path:".containers[*].lifecycle.postStart.tcpSocket",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.tcpSocket.host": FieldMetadata{Path:".containers[*].lifecycle.postStart.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle.postStart.tcpSocket.port": FieldMetadata{Path:".containers[*].lifecycle.postStart.tcpSocket.port",Type:"",Format:"",Required:true},
+			".containers[*].lifecycle.preStop": FieldMetadata{Path:".containers[*].lifecycle.preStop",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.exec": FieldMetadata{Path:".containers[*].lifecycle.preStop.exec",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.exec.command": FieldMetadata{Path:".containers[*].lifecycle.preStop.exec.command",Type:"array",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.httpGet": FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.httpGet.host": FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.host",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.httpGet.httpHeaders": FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.httpGet.path": FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.path",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.httpGet.port": FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.port",Type:"",Format:"",Required:true},
+			".containers[*].lifecycle.preStop.httpGet.scheme": FieldMetadata{Path:".containers[*].lifecycle.preStop.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.sleep": FieldMetadata{Path:".containers[*].lifecycle.preStop.sleep",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.tcpSocket": FieldMetadata{Path:".containers[*].lifecycle.preStop.tcpSocket",Type:"",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.tcpSocket.host": FieldMetadata{Path:".containers[*].lifecycle.preStop.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".containers[*].lifecycle.preStop.tcpSocket.port": FieldMetadata{Path:".containers[*].lifecycle.preStop.tcpSocket.port",Type:"",Format:"",Required:true},
+			".containers[*].lifecycle.stopSignal": FieldMetadata{Path:".containers[*].lifecycle.stopSignal",Type:"string",Format:"",Required:false},
+			".containers[*].livenessProbe": FieldMetadata{Path:".containers[*].livenessProbe",Type:"",Format:"",Required:false},
+			".containers[*].livenessProbe.exec": FieldMetadata{Path:".containers[*].livenessProbe.exec",Type:"",Format:"",Required:false},
+			".containers[*].livenessProbe.exec.command": FieldMetadata{Path:".containers[*].livenessProbe.exec.command",Type:"array",Format:"",Required:false},
+			".containers[*].livenessProbe.failureThreshold": FieldMetadata{Path:".containers[*].livenessProbe.failureThreshold",Type:"integer",Format:"int32",Required:false},
+			".containers[*].livenessProbe.httpGet": FieldMetadata{Path:".containers[*].livenessProbe.httpGet",Type:"",Format:"",Required:false},
+			".containers[*].livenessProbe.httpGet.host": FieldMetadata{Path:".containers[*].livenessProbe.httpGet.host",Type:"string",Format:"",Required:false},
+			".containers[*].livenessProbe.httpGet.httpHeaders": FieldMetadata{Path:".containers[*].livenessProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".containers[*].livenessProbe.httpGet.path": FieldMetadata{Path:".containers[*].livenessProbe.httpGet.path",Type:"string",Format:"",Required:false},
+			".containers[*].livenessProbe.httpGet.port": FieldMetadata{Path:".containers[*].livenessProbe.httpGet.port",Type:"",Format:"",Required:true},
+			".containers[*].livenessProbe.httpGet.scheme": FieldMetadata{Path:".containers[*].livenessProbe.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".containers[*].livenessProbe.initialDelaySeconds": FieldMetadata{Path:".containers[*].livenessProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].livenessProbe.periodSeconds": FieldMetadata{Path:".containers[*].livenessProbe.periodSeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].livenessProbe.successThreshold": FieldMetadata{Path:".containers[*].livenessProbe.successThreshold",Type:"integer",Format:"int32",Required:false},
+			".containers[*].livenessProbe.tcpSocket": FieldMetadata{Path:".containers[*].livenessProbe.tcpSocket",Type:"",Format:"",Required:false},
+			".containers[*].livenessProbe.tcpSocket.host": FieldMetadata{Path:".containers[*].livenessProbe.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".containers[*].livenessProbe.tcpSocket.port": FieldMetadata{Path:".containers[*].livenessProbe.tcpSocket.port",Type:"",Format:"",Required:true},
+			".containers[*].livenessProbe.terminationGracePeriodSeconds": FieldMetadata{Path:".containers[*].livenessProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
+			".containers[*].livenessProbe.timeoutSeconds": FieldMetadata{Path:".containers[*].livenessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].name": FieldMetadata{Path:".containers[*].name",Type:"string",Format:"string",Required:true},
+			".containers[*].ports": FieldMetadata{Path:".containers[*].ports",Type:"array",Format:"",Required:false},
+			".containers[*].ports[*].containerPort": FieldMetadata{Path:".containers[*].ports[*].containerPort",Type:"integer",Format:"",Required:true},
+			".containers[*].ports[*].hostIP": FieldMetadata{Path:".containers[*].ports[*].hostIP",Type:"string",Format:"",Required:false},
+			".containers[*].ports[*].hostPort": FieldMetadata{Path:".containers[*].ports[*].hostPort",Type:"integer",Format:"",Required:false},
+			".containers[*].ports[*].name": FieldMetadata{Path:".containers[*].ports[*].name",Type:"string",Format:"",Required:false},
+			".containers[*].ports[*].protocol": FieldMetadata{Path:".containers[*].ports[*].protocol",Type:"string",Format:"",Required:false},
+			".containers[*].readinessProbe": FieldMetadata{Path:".containers[*].readinessProbe",Type:"",Format:"",Required:false},
+			".containers[*].readinessProbe.exec": FieldMetadata{Path:".containers[*].readinessProbe.exec",Type:"",Format:"",Required:false},
+			".containers[*].readinessProbe.exec.command": FieldMetadata{Path:".containers[*].readinessProbe.exec.command",Type:"array",Format:"",Required:false},
+			".containers[*].readinessProbe.failureThreshold": FieldMetadata{Path:".containers[*].readinessProbe.failureThreshold",Type:"integer",Format:"int32",Required:false},
+			".containers[*].readinessProbe.httpGet": FieldMetadata{Path:".containers[*].readinessProbe.httpGet",Type:"",Format:"",Required:false},
+			".containers[*].readinessProbe.httpGet.host": FieldMetadata{Path:".containers[*].readinessProbe.httpGet.host",Type:"string",Format:"",Required:false},
+			".containers[*].readinessProbe.httpGet.httpHeaders": FieldMetadata{Path:".containers[*].readinessProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".containers[*].readinessProbe.httpGet.path": FieldMetadata{Path:".containers[*].readinessProbe.httpGet.path",Type:"string",Format:"",Required:false},
+			".containers[*].readinessProbe.httpGet.port": FieldMetadata{Path:".containers[*].readinessProbe.httpGet.port",Type:"",Format:"",Required:true},
+			".containers[*].readinessProbe.httpGet.scheme": FieldMetadata{Path:".containers[*].readinessProbe.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".containers[*].readinessProbe.initialDelaySeconds": FieldMetadata{Path:".containers[*].readinessProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].readinessProbe.periodSeconds": FieldMetadata{Path:".containers[*].readinessProbe.periodSeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].readinessProbe.successThreshold": FieldMetadata{Path:".containers[*].readinessProbe.successThreshold",Type:"integer",Format:"int32",Required:false},
+			".containers[*].readinessProbe.tcpSocket": FieldMetadata{Path:".containers[*].readinessProbe.tcpSocket",Type:"",Format:"",Required:false},
+			".containers[*].readinessProbe.tcpSocket.host": FieldMetadata{Path:".containers[*].readinessProbe.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".containers[*].readinessProbe.tcpSocket.port": FieldMetadata{Path:".containers[*].readinessProbe.tcpSocket.port",Type:"",Format:"",Required:true},
+			".containers[*].readinessProbe.terminationGracePeriodSeconds": FieldMetadata{Path:".containers[*].readinessProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
+			".containers[*].readinessProbe.timeoutSeconds": FieldMetadata{Path:".containers[*].readinessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].resources": FieldMetadata{Path:".containers[*].resources",Type:"",Format:"",Required:false},
+			".containers[*].resources.claims": FieldMetadata{Path:".containers[*].resources.claims",Type:"array",Format:"",Required:false},
+			".containers[*].resources.limits": FieldMetadata{Path:".containers[*].resources.limits",Type:"object",Format:"",Required:false},
+			".containers[*].resources.requests": FieldMetadata{Path:".containers[*].resources.requests",Type:"object",Format:"",Required:false},
+			".containers[*].securityContext": FieldMetadata{Path:".containers[*].securityContext",Type:"",Format:"",Required:false},
+			".containers[*].securityContext.allowPrivilegeEscalation": FieldMetadata{Path:".containers[*].securityContext.allowPrivilegeEscalation",Type:"boolean",Format:"",Required:false},
+			".containers[*].securityContext.capabilities": FieldMetadata{Path:".containers[*].securityContext.capabilities",Type:"",Format:"",Required:false},
+			".containers[*].securityContext.capabilities.add": FieldMetadata{Path:".containers[*].securityContext.capabilities.add",Type:"array",Format:"",Required:false},
+			".containers[*].securityContext.capabilities.drop": FieldMetadata{Path:".containers[*].securityContext.capabilities.drop",Type:"array",Format:"",Required:false},
+			".containers[*].securityContext.privileged": FieldMetadata{Path:".containers[*].securityContext.privileged",Type:"boolean",Format:"",Required:false},
+			".containers[*].securityContext.readOnlyRootFilesystem": FieldMetadata{Path:".containers[*].securityContext.readOnlyRootFilesystem",Type:"boolean",Format:"",Required:false},
+			".containers[*].securityContext.runAsGroup": FieldMetadata{Path:".containers[*].securityContext.runAsGroup",Type:"integer",Format:"int64",Required:false},
+			".containers[*].securityContext.runAsNonRoot": FieldMetadata{Path:".containers[*].securityContext.runAsNonRoot",Type:"boolean",Format:"",Required:false},
+			".containers[*].securityContext.runAsUser": FieldMetadata{Path:".containers[*].securityContext.runAsUser",Type:"integer",Format:"int64",Required:false},
+			".containers[*].securityContext.seLinuxOptions": FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions",Type:"",Format:"",Required:false},
+			".containers[*].securityContext.seLinuxOptions.level": FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions.level",Type:"string",Format:"",Required:false},
+			".containers[*].securityContext.seLinuxOptions.role": FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions.role",Type:"string",Format:"",Required:false},
+			".containers[*].securityContext.seLinuxOptions.type": FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions.type",Type:"string",Format:"",Required:false},
+			".containers[*].securityContext.seLinuxOptions.user": FieldMetadata{Path:".containers[*].securityContext.seLinuxOptions.user",Type:"string",Format:"",Required:false},
+			".containers[*].startupProbe": FieldMetadata{Path:".containers[*].startupProbe",Type:"",Format:"",Required:false},
+			".containers[*].startupProbe.exec": FieldMetadata{Path:".containers[*].startupProbe.exec",Type:"",Format:"",Required:false},
+			".containers[*].startupProbe.exec.command": FieldMetadata{Path:".containers[*].startupProbe.exec.command",Type:"array",Format:"",Required:false},
+			".containers[*].startupProbe.failureThreshold": FieldMetadata{Path:".containers[*].startupProbe.failureThreshold",Type:"integer",Format:"int32",Required:false},
+			".containers[*].startupProbe.httpGet": FieldMetadata{Path:".containers[*].startupProbe.httpGet",Type:"",Format:"",Required:false},
+			".containers[*].startupProbe.httpGet.host": FieldMetadata{Path:".containers[*].startupProbe.httpGet.host",Type:"string",Format:"",Required:false},
+			".containers[*].startupProbe.httpGet.httpHeaders": FieldMetadata{Path:".containers[*].startupProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".containers[*].startupProbe.httpGet.path": FieldMetadata{Path:".containers[*].startupProbe.httpGet.path",Type:"string",Format:"",Required:false},
+			".containers[*].startupProbe.httpGet.port": FieldMetadata{Path:".containers[*].startupProbe.httpGet.port",Type:"",Format:"",Required:true},
+			".containers[*].startupProbe.httpGet.scheme": FieldMetadata{Path:".containers[*].startupProbe.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".containers[*].startupProbe.initialDelaySeconds": FieldMetadata{Path:".containers[*].startupProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].startupProbe.periodSeconds": FieldMetadata{Path:".containers[*].startupProbe.periodSeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].startupProbe.successThreshold": FieldMetadata{Path:".containers[*].startupProbe.successThreshold",Type:"integer",Format:"int32",Required:false},
+			".containers[*].startupProbe.tcpSocket": FieldMetadata{Path:".containers[*].startupProbe.tcpSocket",Type:"",Format:"",Required:false},
+			".containers[*].startupProbe.tcpSocket.host": FieldMetadata{Path:".containers[*].startupProbe.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".containers[*].startupProbe.tcpSocket.port": FieldMetadata{Path:".containers[*].startupProbe.tcpSocket.port",Type:"",Format:"",Required:true},
+			".containers[*].startupProbe.terminationGracePeriodSeconds": FieldMetadata{Path:".containers[*].startupProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
+			".containers[*].startupProbe.timeoutSeconds": FieldMetadata{Path:".containers[*].startupProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false},
+			".containers[*].stdin": FieldMetadata{Path:".containers[*].stdin",Type:"boolean",Format:"",Required:false},
+			".containers[*].stdinOnce": FieldMetadata{Path:".containers[*].stdinOnce",Type:"boolean",Format:"",Required:false},
+			".containers[*].terminationMessagePath": FieldMetadata{Path:".containers[*].terminationMessagePath",Type:"string",Format:"",Required:false},
+			".containers[*].tty": FieldMetadata{Path:".containers[*].tty",Type:"boolean",Format:"",Required:false},
+			".containers[*].volumeDevices": FieldMetadata{Path:".containers[*].volumeDevices",Type:"array",Format:"",Required:false},
+			".containers[*].volumeDevices[*].devicePath": FieldMetadata{Path:".containers[*].volumeDevices[*].devicePath",Type:"string",Format:"",Required:true},
+			".containers[*].volumeDevices[*].name": FieldMetadata{Path:".containers[*].volumeDevices[*].name",Type:"string",Format:"",Required:true},
+			".containers[*].volumeMounts": FieldMetadata{Path:".containers[*].volumeMounts",Type:"array",Format:"",Required:false},
+			".containers[*].volumeMounts[*].mountPath": FieldMetadata{Path:".containers[*].volumeMounts[*].mountPath",Type:"string",Format:"",Required:true},
+			".containers[*].volumeMounts[*].mountPropagation": FieldMetadata{Path:".containers[*].volumeMounts[*].mountPropagation",Type:"string",Format:"",Required:false},
+			".containers[*].volumeMounts[*].name": FieldMetadata{Path:".containers[*].volumeMounts[*].name",Type:"string",Format:"",Required:true},
+			".containers[*].volumeMounts[*].readOnly": FieldMetadata{Path:".containers[*].volumeMounts[*].readOnly",Type:"boolean",Format:"",Required:false},
+			".containers[*].volumeMounts[*].recursiveReadOnly": FieldMetadata{Path:".containers[*].volumeMounts[*].recursiveReadOnly",Type:"string",Format:"",Required:false},
+			".containers[*].volumeMounts[*].subPath": FieldMetadata{Path:".containers[*].volumeMounts[*].subPath",Type:"string",Format:"",Required:false},
+			".containers[*].volumeMounts[*].subPathExpr": FieldMetadata{Path:".containers[*].volumeMounts[*].subPathExpr",Type:"string",Format:"",Required:false},
+			".containers[*].workingDir": FieldMetadata{Path:".containers[*].workingDir",Type:"string",Format:"",Required:false},
 			".dnsConfig": FieldMetadata{Path:".dnsConfig",Type:"",Format:"",Required:false},
 			".dnsConfig.nameservers": FieldMetadata{Path:".dnsConfig.nameservers",Type:"array",Format:"",Required:false},
 			".dnsConfig.options": FieldMetadata{Path:".dnsConfig.options",Type:"array",Format:"",Required:false},
+			".dnsConfig.options[*].name": FieldMetadata{Path:".dnsConfig.options[*].name",Type:"string",Format:"",Required:false},
+			".dnsConfig.options[*].value": FieldMetadata{Path:".dnsConfig.options[*].value",Type:"string",Format:"",Required:false},
 			".dnsConfig.searches": FieldMetadata{Path:".dnsConfig.searches",Type:"array",Format:"",Required:false},
 			".dnsPolicy": FieldMetadata{Path:".dnsPolicy",Type:"string",Format:"",Required:false},
 			".hostPID": FieldMetadata{Path:".hostPID",Type:"boolean",Format:"",Required:false},
 			".hostname": FieldMetadata{Path:".hostname",Type:"string",Format:"string",Required:false},
 			".imagePullSecrets": FieldMetadata{Path:".imagePullSecrets",Type:"array",Format:"",Required:false},
+			".imagePullSecrets[*].name": FieldMetadata{Path:".imagePullSecrets[*].name",Type:"string",Format:"",Required:false},
 			".initContainers": FieldMetadata{Path:".initContainers",Type:"array",Format:"",Required:false},
+			".initContainers[*].args": FieldMetadata{Path:".initContainers[*].args",Type:"array",Format:"",Required:false},
+			".initContainers[*].command": FieldMetadata{Path:".initContainers[*].command",Type:"array",Format:"",Required:false},
+			".initContainers[*].env": FieldMetadata{Path:".initContainers[*].env",Type:"array",Format:"",Required:false},
+			".initContainers[*].envFrom": FieldMetadata{Path:".initContainers[*].envFrom",Type:"array",Format:"",Required:false},
+			".initContainers[*].envFrom[*].configMapRef": FieldMetadata{Path:".initContainers[*].envFrom[*].configMapRef",Type:"",Format:"",Required:false},
+			".initContainers[*].envFrom[*].prefix": FieldMetadata{Path:".initContainers[*].envFrom[*].prefix",Type:"string",Format:"",Required:false},
+			".initContainers[*].envFrom[*].secretRef": FieldMetadata{Path:".initContainers[*].envFrom[*].secretRef",Type:"",Format:"",Required:false},
+			".initContainers[*].env[*].name": FieldMetadata{Path:".initContainers[*].env[*].name",Type:"string",Format:"",Required:true},
+			".initContainers[*].env[*].value": FieldMetadata{Path:".initContainers[*].env[*].value",Type:"string",Format:"",Required:false},
+			".initContainers[*].env[*].valueFrom": FieldMetadata{Path:".initContainers[*].env[*].valueFrom",Type:"",Format:"",Required:false},
+			".initContainers[*].image": FieldMetadata{Path:".initContainers[*].image",Type:"string",Format:"",Required:false},
+			".initContainers[*].imagePullPolicy": FieldMetadata{Path:".initContainers[*].imagePullPolicy",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle": FieldMetadata{Path:".initContainers[*].lifecycle",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart": FieldMetadata{Path:".initContainers[*].lifecycle.postStart",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.exec": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.exec",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.exec.command": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.exec.command",Type:"array",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.httpGet": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.httpGet.host": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.httpGet.httpHeaders": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.httpGet.path": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.path",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.httpGet.port": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.port",Type:"",Format:"",Required:true},
+			".initContainers[*].lifecycle.postStart.httpGet.scheme": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.sleep": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.sleep",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.tcpSocket": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.tcpSocket",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.tcpSocket.host": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle.postStart.tcpSocket.port": FieldMetadata{Path:".initContainers[*].lifecycle.postStart.tcpSocket.port",Type:"",Format:"",Required:true},
+			".initContainers[*].lifecycle.preStop": FieldMetadata{Path:".initContainers[*].lifecycle.preStop",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.exec": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.exec",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.exec.command": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.exec.command",Type:"array",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.httpGet": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.httpGet.host": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.httpGet.httpHeaders": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.httpGet.path": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.path",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.httpGet.port": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.port",Type:"",Format:"",Required:true},
+			".initContainers[*].lifecycle.preStop.httpGet.scheme": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.sleep": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.sleep",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.tcpSocket": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.tcpSocket",Type:"",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.tcpSocket.host": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].lifecycle.preStop.tcpSocket.port": FieldMetadata{Path:".initContainers[*].lifecycle.preStop.tcpSocket.port",Type:"",Format:"",Required:true},
+			".initContainers[*].lifecycle.stopSignal": FieldMetadata{Path:".initContainers[*].lifecycle.stopSignal",Type:"string",Format:"",Required:false},
+			".initContainers[*].livenessProbe": FieldMetadata{Path:".initContainers[*].livenessProbe",Type:"",Format:"",Required:false},
+			".initContainers[*].livenessProbe.exec": FieldMetadata{Path:".initContainers[*].livenessProbe.exec",Type:"",Format:"",Required:false},
+			".initContainers[*].livenessProbe.exec.command": FieldMetadata{Path:".initContainers[*].livenessProbe.exec.command",Type:"array",Format:"",Required:false},
+			".initContainers[*].livenessProbe.failureThreshold": FieldMetadata{Path:".initContainers[*].livenessProbe.failureThreshold",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].livenessProbe.httpGet": FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet",Type:"",Format:"",Required:false},
+			".initContainers[*].livenessProbe.httpGet.host": FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].livenessProbe.httpGet.httpHeaders": FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".initContainers[*].livenessProbe.httpGet.path": FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.path",Type:"string",Format:"",Required:false},
+			".initContainers[*].livenessProbe.httpGet.port": FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.port",Type:"",Format:"",Required:true},
+			".initContainers[*].livenessProbe.httpGet.scheme": FieldMetadata{Path:".initContainers[*].livenessProbe.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".initContainers[*].livenessProbe.initialDelaySeconds": FieldMetadata{Path:".initContainers[*].livenessProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].livenessProbe.periodSeconds": FieldMetadata{Path:".initContainers[*].livenessProbe.periodSeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].livenessProbe.successThreshold": FieldMetadata{Path:".initContainers[*].livenessProbe.successThreshold",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].livenessProbe.tcpSocket": FieldMetadata{Path:".initContainers[*].livenessProbe.tcpSocket",Type:"",Format:"",Required:false},
+			".initContainers[*].livenessProbe.tcpSocket.host": FieldMetadata{Path:".initContainers[*].livenessProbe.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].livenessProbe.tcpSocket.port": FieldMetadata{Path:".initContainers[*].livenessProbe.tcpSocket.port",Type:"",Format:"",Required:true},
+			".initContainers[*].livenessProbe.terminationGracePeriodSeconds": FieldMetadata{Path:".initContainers[*].livenessProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
+			".initContainers[*].livenessProbe.timeoutSeconds": FieldMetadata{Path:".initContainers[*].livenessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].name": FieldMetadata{Path:".initContainers[*].name",Type:"string",Format:"string",Required:true},
+			".initContainers[*].ports": FieldMetadata{Path:".initContainers[*].ports",Type:"array",Format:"",Required:false},
+			".initContainers[*].ports[*].containerPort": FieldMetadata{Path:".initContainers[*].ports[*].containerPort",Type:"integer",Format:"",Required:true},
+			".initContainers[*].ports[*].hostIP": FieldMetadata{Path:".initContainers[*].ports[*].hostIP",Type:"string",Format:"",Required:false},
+			".initContainers[*].ports[*].hostPort": FieldMetadata{Path:".initContainers[*].ports[*].hostPort",Type:"integer",Format:"",Required:false},
+			".initContainers[*].ports[*].name": FieldMetadata{Path:".initContainers[*].ports[*].name",Type:"string",Format:"",Required:false},
+			".initContainers[*].ports[*].protocol": FieldMetadata{Path:".initContainers[*].ports[*].protocol",Type:"string",Format:"",Required:false},
+			".initContainers[*].readinessProbe": FieldMetadata{Path:".initContainers[*].readinessProbe",Type:"",Format:"",Required:false},
+			".initContainers[*].readinessProbe.exec": FieldMetadata{Path:".initContainers[*].readinessProbe.exec",Type:"",Format:"",Required:false},
+			".initContainers[*].readinessProbe.exec.command": FieldMetadata{Path:".initContainers[*].readinessProbe.exec.command",Type:"array",Format:"",Required:false},
+			".initContainers[*].readinessProbe.failureThreshold": FieldMetadata{Path:".initContainers[*].readinessProbe.failureThreshold",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].readinessProbe.httpGet": FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet",Type:"",Format:"",Required:false},
+			".initContainers[*].readinessProbe.httpGet.host": FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].readinessProbe.httpGet.httpHeaders": FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".initContainers[*].readinessProbe.httpGet.path": FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.path",Type:"string",Format:"",Required:false},
+			".initContainers[*].readinessProbe.httpGet.port": FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.port",Type:"",Format:"",Required:true},
+			".initContainers[*].readinessProbe.httpGet.scheme": FieldMetadata{Path:".initContainers[*].readinessProbe.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".initContainers[*].readinessProbe.initialDelaySeconds": FieldMetadata{Path:".initContainers[*].readinessProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].readinessProbe.periodSeconds": FieldMetadata{Path:".initContainers[*].readinessProbe.periodSeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].readinessProbe.successThreshold": FieldMetadata{Path:".initContainers[*].readinessProbe.successThreshold",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].readinessProbe.tcpSocket": FieldMetadata{Path:".initContainers[*].readinessProbe.tcpSocket",Type:"",Format:"",Required:false},
+			".initContainers[*].readinessProbe.tcpSocket.host": FieldMetadata{Path:".initContainers[*].readinessProbe.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].readinessProbe.tcpSocket.port": FieldMetadata{Path:".initContainers[*].readinessProbe.tcpSocket.port",Type:"",Format:"",Required:true},
+			".initContainers[*].readinessProbe.terminationGracePeriodSeconds": FieldMetadata{Path:".initContainers[*].readinessProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
+			".initContainers[*].readinessProbe.timeoutSeconds": FieldMetadata{Path:".initContainers[*].readinessProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].resources": FieldMetadata{Path:".initContainers[*].resources",Type:"",Format:"",Required:false},
+			".initContainers[*].resources.claims": FieldMetadata{Path:".initContainers[*].resources.claims",Type:"array",Format:"",Required:false},
+			".initContainers[*].resources.limits": FieldMetadata{Path:".initContainers[*].resources.limits",Type:"object",Format:"",Required:false},
+			".initContainers[*].resources.requests": FieldMetadata{Path:".initContainers[*].resources.requests",Type:"object",Format:"",Required:false},
+			".initContainers[*].securityContext": FieldMetadata{Path:".initContainers[*].securityContext",Type:"",Format:"",Required:false},
+			".initContainers[*].securityContext.allowPrivilegeEscalation": FieldMetadata{Path:".initContainers[*].securityContext.allowPrivilegeEscalation",Type:"boolean",Format:"",Required:false},
+			".initContainers[*].securityContext.capabilities": FieldMetadata{Path:".initContainers[*].securityContext.capabilities",Type:"",Format:"",Required:false},
+			".initContainers[*].securityContext.capabilities.add": FieldMetadata{Path:".initContainers[*].securityContext.capabilities.add",Type:"array",Format:"",Required:false},
+			".initContainers[*].securityContext.capabilities.drop": FieldMetadata{Path:".initContainers[*].securityContext.capabilities.drop",Type:"array",Format:"",Required:false},
+			".initContainers[*].securityContext.privileged": FieldMetadata{Path:".initContainers[*].securityContext.privileged",Type:"boolean",Format:"",Required:false},
+			".initContainers[*].securityContext.readOnlyRootFilesystem": FieldMetadata{Path:".initContainers[*].securityContext.readOnlyRootFilesystem",Type:"boolean",Format:"",Required:false},
+			".initContainers[*].securityContext.runAsGroup": FieldMetadata{Path:".initContainers[*].securityContext.runAsGroup",Type:"integer",Format:"int64",Required:false},
+			".initContainers[*].securityContext.runAsNonRoot": FieldMetadata{Path:".initContainers[*].securityContext.runAsNonRoot",Type:"boolean",Format:"",Required:false},
+			".initContainers[*].securityContext.runAsUser": FieldMetadata{Path:".initContainers[*].securityContext.runAsUser",Type:"integer",Format:"int64",Required:false},
+			".initContainers[*].securityContext.seLinuxOptions": FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions",Type:"",Format:"",Required:false},
+			".initContainers[*].securityContext.seLinuxOptions.level": FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions.level",Type:"string",Format:"",Required:false},
+			".initContainers[*].securityContext.seLinuxOptions.role": FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions.role",Type:"string",Format:"",Required:false},
+			".initContainers[*].securityContext.seLinuxOptions.type": FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions.type",Type:"string",Format:"",Required:false},
+			".initContainers[*].securityContext.seLinuxOptions.user": FieldMetadata{Path:".initContainers[*].securityContext.seLinuxOptions.user",Type:"string",Format:"",Required:false},
+			".initContainers[*].startupProbe": FieldMetadata{Path:".initContainers[*].startupProbe",Type:"",Format:"",Required:false},
+			".initContainers[*].startupProbe.exec": FieldMetadata{Path:".initContainers[*].startupProbe.exec",Type:"",Format:"",Required:false},
+			".initContainers[*].startupProbe.exec.command": FieldMetadata{Path:".initContainers[*].startupProbe.exec.command",Type:"array",Format:"",Required:false},
+			".initContainers[*].startupProbe.failureThreshold": FieldMetadata{Path:".initContainers[*].startupProbe.failureThreshold",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].startupProbe.httpGet": FieldMetadata{Path:".initContainers[*].startupProbe.httpGet",Type:"",Format:"",Required:false},
+			".initContainers[*].startupProbe.httpGet.host": FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].startupProbe.httpGet.httpHeaders": FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.httpHeaders",Type:"array",Format:"",Required:false},
+			".initContainers[*].startupProbe.httpGet.path": FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.path",Type:"string",Format:"",Required:false},
+			".initContainers[*].startupProbe.httpGet.port": FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.port",Type:"",Format:"",Required:true},
+			".initContainers[*].startupProbe.httpGet.scheme": FieldMetadata{Path:".initContainers[*].startupProbe.httpGet.scheme",Type:"string",Format:"",Required:false},
+			".initContainers[*].startupProbe.initialDelaySeconds": FieldMetadata{Path:".initContainers[*].startupProbe.initialDelaySeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].startupProbe.periodSeconds": FieldMetadata{Path:".initContainers[*].startupProbe.periodSeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].startupProbe.successThreshold": FieldMetadata{Path:".initContainers[*].startupProbe.successThreshold",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].startupProbe.tcpSocket": FieldMetadata{Path:".initContainers[*].startupProbe.tcpSocket",Type:"",Format:"",Required:false},
+			".initContainers[*].startupProbe.tcpSocket.host": FieldMetadata{Path:".initContainers[*].startupProbe.tcpSocket.host",Type:"string",Format:"",Required:false},
+			".initContainers[*].startupProbe.tcpSocket.port": FieldMetadata{Path:".initContainers[*].startupProbe.tcpSocket.port",Type:"",Format:"",Required:true},
+			".initContainers[*].startupProbe.terminationGracePeriodSeconds": FieldMetadata{Path:".initContainers[*].startupProbe.terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
+			".initContainers[*].startupProbe.timeoutSeconds": FieldMetadata{Path:".initContainers[*].startupProbe.timeoutSeconds",Type:"integer",Format:"int32",Required:false},
+			".initContainers[*].stdin": FieldMetadata{Path:".initContainers[*].stdin",Type:"boolean",Format:"",Required:false},
+			".initContainers[*].stdinOnce": FieldMetadata{Path:".initContainers[*].stdinOnce",Type:"boolean",Format:"",Required:false},
+			".initContainers[*].terminationMessagePath": FieldMetadata{Path:".initContainers[*].terminationMessagePath",Type:"string",Format:"",Required:false},
+			".initContainers[*].tty": FieldMetadata{Path:".initContainers[*].tty",Type:"boolean",Format:"",Required:false},
+			".initContainers[*].volumeDevices": FieldMetadata{Path:".initContainers[*].volumeDevices",Type:"array",Format:"",Required:false},
+			".initContainers[*].volumeDevices[*].devicePath": FieldMetadata{Path:".initContainers[*].volumeDevices[*].devicePath",Type:"string",Format:"",Required:true},
+			".initContainers[*].volumeDevices[*].name": FieldMetadata{Path:".initContainers[*].volumeDevices[*].name",Type:"string",Format:"",Required:true},
+			".initContainers[*].volumeMounts": FieldMetadata{Path:".initContainers[*].volumeMounts",Type:"array",Format:"",Required:false},
+			".initContainers[*].volumeMounts[*].mountPath": FieldMetadata{Path:".initContainers[*].volumeMounts[*].mountPath",Type:"string",Format:"",Required:true},
+			".initContainers[*].volumeMounts[*].mountPropagation": FieldMetadata{Path:".initContainers[*].volumeMounts[*].mountPropagation",Type:"string",Format:"",Required:false},
+			".initContainers[*].volumeMounts[*].name": FieldMetadata{Path:".initContainers[*].volumeMounts[*].name",Type:"string",Format:"",Required:true},
+			".initContainers[*].volumeMounts[*].readOnly": FieldMetadata{Path:".initContainers[*].volumeMounts[*].readOnly",Type:"boolean",Format:"",Required:false},
+			".initContainers[*].volumeMounts[*].recursiveReadOnly": FieldMetadata{Path:".initContainers[*].volumeMounts[*].recursiveReadOnly",Type:"string",Format:"",Required:false},
+			".initContainers[*].volumeMounts[*].subPath": FieldMetadata{Path:".initContainers[*].volumeMounts[*].subPath",Type:"string",Format:"",Required:false},
+			".initContainers[*].volumeMounts[*].subPathExpr": FieldMetadata{Path:".initContainers[*].volumeMounts[*].subPathExpr",Type:"string",Format:"",Required:false},
+			".initContainers[*].workingDir": FieldMetadata{Path:".initContainers[*].workingDir",Type:"string",Format:"",Required:false},
 			".nodeSelector": FieldMetadata{Path:".nodeSelector",Type:"object",Format:"",Required:false},
 			".priority": FieldMetadata{Path:".priority",Type:"integer",Format:"int32",Required:false},
 			".restartPolicy": FieldMetadata{Path:".restartPolicy",Type:"string",Format:"",Required:false},
@@ -1182,6 +2066,8 @@ func init() {
 			".securityContext.seLinuxChangePolicy": FieldMetadata{Path:".securityContext.seLinuxChangePolicy",Type:"string",Format:"",Required:false},
 			".securityContext.seLinuxOptions": FieldMetadata{Path:".securityContext.seLinuxOptions",Type:"",Format:"",Required:false},
 			".securityContext.seccompProfile": FieldMetadata{Path:".securityContext.seccompProfile",Type:"",Format:"",Required:false},
+			".securityContext.seccompProfile.localhostProfile": FieldMetadata{Path:".securityContext.seccompProfile.localhostProfile",Type:"string",Format:"",Required:false},
+			".securityContext.seccompProfile.type": FieldMetadata{Path:".securityContext.seccompProfile.type",Type:"string",Format:"",Required:true},
 			".securityContext.supplementalGroups": FieldMetadata{Path:".securityContext.supplementalGroups",Type:"array",Format:"",Required:false},
 			".securityContext.supplementalGroupsPolicy": FieldMetadata{Path:".securityContext.supplementalGroupsPolicy",Type:"string",Format:"",Required:false},
 			".securityContext.sysctls": FieldMetadata{Path:".securityContext.sysctls",Type:"array",Format:"",Required:false},
@@ -1190,8 +2076,170 @@ func init() {
 			".subdomain": FieldMetadata{Path:".subdomain",Type:"string",Format:"",Required:false},
 			".terminationGracePeriodSeconds": FieldMetadata{Path:".terminationGracePeriodSeconds",Type:"integer",Format:"int64",Required:false},
 			".tolerations": FieldMetadata{Path:".tolerations",Type:"array",Format:"",Required:false},
+			".tolerations[*].effect": FieldMetadata{Path:".tolerations[*].effect",Type:"string",Format:"",Required:false},
+			".tolerations[*].key": FieldMetadata{Path:".tolerations[*].key",Type:"string",Format:"",Required:false},
+			".tolerations[*].operator": FieldMetadata{Path:".tolerations[*].operator",Type:"string",Format:"",Required:false},
+			".tolerations[*].tolerationSeconds": FieldMetadata{Path:".tolerations[*].tolerationSeconds",Type:"integer",Format:"int64",Required:false},
+			".tolerations[*].value": FieldMetadata{Path:".tolerations[*].value",Type:"string",Format:"",Required:false},
 			".topologySpreadConstraints": FieldMetadata{Path:".topologySpreadConstraints",Type:"array",Format:"",Required:false},
+			".topologySpreadConstraints[*].labelSelector": FieldMetadata{Path:".topologySpreadConstraints[*].labelSelector",Type:"",Format:"",Required:false},
+			".topologySpreadConstraints[*].labelSelector.matchExpressions": FieldMetadata{Path:".topologySpreadConstraints[*].labelSelector.matchExpressions",Type:"array",Format:"",Required:false},
+			".topologySpreadConstraints[*].labelSelector.matchLabels": FieldMetadata{Path:".topologySpreadConstraints[*].labelSelector.matchLabels",Type:"object",Format:"",Required:false},
+			".topologySpreadConstraints[*].maxSkew": FieldMetadata{Path:".topologySpreadConstraints[*].maxSkew",Type:"integer",Format:"int32",Required:true},
+			".topologySpreadConstraints[*].topologyKey": FieldMetadata{Path:".topologySpreadConstraints[*].topologyKey",Type:"string",Format:"",Required:true,MinLength:func() *int { v := 1; return &v }()},
+			".topologySpreadConstraints[*].whenUnsatisfiable": FieldMetadata{Path:".topologySpreadConstraints[*].whenUnsatisfiable",Type:"string",Format:"",Required:true},
 			".volumes": FieldMetadata{Path:".volumes",Type:"array",Format:"",Required:false},
+			".volumes[*].awsElasticBlockStore": FieldMetadata{Path:".volumes[*].awsElasticBlockStore",Type:"",Format:"",Required:false},
+			".volumes[*].awsElasticBlockStore.fsType": FieldMetadata{Path:".volumes[*].awsElasticBlockStore.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].awsElasticBlockStore.partition": FieldMetadata{Path:".volumes[*].awsElasticBlockStore.partition",Type:"integer",Format:"",Required:false},
+			".volumes[*].awsElasticBlockStore.readOnly": FieldMetadata{Path:".volumes[*].awsElasticBlockStore.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].awsElasticBlockStore.volumeID": FieldMetadata{Path:".volumes[*].awsElasticBlockStore.volumeID",Type:"string",Format:"",Required:true},
+			".volumes[*].azureDisk": FieldMetadata{Path:".volumes[*].azureDisk",Type:"",Format:"",Required:false},
+			".volumes[*].azureDisk.cachingMode": FieldMetadata{Path:".volumes[*].azureDisk.cachingMode",Type:"string",Format:"",Required:false},
+			".volumes[*].azureDisk.diskName": FieldMetadata{Path:".volumes[*].azureDisk.diskName",Type:"string",Format:"",Required:true},
+			".volumes[*].azureDisk.diskURI": FieldMetadata{Path:".volumes[*].azureDisk.diskURI",Type:"string",Format:"",Required:true},
+			".volumes[*].azureDisk.fsType": FieldMetadata{Path:".volumes[*].azureDisk.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].azureDisk.kind": FieldMetadata{Path:".volumes[*].azureDisk.kind",Type:"string",Format:"",Required:false},
+			".volumes[*].azureDisk.readOnly": FieldMetadata{Path:".volumes[*].azureDisk.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].azureFile": FieldMetadata{Path:".volumes[*].azureFile",Type:"",Format:"",Required:false},
+			".volumes[*].azureFile.readOnly": FieldMetadata{Path:".volumes[*].azureFile.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].azureFile.secretName": FieldMetadata{Path:".volumes[*].azureFile.secretName",Type:"string",Format:"",Required:true},
+			".volumes[*].azureFile.shareName": FieldMetadata{Path:".volumes[*].azureFile.shareName",Type:"string",Format:"",Required:true},
+			".volumes[*].cephfs": FieldMetadata{Path:".volumes[*].cephfs",Type:"",Format:"",Required:false},
+			".volumes[*].cephfs.monitors": FieldMetadata{Path:".volumes[*].cephfs.monitors",Type:"array",Format:"",Required:true},
+			".volumes[*].cephfs.path": FieldMetadata{Path:".volumes[*].cephfs.path",Type:"string",Format:"",Required:false},
+			".volumes[*].cephfs.readOnly": FieldMetadata{Path:".volumes[*].cephfs.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].cephfs.secretFile": FieldMetadata{Path:".volumes[*].cephfs.secretFile",Type:"string",Format:"",Required:false},
+			".volumes[*].cephfs.secretRef": FieldMetadata{Path:".volumes[*].cephfs.secretRef",Type:"",Format:"",Required:false},
+			".volumes[*].cephfs.user": FieldMetadata{Path:".volumes[*].cephfs.user",Type:"string",Format:"",Required:false},
+			".volumes[*].cinder": FieldMetadata{Path:".volumes[*].cinder",Type:"",Format:"",Required:false},
+			".volumes[*].cinder.fsType": FieldMetadata{Path:".volumes[*].cinder.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].cinder.readOnly": FieldMetadata{Path:".volumes[*].cinder.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].cinder.secretRef": FieldMetadata{Path:".volumes[*].cinder.secretRef",Type:"",Format:"",Required:false},
+			".volumes[*].cinder.volumeID": FieldMetadata{Path:".volumes[*].cinder.volumeID",Type:"string",Format:"",Required:true},
+			".volumes[*].configMap": FieldMetadata{Path:".volumes[*].configMap",Type:"",Format:"",Required:false},
+			".volumes[*].configMap.defaultMode": FieldMetadata{Path:".volumes[*].configMap.defaultMode",Type:"integer",Format:"",Required:false},
+			".volumes[*].configMap.items": FieldMetadata{Path:".volumes[*].configMap.items",Type:"array",Format:"",Required:false},
+			".volumes[*].configMap.name": FieldMetadata{Path:".volumes[*].configMap.name",Type:"string",Format:"",Required:false},
+			".volumes[*].configMap.optional": FieldMetadata{Path:".volumes[*].configMap.optional",Type:"boolean",Format:"",Required:false},
+			".volumes[*].csi": FieldMetadata{Path:".volumes[*].csi",Type:"",Format:"",Required:false},
+			".volumes[*].csi.driver": FieldMetadata{Path:".volumes[*].csi.driver",Type:"string",Format:"",Required:true},
+			".volumes[*].csi.fsType": FieldMetadata{Path:".volumes[*].csi.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].csi.nodePublishSecretRef": FieldMetadata{Path:".volumes[*].csi.nodePublishSecretRef",Type:"",Format:"",Required:false},
+			".volumes[*].csi.readOnly": FieldMetadata{Path:".volumes[*].csi.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].csi.volumeAttributes": FieldMetadata{Path:".volumes[*].csi.volumeAttributes",Type:"object",Format:"",Required:false},
+			".volumes[*].downwardAPI": FieldMetadata{Path:".volumes[*].downwardAPI",Type:"",Format:"",Required:false},
+			".volumes[*].downwardAPI.defaultMode": FieldMetadata{Path:".volumes[*].downwardAPI.defaultMode",Type:"integer",Format:"",Required:false},
+			".volumes[*].downwardAPI.items": FieldMetadata{Path:".volumes[*].downwardAPI.items",Type:"array",Format:"",Required:false},
+			".volumes[*].emptyDir": FieldMetadata{Path:".volumes[*].emptyDir",Type:"",Format:"",Required:false},
+			".volumes[*].emptyDir.medium": FieldMetadata{Path:".volumes[*].emptyDir.medium",Type:"string",Format:"",Required:false},
+			".volumes[*].emptyDir.sizeLimit": FieldMetadata{Path:".volumes[*].emptyDir.sizeLimit",Type:"",Format:"",Required:false},
+			".volumes[*].ephemeral": FieldMetadata{Path:".volumes[*].ephemeral",Type:"",Format:"",Required:false},
+			".volumes[*].ephemeral.volumeClaimTemplate": FieldMetadata{Path:".volumes[*].ephemeral.volumeClaimTemplate",Type:"",Format:"",Required:false},
+			".volumes[*].fc": FieldMetadata{Path:".volumes[*].fc",Type:"",Format:"",Required:false},
+			".volumes[*].fc.fsType": FieldMetadata{Path:".volumes[*].fc.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].fc.lun": FieldMetadata{Path:".volumes[*].fc.lun",Type:"integer",Format:"",Required:false},
+			".volumes[*].fc.readOnly": FieldMetadata{Path:".volumes[*].fc.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].fc.targetWWNs": FieldMetadata{Path:".volumes[*].fc.targetWWNs",Type:"array",Format:"",Required:false},
+			".volumes[*].fc.wwids": FieldMetadata{Path:".volumes[*].fc.wwids",Type:"array",Format:"",Required:false},
+			".volumes[*].flexVolume": FieldMetadata{Path:".volumes[*].flexVolume",Type:"",Format:"",Required:false},
+			".volumes[*].flexVolume.driver": FieldMetadata{Path:".volumes[*].flexVolume.driver",Type:"string",Format:"",Required:true},
+			".volumes[*].flexVolume.fsType": FieldMetadata{Path:".volumes[*].flexVolume.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].flexVolume.options": FieldMetadata{Path:".volumes[*].flexVolume.options",Type:"object",Format:"",Required:false},
+			".volumes[*].flexVolume.readOnly": FieldMetadata{Path:".volumes[*].flexVolume.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].flexVolume.secretRef": FieldMetadata{Path:".volumes[*].flexVolume.secretRef",Type:"",Format:"",Required:false},
+			".volumes[*].flocker": FieldMetadata{Path:".volumes[*].flocker",Type:"",Format:"",Required:false},
+			".volumes[*].flocker.datasetName": FieldMetadata{Path:".volumes[*].flocker.datasetName",Type:"string",Format:"",Required:false},
+			".volumes[*].flocker.datasetUUID": FieldMetadata{Path:".volumes[*].flocker.datasetUUID",Type:"string",Format:"",Required:false},
+			".volumes[*].gcePersistentDisk": FieldMetadata{Path:".volumes[*].gcePersistentDisk",Type:"",Format:"",Required:false},
+			".volumes[*].gcePersistentDisk.fsType": FieldMetadata{Path:".volumes[*].gcePersistentDisk.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].gcePersistentDisk.partition": FieldMetadata{Path:".volumes[*].gcePersistentDisk.partition",Type:"integer",Format:"",Required:false},
+			".volumes[*].gcePersistentDisk.pdName": FieldMetadata{Path:".volumes[*].gcePersistentDisk.pdName",Type:"string",Format:"",Required:true},
+			".volumes[*].gcePersistentDisk.readOnly": FieldMetadata{Path:".volumes[*].gcePersistentDisk.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].gitRepo": FieldMetadata{Path:".volumes[*].gitRepo",Type:"",Format:"",Required:false},
+			".volumes[*].gitRepo.directory": FieldMetadata{Path:".volumes[*].gitRepo.directory",Type:"string",Format:"",Required:false},
+			".volumes[*].gitRepo.repository": FieldMetadata{Path:".volumes[*].gitRepo.repository",Type:"string",Format:"",Required:true},
+			".volumes[*].gitRepo.revision": FieldMetadata{Path:".volumes[*].gitRepo.revision",Type:"string",Format:"",Required:false},
+			".volumes[*].glusterfs": FieldMetadata{Path:".volumes[*].glusterfs",Type:"",Format:"",Required:false},
+			".volumes[*].glusterfs.endpoints": FieldMetadata{Path:".volumes[*].glusterfs.endpoints",Type:"string",Format:"",Required:true},
+			".volumes[*].glusterfs.path": FieldMetadata{Path:".volumes[*].glusterfs.path",Type:"string",Format:"",Required:true},
+			".volumes[*].glusterfs.readOnly": FieldMetadata{Path:".volumes[*].glusterfs.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].hostPath": FieldMetadata{Path:".volumes[*].hostPath",Type:"",Format:"",Required:false},
+			".volumes[*].hostPath.path": FieldMetadata{Path:".volumes[*].hostPath.path",Type:"string",Format:"",Required:true},
+			".volumes[*].hostPath.type": FieldMetadata{Path:".volumes[*].hostPath.type",Type:"string",Format:"",Required:false},
+			".volumes[*].iscsi": FieldMetadata{Path:".volumes[*].iscsi",Type:"",Format:"",Required:false},
+			".volumes[*].iscsi.chapAuthDiscovery": FieldMetadata{Path:".volumes[*].iscsi.chapAuthDiscovery",Type:"boolean",Format:"",Required:false},
+			".volumes[*].iscsi.chapAuthSession": FieldMetadata{Path:".volumes[*].iscsi.chapAuthSession",Type:"boolean",Format:"",Required:false},
+			".volumes[*].iscsi.fsType": FieldMetadata{Path:".volumes[*].iscsi.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].iscsi.initiatorName": FieldMetadata{Path:".volumes[*].iscsi.initiatorName",Type:"string",Format:"",Required:false},
+			".volumes[*].iscsi.iqn": FieldMetadata{Path:".volumes[*].iscsi.iqn",Type:"string",Format:"",Required:true},
+			".volumes[*].iscsi.iscsiInterface": FieldMetadata{Path:".volumes[*].iscsi.iscsiInterface",Type:"string",Format:"",Required:false},
+			".volumes[*].iscsi.lun": FieldMetadata{Path:".volumes[*].iscsi.lun",Type:"integer",Format:"",Required:true},
+			".volumes[*].iscsi.portals": FieldMetadata{Path:".volumes[*].iscsi.portals",Type:"array",Format:"",Required:false},
+			".volumes[*].iscsi.readOnly": FieldMetadata{Path:".volumes[*].iscsi.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].iscsi.secretRef": FieldMetadata{Path:".volumes[*].iscsi.secretRef",Type:"",Format:"",Required:false},
+			".volumes[*].iscsi.targetPortal": FieldMetadata{Path:".volumes[*].iscsi.targetPortal",Type:"string",Format:"",Required:true},
+			".volumes[*].name": FieldMetadata{Path:".volumes[*].name",Type:"string",Format:"string",Required:true},
+			".volumes[*].nfs": FieldMetadata{Path:".volumes[*].nfs",Type:"",Format:"",Required:false},
+			".volumes[*].nfs.path": FieldMetadata{Path:".volumes[*].nfs.path",Type:"string",Format:"",Required:true},
+			".volumes[*].nfs.readOnly": FieldMetadata{Path:".volumes[*].nfs.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].nfs.server": FieldMetadata{Path:".volumes[*].nfs.server",Type:"string",Format:"",Required:true},
+			".volumes[*].persistentVolumeClaim": FieldMetadata{Path:".volumes[*].persistentVolumeClaim",Type:"",Format:"",Required:false},
+			".volumes[*].persistentVolumeClaim.claimName": FieldMetadata{Path:".volumes[*].persistentVolumeClaim.claimName",Type:"string",Format:"",Required:true},
+			".volumes[*].persistentVolumeClaim.readOnly": FieldMetadata{Path:".volumes[*].persistentVolumeClaim.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].photonPersistentDisk": FieldMetadata{Path:".volumes[*].photonPersistentDisk",Type:"",Format:"",Required:false},
+			".volumes[*].photonPersistentDisk.fsType": FieldMetadata{Path:".volumes[*].photonPersistentDisk.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].photonPersistentDisk.pdID": FieldMetadata{Path:".volumes[*].photonPersistentDisk.pdID",Type:"string",Format:"",Required:true},
+			".volumes[*].portworxVolume": FieldMetadata{Path:".volumes[*].portworxVolume",Type:"",Format:"",Required:false},
+			".volumes[*].portworxVolume.fsType": FieldMetadata{Path:".volumes[*].portworxVolume.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].portworxVolume.readOnly": FieldMetadata{Path:".volumes[*].portworxVolume.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].portworxVolume.volumeID": FieldMetadata{Path:".volumes[*].portworxVolume.volumeID",Type:"string",Format:"",Required:true},
+			".volumes[*].projected": FieldMetadata{Path:".volumes[*].projected",Type:"",Format:"",Required:false},
+			".volumes[*].projected.defaultMode": FieldMetadata{Path:".volumes[*].projected.defaultMode",Type:"integer",Format:"",Required:false},
+			".volumes[*].projected.sources": FieldMetadata{Path:".volumes[*].projected.sources",Type:"array",Format:"",Required:false},
+			".volumes[*].quobyte": FieldMetadata{Path:".volumes[*].quobyte",Type:"",Format:"",Required:false},
+			".volumes[*].quobyte.group": FieldMetadata{Path:".volumes[*].quobyte.group",Type:"string",Format:"",Required:false},
+			".volumes[*].quobyte.readOnly": FieldMetadata{Path:".volumes[*].quobyte.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].quobyte.registry": FieldMetadata{Path:".volumes[*].quobyte.registry",Type:"string",Format:"",Required:true},
+			".volumes[*].quobyte.tenant": FieldMetadata{Path:".volumes[*].quobyte.tenant",Type:"string",Format:"",Required:false},
+			".volumes[*].quobyte.user": FieldMetadata{Path:".volumes[*].quobyte.user",Type:"string",Format:"",Required:false},
+			".volumes[*].quobyte.volume": FieldMetadata{Path:".volumes[*].quobyte.volume",Type:"string",Format:"",Required:true},
+			".volumes[*].rbd": FieldMetadata{Path:".volumes[*].rbd",Type:"",Format:"",Required:false},
+			".volumes[*].rbd.fsType": FieldMetadata{Path:".volumes[*].rbd.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].rbd.image": FieldMetadata{Path:".volumes[*].rbd.image",Type:"string",Format:"",Required:true},
+			".volumes[*].rbd.keyring": FieldMetadata{Path:".volumes[*].rbd.keyring",Type:"string",Format:"",Required:false},
+			".volumes[*].rbd.monitors": FieldMetadata{Path:".volumes[*].rbd.monitors",Type:"array",Format:"",Required:true},
+			".volumes[*].rbd.pool": FieldMetadata{Path:".volumes[*].rbd.pool",Type:"string",Format:"",Required:false},
+			".volumes[*].rbd.readOnly": FieldMetadata{Path:".volumes[*].rbd.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].rbd.secretRef": FieldMetadata{Path:".volumes[*].rbd.secretRef",Type:"",Format:"",Required:false},
+			".volumes[*].rbd.user": FieldMetadata{Path:".volumes[*].rbd.user",Type:"string",Format:"",Required:false},
+			".volumes[*].scaleIO": FieldMetadata{Path:".volumes[*].scaleIO",Type:"",Format:"",Required:false},
+			".volumes[*].scaleIO.fsType": FieldMetadata{Path:".volumes[*].scaleIO.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].scaleIO.gateway": FieldMetadata{Path:".volumes[*].scaleIO.gateway",Type:"string",Format:"",Required:true},
+			".volumes[*].scaleIO.protectionDomain": FieldMetadata{Path:".volumes[*].scaleIO.protectionDomain",Type:"string",Format:"",Required:false},
+			".volumes[*].scaleIO.readOnly": FieldMetadata{Path:".volumes[*].scaleIO.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].scaleIO.secretRef": FieldMetadata{Path:".volumes[*].scaleIO.secretRef",Type:"",Format:"",Required:true},
+			".volumes[*].scaleIO.sslEnabled": FieldMetadata{Path:".volumes[*].scaleIO.sslEnabled",Type:"boolean",Format:"",Required:false},
+			".volumes[*].scaleIO.storageMode": FieldMetadata{Path:".volumes[*].scaleIO.storageMode",Type:"string",Format:"",Required:false},
+			".volumes[*].scaleIO.storagePool": FieldMetadata{Path:".volumes[*].scaleIO.storagePool",Type:"string",Format:"",Required:false},
+			".volumes[*].scaleIO.system": FieldMetadata{Path:".volumes[*].scaleIO.system",Type:"string",Format:"",Required:true},
+			".volumes[*].scaleIO.volumeName": FieldMetadata{Path:".volumes[*].scaleIO.volumeName",Type:"string",Format:"",Required:false},
+			".volumes[*].secret": FieldMetadata{Path:".volumes[*].secret",Type:"",Format:"",Required:false},
+			".volumes[*].secret.defaultMode": FieldMetadata{Path:".volumes[*].secret.defaultMode",Type:"integer",Format:"",Required:false},
+			".volumes[*].secret.items": FieldMetadata{Path:".volumes[*].secret.items",Type:"array",Format:"",Required:false},
+			".volumes[*].secret.optional": FieldMetadata{Path:".volumes[*].secret.optional",Type:"boolean",Format:"",Required:false},
+			".volumes[*].secret.secretName": FieldMetadata{Path:".volumes[*].secret.secretName",Type:"string",Format:"",Required:false},
+			".volumes[*].storageos": FieldMetadata{Path:".volumes[*].storageos",Type:"",Format:"",Required:false},
+			".volumes[*].storageos.fsType": FieldMetadata{Path:".volumes[*].storageos.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].storageos.readOnly": FieldMetadata{Path:".volumes[*].storageos.readOnly",Type:"boolean",Format:"",Required:false},
+			".volumes[*].storageos.secretRef": FieldMetadata{Path:".volumes[*].storageos.secretRef",Type:"",Format:"",Required:false},
+			".volumes[*].storageos.volumeName": FieldMetadata{Path:".volumes[*].storageos.volumeName",Type:"string",Format:"",Required:false},
+			".volumes[*].storageos.volumeNamespace": FieldMetadata{Path:".volumes[*].storageos.volumeNamespace",Type:"string",Format:"",Required:false},
+			".volumes[*].vsphereVolume": FieldMetadata{Path:".volumes[*].vsphereVolume",Type:"",Format:"",Required:false},
+			".volumes[*].vsphereVolume.fsType": FieldMetadata{Path:".volumes[*].vsphereVolume.fsType",Type:"string",Format:"",Required:false},
+			".volumes[*].vsphereVolume.storagePolicyID": FieldMetadata{Path:".volumes[*].vsphereVolume.storagePolicyID",Type:"string",Format:"",Required:false},
+			".volumes[*].vsphereVolume.storagePolicyName": FieldMetadata{Path:".volumes[*].vsphereVolume.storagePolicyName",Type:"string",Format:"",Required:false},
+			".volumes[*].vsphereVolume.volumePath": FieldMetadata{Path:".volumes[*].vsphereVolume.volumePath",Type:"string",Format:"",Required:true},
 		}
 		PortworxVolumeSourceDeferredFields = SchemaMetadata{
 			".fsType": FieldMetadata{Path:".fsType",Type:"string",Format:"",Required:false},
@@ -1543,6 +2591,12 @@ func init() {
 		}
 		WeightedPodAffinityTermDeferredFields = SchemaMetadata{
 			".podAffinityTerm": FieldMetadata{Path:".podAffinityTerm",Type:"",Format:"",Required:true},
+			".podAffinityTerm.labelSelector": FieldMetadata{Path:".podAffinityTerm.labelSelector",Type:"",Format:"",Required:false},
+			".podAffinityTerm.matchLabelKeys": FieldMetadata{Path:".podAffinityTerm.matchLabelKeys",Type:"array",Format:"",Required:false},
+			".podAffinityTerm.mismatchLabelKeys": FieldMetadata{Path:".podAffinityTerm.mismatchLabelKeys",Type:"array",Format:"",Required:false},
+			".podAffinityTerm.namespaceSelector": FieldMetadata{Path:".podAffinityTerm.namespaceSelector",Type:"",Format:"",Required:false},
+			".podAffinityTerm.namespaces": FieldMetadata{Path:".podAffinityTerm.namespaces",Type:"array",Format:"",Required:false},
+			".podAffinityTerm.topologyKey": FieldMetadata{Path:".podAffinityTerm.topologyKey",Type:"string",Format:"",Required:true},
 			".weight": FieldMetadata{Path:".weight",Type:"integer",Format:"",Required:true},
 		}
 		WindowsSecurityContextOptionsDeferredFields = SchemaMetadata{

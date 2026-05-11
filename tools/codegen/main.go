@@ -393,6 +393,23 @@ func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix
 			if propSchema.Items.Properties != nil {
 				nestedPrefix := path + "[*]"
 				extractFields(typeName, propSchema.Items.Properties, nestedPrefix, requiredSet, metadata, processing, finished)
+			} else if propSchema.Items.Ref != "" {
+				// Items has a $ref but no direct Properties.
+				// Resolve the reference and extract its properties.
+				refTypeName := strings.TrimPrefix(propSchema.Items.Ref, "#/components/schemas/")
+				if refTypeName != propSchema.Items.Ref {
+					refSchema, _, err := loadSchemaFromName(refTypeName)
+					if err == nil && refSchema.Properties != nil {
+						refRequired := make(map[string]bool)
+						for _, req := range refSchema.Required {
+							refRequired[req] = true
+						}
+						nestedPrefix := path + "[*]"
+						refProcessing := make(map[string]bool)
+						refFinished := make(map[string]bool)
+						extractFields(refTypeName, refSchema.Properties, nestedPrefix, refRequired, metadata, refProcessing, refFinished)
+					}
+				}
 			}
 		}
 
@@ -413,6 +430,119 @@ func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix
 					refFinished := make(map[string]bool)
 					extractFields(refTypeName, refSchema.Properties, path, refRequired, metadata, refProcessing, refFinished)
 				}
+			}
+		}
+
+		// Handle bare references: a property with no type, no $ref, no nested properties,
+		// but whose name matches a schema file that IS a defined type. This catches
+		// union-field references like LifecycleHandler.exec → ExecAction where the
+		// schema has no $ref but the field name is the referenced type in disguise.
+		if propSchema.Type == "" && propSchema.Ref == "" && len(propSchema.Properties) == 0 && propSchema.Items == nil {
+			var candidateType string
+			var refSchema *OpenAPISchema
+
+			// Direct mapping for known lifecycle handler fields.
+			// Lifecycle.postStart and Lifecycle.preStop are inline objects whose type is
+			// LifecycleHandler (not named PostStart/PreStop by convention).
+			if propName == "postStart" || propName == "preStop" {
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.LifecycleHandler"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.LifecycleHandler", s
+				}
+			}
+
+			// Direct mapping for LifecycleHandler action sub-fields.
+			// Strategy 2 capitalizes "tcpSocket" -> "TcpSocketAction" (wrong case),
+			// so we handle these known mappings explicitly.
+			switch propName {
+			case "tcpSocket":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.TCPSocketAction"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.TCPSocketAction", s
+				}
+			case "httpGet":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.HTTPGetAction"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.HTTPGetAction", s
+				}
+			case "exec":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.ExecAction"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.ExecAction", s
+				}
+			case "secretKeyRef":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.SecretKeySelector"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.SecretKeySelector", s
+				}
+			case "configMapKeyRef":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.ConfigMapKeySelector"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.ConfigMapKeySelector", s
+				}
+			}
+
+			// Strategy 1: Capitalized property name (e.g. "exec" -> "Exec")
+			capitalized := strings.ToUpper(propName[:1]) + propName[1:]
+			tentative := "io.k8s.api.core.v1." + capitalized
+			if s, _, err := loadSchemaFromName(tentative); err == nil && s.Properties != nil {
+				candidateType, refSchema = tentative, s
+			}
+
+			// Strategy 2: Property name + "Action" suffix (e.g. "exec" -> "ExecAction")
+			if refSchema == nil {
+				tentative = "io.k8s.api.core.v1." + capitalized + "Action"
+				if s, _, err := loadSchemaFromName(tentative); err == nil && s.Properties != nil {
+					candidateType, refSchema = tentative, s
+				}
+			}
+
+			// Strategy 3: Case-insensitive scan (e.g. "httpGet" matches "HTTPGetAction")
+			if refSchema == nil {
+				entries, _ := schemaFS.ReadDir("schemas")
+				for _, e := range entries {
+					if e.IsDir() {
+						continue
+					}
+					baseName := strings.TrimSuffix(e.Name(), ".json")
+					if strings.HasPrefix(strings.ToLower(baseName), strings.ToLower(propName)) {
+						tentative = "io.k8s.api.core.v1." + baseName
+						if s, _, err := loadSchemaFromName(tentative); err == nil && s.Properties != nil {
+							candidateType, refSchema = tentative, s
+							break
+						}
+					}
+				}
+			}
+
+
+			// Strategy 4: Property name is a case-insensitive substring of the type name.
+			// This handles tcpsocket -> TCPSocketAction and httpGet -> HTTPGetAction
+			// where the type name contains the lowercased property name.
+			if refSchema == nil {
+				entries, _ := schemaFS.ReadDir("schemas")
+				for _, e := range entries {
+					if e.IsDir() {
+						continue
+					}
+					baseName := strings.TrimSuffix(e.Name(), ".json")
+					candidateTypeName := strings.TrimPrefix(baseName, "io.k8s.api.core.v1.")
+					// Check if the lowercased property name appears in the type name
+					lowerProp := strings.ToLower(propName)
+					lowerCandidate := strings.ToLower(candidateTypeName)
+					if strings.Contains(lowerCandidate, lowerProp) {
+						tentative := "io.k8s.api.core.v1." + baseName
+						if s, _, err := loadSchemaFromName(tentative); err == nil && s.Properties != nil {
+							candidateType, refSchema = tentative, s
+							break
+						}
+					}
+				}
+			}
+
+						// If we found a matching schema, extract its fields into the current path
+			if refSchema != nil {
+				refRequired := make(map[string]bool)
+				for _, req := range refSchema.Required {
+					refRequired[req] = true
+				}
+				refProcessing := make(map[string]bool)
+				refFinished := make(map[string]bool)
+				extractFields(candidateType, refSchema.Properties, path, refRequired, metadata, refProcessing, refFinished)
 			}
 		}
 	}
