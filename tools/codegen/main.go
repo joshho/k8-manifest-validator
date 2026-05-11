@@ -19,6 +19,7 @@ var schemaFS embed.FS
 
 // OpenAPISchema represents the structure of an OpenAPI v3 schema file.
 type OpenAPISchema struct {
+	Ref         string                    `json:"$ref,omitempty"`
 	Type        string                    `json:"type,omitempty"`
 	Format      string                    `json:"format,omitempty"`
 	Description string                    `json:"description,omitempty"`
@@ -131,7 +132,14 @@ func generateOutput(schemas []string) string {
 	allPaths := make(map[string]FieldMetadata) // path -> first metadata seen
 	for _, typeName := range sortedTypes(allMetadata) {
 		metadata := allMetadata[typeName]
-		for path, meta := range metadata {
+		// Sort keys for deterministic iteration (Go map iteration is randomized)
+		paths := make([]string, 0, len(metadata))
+		for p := range metadata {
+			paths = append(paths, p)
+		}
+		sort.Strings(paths)
+		for _, path := range paths {
+			meta := metadata[path]
 			if _, exists := allPaths[path]; !exists {
 				allPaths[path] = meta
 			}
@@ -288,12 +296,38 @@ func extractMetadata(typeName string, schema *OpenAPISchema, prefix string) Sche
 		requiredSet[req] = true
 	}
 
-	extractFields(typeName, schema.Properties, prefix, requiredSet, metadata)
+	processing := make(map[string]bool)
+	finished := make(map[string]bool)
+	extractFields(typeName, schema.Properties, prefix, requiredSet, metadata, processing, finished)
 
 	return metadata
 }
 
-func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix string, requiredSet map[string]bool, metadata SchemaMetadata) {
+// loadSchema loads a schema from the embedded fs by type name.
+// The typeName is expected to be in the format "io.k8s.api.core.v1.TypeName".
+func loadSchemaFromName(typeName string) (*OpenAPISchema, string, error) {
+	fileName := typeName + ".json"
+	schema, err := loadSchema(fileName)
+	if err != nil {
+		return nil, "", err
+	}
+	return schema, typeName, nil
+}
+
+func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix string, requiredSet map[string]bool, metadata SchemaMetadata, processing, finished map[string]bool) {
+	// Cycle detection
+	if finished[typeName] {
+		return
+	}
+	if processing[typeName] {
+		return
+	}
+	processing[typeName] = true
+	defer func() {
+		processing[typeName] = false
+		finished[typeName] = true
+	}()
+
 	for propName, propSchema := range properties {
 		// Issue 1 fix: construct full JSON paths from schema root.
 		// Prefix starts as "." (the type root), so first-level fields get paths like ".name".
@@ -351,14 +385,164 @@ func extractFields(typeName string, properties map[string]*OpenAPISchema, prefix
 
 		// Recurse into nested objects
 		if fieldType == "object" && propSchema.Properties != nil {
-			extractFields(typeName, propSchema.Properties, path, requiredSet, metadata)
+			extractFields(typeName, propSchema.Properties, path, requiredSet, metadata, processing, finished)
 		}
 
 		// Handle array items - recurse into items' properties
 		if propType := propSchema.Type; propType == "array" && propSchema.Items != nil {
 			if propSchema.Items.Properties != nil {
 				nestedPrefix := path + "[*]"
-				extractFields(typeName, propSchema.Items.Properties, nestedPrefix, requiredSet, metadata)
+				extractFields(typeName, propSchema.Items.Properties, nestedPrefix, requiredSet, metadata, processing, finished)
+			} else if propSchema.Items.Ref != "" {
+				// Items has a $ref but no direct Properties.
+				// Resolve the reference and extract its properties.
+				refTypeName := strings.TrimPrefix(propSchema.Items.Ref, "#/components/schemas/")
+				if refTypeName != propSchema.Items.Ref {
+					refSchema, _, err := loadSchemaFromName(refTypeName)
+					if err == nil && refSchema.Properties != nil {
+						refRequired := make(map[string]bool)
+						for _, req := range refSchema.Required {
+							refRequired[req] = true
+						}
+						nestedPrefix := path + "[*]"
+						refProcessing := make(map[string]bool)
+						refFinished := make(map[string]bool)
+						extractFields(refTypeName, refSchema.Properties, nestedPrefix, refRequired, metadata, refProcessing, refFinished)
+					}
+				}
+			}
+		}
+
+		// Resolve $ref by loading the referenced schema and recursing.
+		// Use fresh cycle-detection maps so the same referenced type can be
+		// extracted under multiple field prefixes (e.g. livenessProbe, readinessProbe,
+		// and startupProbe all $ref Probe).
+		if propSchema.Ref != "" {
+			refTypeName := strings.TrimPrefix(propSchema.Ref, "#/components/schemas/")
+			if refTypeName != propSchema.Ref {
+				refSchema, _, err := loadSchemaFromName(refTypeName)
+				if err == nil && refSchema.Properties != nil {
+					refRequired := make(map[string]bool)
+					for _, req := range refSchema.Required {
+						refRequired[req] = true
+					}
+					refProcessing := make(map[string]bool)
+					refFinished := make(map[string]bool)
+					extractFields(refTypeName, refSchema.Properties, path, refRequired, metadata, refProcessing, refFinished)
+				}
+			}
+		}
+
+		// Handle bare references: a property with no type, no $ref, no nested properties,
+		// but whose name matches a schema file that IS a defined type. This catches
+		// union-field references like LifecycleHandler.exec → ExecAction where the
+		// schema has no $ref but the field name is the referenced type in disguise.
+		if propSchema.Type == "" && propSchema.Ref == "" && len(propSchema.Properties) == 0 && propSchema.Items == nil {
+			var candidateType string
+			var refSchema *OpenAPISchema
+
+			// Direct mapping for known lifecycle handler fields.
+			// Lifecycle.postStart and Lifecycle.preStop are inline objects whose type is
+			// LifecycleHandler (not named PostStart/PreStop by convention).
+			if propName == "postStart" || propName == "preStop" {
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.LifecycleHandler"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.LifecycleHandler", s
+				}
+			}
+
+			// Direct mapping for LifecycleHandler action sub-fields.
+			// Strategy 2 capitalizes "tcpSocket" -> "TcpSocketAction" (wrong case),
+			// so we handle these known mappings explicitly.
+			switch propName {
+			case "tcpSocket":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.TCPSocketAction"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.TCPSocketAction", s
+				}
+			case "httpGet":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.HTTPGetAction"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.HTTPGetAction", s
+				}
+			case "exec":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.ExecAction"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.ExecAction", s
+				}
+			case "secretKeyRef":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.SecretKeySelector"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.SecretKeySelector", s
+				}
+			case "configMapKeyRef":
+				if s, _, err := loadSchemaFromName("io.k8s.api.core.v1.ConfigMapKeySelector"); err == nil && s.Properties != nil {
+					candidateType, refSchema = "io.k8s.api.core.v1.ConfigMapKeySelector", s
+				}
+			}
+
+			// Strategy 1: Capitalized property name (e.g. "exec" -> "Exec")
+			capitalized := strings.ToUpper(propName[:1]) + propName[1:]
+			tentative := "io.k8s.api.core.v1." + capitalized
+			if s, _, err := loadSchemaFromName(tentative); err == nil && s.Properties != nil {
+				candidateType, refSchema = tentative, s
+			}
+
+			// Strategy 2: Property name + "Action" suffix (e.g. "exec" -> "ExecAction")
+			if refSchema == nil {
+				tentative = "io.k8s.api.core.v1." + capitalized + "Action"
+				if s, _, err := loadSchemaFromName(tentative); err == nil && s.Properties != nil {
+					candidateType, refSchema = tentative, s
+				}
+			}
+
+			// Strategy 3: Case-insensitive scan (e.g. "httpGet" matches "HTTPGetAction")
+			if refSchema == nil {
+				entries, _ := schemaFS.ReadDir("schemas")
+				for _, e := range entries {
+					if e.IsDir() {
+						continue
+					}
+					baseName := strings.TrimSuffix(e.Name(), ".json")
+					if strings.HasPrefix(strings.ToLower(baseName), strings.ToLower(propName)) {
+						tentative = "io.k8s.api.core.v1." + baseName
+						if s, _, err := loadSchemaFromName(tentative); err == nil && s.Properties != nil {
+							candidateType, refSchema = tentative, s
+							break
+						}
+					}
+				}
+			}
+
+
+			// Strategy 4: Property name is a case-insensitive substring of the type name.
+			// This handles tcpsocket -> TCPSocketAction and httpGet -> HTTPGetAction
+			// where the type name contains the lowercased property name.
+			if refSchema == nil {
+				entries, _ := schemaFS.ReadDir("schemas")
+				for _, e := range entries {
+					if e.IsDir() {
+						continue
+					}
+					baseName := strings.TrimSuffix(e.Name(), ".json")
+					candidateTypeName := strings.TrimPrefix(baseName, "io.k8s.api.core.v1.")
+					// Check if the lowercased property name appears in the type name
+					lowerProp := strings.ToLower(propName)
+					lowerCandidate := strings.ToLower(candidateTypeName)
+					if strings.Contains(lowerCandidate, lowerProp) {
+						tentative := "io.k8s.api.core.v1." + baseName
+						if s, _, err := loadSchemaFromName(tentative); err == nil && s.Properties != nil {
+							candidateType, refSchema = tentative, s
+							break
+						}
+					}
+				}
+			}
+
+						// If we found a matching schema, extract its fields into the current path
+			if refSchema != nil {
+				refRequired := make(map[string]bool)
+				for _, req := range refSchema.Required {
+					refRequired[req] = true
+				}
+				refProcessing := make(map[string]bool)
+				refFinished := make(map[string]bool)
+				extractFields(candidateType, refSchema.Properties, path, refRequired, metadata, refProcessing, refFinished)
 			}
 		}
 	}
