@@ -104,6 +104,11 @@ for r in releases:
     LATEST_PATCH="0"
   fi
 
+  # IMPORTANT: k8s.io/api, k8s.io/apimachinery, k8s.io/apiextensions-apiserver
+  # only tag releases at .0 patch. They do NOT have .1, .2 etc tags.
+  # For minor bumps we always use .0 regardless of k8s Kubernetes patch version.
+  LATEST_PATCH="0"
+
   ACTUAL_PKG="v0.${MINOR}.${LATEST_PATCH}"
   echo "Using k8s packages: ${ACTUAL_PKG} (k8s 1.${MINOR}.${LATEST_PATCH})"
 

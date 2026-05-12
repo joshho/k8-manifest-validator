@@ -768,6 +768,15 @@ func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.E
 	// Phase 2: structural validation for deferred fields
 	allErrs = append(allErrs, RunStructuralValidation(deploy, field.NewPath(""))...)
 
+	// Phase 2: semantic layer — lifecycle hooks
+	allErrs = append(allErrs, validateLifecycleHooks(&deploy.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — securityContext
+	allErrs = append(allErrs, validateSecurityContext(&deploy.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — scheduling fields (affinity, tolerations, topologySpreadConstraints, dnsConfig, host booleans, restartPolicy)
+	allErrs = append(allErrs, validateSchedulingFields(&deploy.Spec.Template.Spec, deploy.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
+
 	return allErrs
 }
 
@@ -800,6 +809,15 @@ func (v *BuiltinValidator) validateStatefulSet(ss *appsv1.StatefulSet) field.Err
 	// Phase 2: structural validation for deferred fields
 	allErrs = append(allErrs, RunStructuralValidation(ss, field.NewPath(""))...)
 
+	// Phase 2: semantic layer — lifecycle hooks
+	allErrs = append(allErrs, validateLifecycleHooks(&ss.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — securityContext
+	allErrs = append(allErrs, validateSecurityContext(&ss.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — scheduling fields
+	allErrs = append(allErrs, validateSchedulingFields(&ss.Spec.Template.Spec, ss.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
+
 	return allErrs
 }
 
@@ -821,6 +839,15 @@ func (v *BuiltinValidator) validateDaemonSet(ds *appsv1.DaemonSet) field.ErrorLi
 
 	// Phase 2: structural validation for deferred fields
 	allErrs = append(allErrs, RunStructuralValidation(ds, field.NewPath(""))...)
+
+	// Phase 2: semantic layer — lifecycle hooks
+	allErrs = append(allErrs, validateLifecycleHooks(&ds.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — securityContext
+	allErrs = append(allErrs, validateSecurityContext(&ds.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — scheduling fields
+	allErrs = append(allErrs, validateSchedulingFields(&ds.Spec.Template.Spec, ds.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
 
 	return allErrs
 }
@@ -848,6 +875,15 @@ func (v *BuiltinValidator) validateReplicaSet(rs *appsv1.ReplicaSet) field.Error
 	// Phase 2: structural validation for deferred fields
 	allErrs = append(allErrs, RunStructuralValidation(rs, field.NewPath(""))...)
 
+	// Phase 2: semantic layer — lifecycle hooks
+	allErrs = append(allErrs, validateLifecycleHooks(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — securityContext
+	allErrs = append(allErrs, validateSecurityContext(&rs.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — scheduling fields
+	allErrs = append(allErrs, validateSchedulingFields(&rs.Spec.Template.Spec, rs.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
+
 	return allErrs
 }
 
@@ -869,6 +905,15 @@ func (v *BuiltinValidator) validateReplicationController(rc *corev1.ReplicationC
 	// Phase 2: structural validation for deferred fields
 	allErrs = append(allErrs, RunStructuralValidation(rc, field.NewPath(""))...)
 
+	// Phase 2: semantic layer — lifecycle hooks
+	allErrs = append(allErrs, validateLifecycleHooks(&rc.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — securityContext
+	allErrs = append(allErrs, validateSecurityContext(&rc.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — scheduling fields
+	allErrs = append(allErrs, validateSchedulingFields(&rc.Spec.Template.Spec, rc.Spec.Template.Spec.DNSPolicy, field.NewPath("spec", "template", "spec"))...)
+
 	return allErrs
 }
 
@@ -881,6 +926,15 @@ func (v *BuiltinValidator) validatePod(pod *corev1.Pod) field.ErrorList {
 
 	// Phase 2: structural validation for deferred fields
 	allErrs = append(allErrs, RunStructuralValidation(pod, field.NewPath(""))...)
+
+	// Phase 2: semantic layer — lifecycle hooks
+	allErrs = append(allErrs, validateLifecycleHooks(&pod.Spec, field.NewPath("spec"))...)
+
+	// Phase 2: semantic layer — securityContext
+	allErrs = append(allErrs, validateSecurityContext(&pod.Spec, field.NewPath("spec"))...)
+
+	// Phase 2: semantic layer — scheduling fields
+	allErrs = append(allErrs, validateSchedulingFields(&pod.Spec, pod.Spec.DNSPolicy, field.NewPath("spec"))...)
 
 	return allErrs
 }
@@ -1002,6 +1056,21 @@ func (v *BuiltinValidator) validateJob(job *batchv1.Job) field.ErrorList {
 	// Phase 2: structural validation for deferred fields
 	allErrs = append(allErrs, RunStructuralValidation(job, field.NewPath(""))...)
 
+	// Phase 2: semantic layer — init container probes (rejected by k8s at admission)
+	allErrs = append(allErrs, validateInitContainerProbes(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — restartPolicy (Job pods must not use Always)
+	allErrs = append(allErrs, validateRestartPolicyForJob(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — lifecycle hooks
+	allErrs = append(allErrs, validateLifecycleHooks(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — init container resource constraints
+	allErrs = append(allErrs, validateInitContainerResources(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — securityContext
+	allErrs = append(allErrs, validateSecurityContext(&job.Spec.Template.Spec, field.NewPath("spec", "template", "spec"))...)
+
 	return allErrs
 }
 
@@ -1022,6 +1091,21 @@ func (v *BuiltinValidator) validateCronJob(cj *batchv1.CronJob) field.ErrorList 
 
 	// Phase 2: structural validation for deferred fields
 	allErrs = append(allErrs, RunStructuralValidation(cj, field.NewPath(""))...)
+
+	// Phase 2: semantic layer — init container probes (rejected by k8s at admission)
+	allErrs = append(allErrs, validateInitContainerProbes(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — restartPolicy (CronJob pods must not use Always)
+	allErrs = append(allErrs, validateRestartPolicyForJob(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — lifecycle hooks
+	allErrs = append(allErrs, validateLifecycleHooks(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — init container resource constraints
+	allErrs = append(allErrs, validateInitContainerResources(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"))...)
+
+	// Phase 2: semantic layer — securityContext
+	allErrs = append(allErrs, validateSecurityContext(&cj.Spec.JobTemplate.Spec.Template.Spec, field.NewPath("spec", "jobTemplate", "spec", "template", "spec"))...)
 
 	return allErrs
 }

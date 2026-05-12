@@ -52,7 +52,15 @@ jobs:
         if: steps.check.outputs.available == 'true'
         env:
           NEW_MINOR: ${{ steps.check.outputs.new_minor }}
+          GIT_AUTHOR_NAME: ci-bot
+          GIT_COMMITTER_NAME: ci-bot
+          GIT_AUTHOR_EMAIL: ci@k8-manifest-validator.io
+          GIT_COMMITTER_EMAIL: ci@k8-manifest-validator.io
         run: |
+          git config --global user.email "ci@k8-manifest-validator.io"
+          git config --global user.name "CI Bot"
+          GO=/home/node/.local/go/go/bin/go
+          if ! command -v "$GO" &>/dev/null; then GO=$(command -v go); fi
           ./scripts/bump-version.sh --minor "${NEW_MINOR#v}"
 
       - name: Validate build and tests
@@ -69,7 +77,13 @@ jobs:
         if: steps.check.outputs.available == 'true'
         env:
           NEW_MINOR: ${{ steps.check.outputs.new_minor }}
+          GIT_AUTHOR_NAME: ci-bot
+          GIT_COMMITTER_NAME: ci-bot
+          GIT_AUTHOR_EMAIL: ci@k8-manifest-validator.io
+          GIT_COMMITTER_EMAIL: ci@k8-manifest-validator.io
         run: |
+          git config --global user.email "ci@k8-manifest-validator.io"
+          git config --global user.name "CI Bot"
           TAG="v${NEW_MINOR#v}-0"
           echo "Pushing main and tag $TAG"
           git push origin main --follow-tags
@@ -114,10 +128,17 @@ jobs:
 
       - name: Apply patch bump + validate
         if: steps.check.outputs.update_available == 'true'
+        env:
+          GIT_AUTHOR_NAME: ci-bot
+          GIT_COMMITTER_NAME: ci-bot
+          GIT_AUTHOR_EMAIL: ci@k8-manifest-validator.io
+          GIT_COMMITTER_EMAIL: ci@k8-manifest-validator.io
         run: |
-          ./scripts/bump-version.sh --patch
+          git config --global user.email "ci@k8-manifest-validator.io"
+          git config --global user.name "CI Bot"
           GO=/home/node/.local/go/go/bin/go
           if ! command -v "$GO" &>/dev/null; then GO=$(command -v go); fi
+          ./scripts/bump-version.sh --patch
           echo "[validate] go build ./..."
           "$GO" build ./...
           echo "[validate] go test ./..."
@@ -125,7 +146,14 @@ jobs:
 
       - name: Push branch + tag
         if: steps.check.outputs.update_available == 'true'
+        env:
+          GIT_AUTHOR_NAME: ci-bot
+          GIT_COMMITTER_NAME: ci-bot
+          GIT_AUTHOR_EMAIL: ci@k8-manifest-validator.io
+          GIT_COMMITTER_EMAIL: ci@k8-manifest-validator.io
         run: |
+          git config --global user.email "ci@k8-manifest-validator.io"
+          git config --global user.name "CI Bot"
           TAG=$(cat VERSION | tr -d '[:space:]')
           git push origin ${{ github.ref_name }}
           git push origin "$TAG"
