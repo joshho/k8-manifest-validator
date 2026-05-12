@@ -53,6 +53,8 @@ jobs:
         env:
           NEW_MINOR: ${{ steps.check.outputs.new_minor }}
         run: |
+          GO=/home/node/.local/go/go/bin/go
+          if ! command -v "$GO" &>/dev/null; then GO=$(command -v go); fi
           ./scripts/bump-version.sh --minor "${NEW_MINOR#v}"
 
       - name: Validate build and tests
