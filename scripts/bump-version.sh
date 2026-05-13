@@ -209,5 +209,5 @@ for r in releases:
   echo "Packages: ${NEW_PKG}"
   echo ""
   echo "Push with: git push origin release/v${K8S_MINOR_NUM}"
-  exit 2
+  exit 0
 fi
