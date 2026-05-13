@@ -140,7 +140,7 @@ for r in releases:
   echo "Packages: ${ACTUAL_PKG}"
   echo ""
   echo "Push with: git push origin main"
-  exit 2
+  exit 0
 fi
 
 # === PATCH MODE ===
