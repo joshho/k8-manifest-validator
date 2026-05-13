@@ -107,7 +107,12 @@ for r in releases:
     exit 0
   fi
 
-  echo "Latest patch:    v1.${CURRENT_PKG_MINOR}.${LATEST_PATCH}"
+  # IMPORTANT: k8s.io/api, k8s.io/apimachinery, k8s.io/apiextensions-apiserver
+  # only tag releases at .0 patch. They do NOT have .1, .2 etc tags.
+  # Force patch to 0 — go.get always uses v0.N.0
+  LATEST_PATCH="0"
+
+  echo "Latest patch:    v1.${CURRENT_PKG_MINOR}.${LATEST_PATCH} (forced .0 — k8s.io packages only tag .0)"
 
   if [[ "$LATEST_PATCH" -gt "$CURRENT_PKG_PATCH" ]]; then
     echo "NEW_PATCH=v1.${CURRENT_PKG_MINOR}.${LATEST_PATCH}"
