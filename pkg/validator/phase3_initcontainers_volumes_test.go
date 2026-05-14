@@ -261,7 +261,7 @@ func TestPhase3_InitVolumes_EmptyDir(t *testing.T) {
 							Name: "tmp-volume",
 							VolumeSource: corev1.VolumeSource{
 								EmptyDir: &corev1.EmptyDirVolumeSource{
-									SizeLimit: &q,
+									SizeLimit: q,
 								},
 							},
 						},
