@@ -363,9 +363,10 @@ func TestPhase4_SELinux_Type_Invalid(t *testing.T) {
 			wantErr:   false,
 		},
 		{
-			name:      "valid SELinuxOptions.Type with caret (validator may not enforce)",
+			name:      "invalid SELinuxOptions.Type with caret",
 			deploy:    deployment(withSELinuxType("bad^type")),
-			wantErr:   false,
+			wantErr:   true,
+			errSubstr: "seLinuxOptions",
 		},
 		{
 			name:      "invalid SELinuxOptions.Type starts with digit",
