@@ -1,0 +1,50 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: redises.redisilient.github.com
+spec:
+  group: redisilient.github.com
+  names:
+    kind: Redis
+    plural: redises
+    singular: redis
+    listKind: RedisList
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              kubernetesConfig:
+                type: object
+                properties:
+                  image:
+                    type: string
+                  imagePullPolicy:
+                    type: string
+                  env:
+                    type: array
+                  resources:
+                    type: object
+              redis:
+                type: object
+                properties:
+                  storage:
+                    type: object
+                  config:
+                    type: object
+              sentinel:
+                type: object
+                properties:
+                  replicas:
+                    type: integer
+                  image:
+                    type: string
+            required:
+            - kubernetesConfig

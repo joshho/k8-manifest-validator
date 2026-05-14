@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: tcp-sidecar
+  namespace: default
+spec:
+  egress:
+  - hosts:
+    - "*/*"
+    tcp:
+    - match:
+      - port: 3306
+      destination:
+        host: mysql.example.com
+        port:
+          number: 3306

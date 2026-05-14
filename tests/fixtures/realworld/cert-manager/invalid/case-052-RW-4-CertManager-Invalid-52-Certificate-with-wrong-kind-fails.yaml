@@ -1,0 +1,9 @@
+apiVersion: cert-manager.io/v1
+kind: BadCertificate
+metadata:
+  name: wrong-kind-cert
+  namespace: default
+spec:
+  secretName: my-cert-tls
+  issuerRef:
+    name: my-issuer

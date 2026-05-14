@@ -1,0 +1,5 @@
+apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+spec:
+  kubernetesConfig:
+    image: redis:7.0

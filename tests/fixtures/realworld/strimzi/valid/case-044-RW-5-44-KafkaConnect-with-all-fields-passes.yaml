@@ -1,0 +1,17 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: full-connect
+  namespace: kafka
+spec:
+  replicas: 3
+  bootstrapServers: my-cluster-kafka:9092
+  tls: {}
+  authentication:
+    type: tls
+  logging:
+    type: inline
+  resources:
+    limits:
+      cpu: "2"
+      memory: 4Gi

@@ -1,0 +1,17 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgreplica
+metadata:
+  name: my-replica
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres
+  replicaName: replica-east
+  image: crunchydata/crunchy-postgres:centos7-14.2-0
+  serviceType: NodePort
+  resources:
+    requests:
+      cpu: 250m
+      memory: 128Mi
+    limits:
+      cpu: "2"
+      memory: 2Gi

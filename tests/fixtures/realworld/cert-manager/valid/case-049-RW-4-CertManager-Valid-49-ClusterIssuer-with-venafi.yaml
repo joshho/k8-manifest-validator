@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: cluster-venafi
+spec:
+  venafi:
+    zone: Production
+    url: https://example.com/vedsdk
+    apiTokenSecretRef:
+      name: venafi-api-token
+      key: api-key

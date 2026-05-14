@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: nginx-install
+  namespace: default
+spec:
+  interval: 5m0s
+  chart:
+    spec:
+      chart: nginx
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami
+  install:
+    timeout: 5m0s
+    remediation:
+      retries: 3

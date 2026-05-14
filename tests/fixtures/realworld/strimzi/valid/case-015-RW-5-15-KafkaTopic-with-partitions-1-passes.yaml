@@ -1,0 +1,8 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: minimal-topic
+  namespace: kafka
+spec:
+  partitions: 1
+  replicas: 1

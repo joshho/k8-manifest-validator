@@ -1,0 +1,11 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgreplica
+metadata:
+  name: my-replica
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres
+  resources:
+    limits:
+      cpu: "1"
+      memory: 1Gi

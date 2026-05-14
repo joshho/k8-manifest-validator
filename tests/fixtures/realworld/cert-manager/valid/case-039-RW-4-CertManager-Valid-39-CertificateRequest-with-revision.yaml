@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: CertificateRequest
+metadata:
+  name: csr-rev-cert
+  namespace: default
+spec:
+  issuerRef:
+    name: my-issuer
+  request: TESTREQUESTBASE64==
+  revision: 1
+  dnsNames:
+    - rev.example.com

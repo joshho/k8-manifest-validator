@@ -1,0 +1,11 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: multi-egress-sidecar
+  namespace: default
+spec:
+  egress:
+  - hosts:
+    - "default/httpbin"
+  - hosts:
+    - "istio-system/*"

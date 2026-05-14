@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: email-san-cert
+  namespace: default
+spec:
+  secretName: email-san-tls
+  issuerRef:
+    name: my-issuer
+  emailSANs:
+    - admin@example.com
+    - support@example.com

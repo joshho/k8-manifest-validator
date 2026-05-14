@@ -1,0 +1,11 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: empty-ports
+  namespace: default
+spec:
+  hosts:
+  - example.com
+  ports: []
+  location: MESH_EXTERNAL
+  resolution: DNS

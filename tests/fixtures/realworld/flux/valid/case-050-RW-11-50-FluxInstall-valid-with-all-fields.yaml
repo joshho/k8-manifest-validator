@@ -1,0 +1,17 @@
+apiVersion: installation.toolkit.fluxcd.io/v1
+kind: FluxInstall
+metadata:
+  name: flux-full
+  namespace: flux-system
+spec:
+  version: "v2.1.0"
+  interval: 30s
+  clusterProvider: eks
+  components:
+    - source-controller
+    - kustomize-controller
+    - helm-controller
+    - notification-controller
+  registry: ghcr.io/fluxcd
+  watchAllNamespaces: false
+  allAtOnce: false

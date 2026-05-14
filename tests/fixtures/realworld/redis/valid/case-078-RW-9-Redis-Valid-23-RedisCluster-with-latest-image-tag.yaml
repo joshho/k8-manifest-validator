@@ -1,0 +1,9 @@
+apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis-cluster:latest
+  clusterSize: 3

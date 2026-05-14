@@ -1,63 +1,59 @@
-# Developer Status
+# Developer State
 
-**Last Updated:** 2026-05-14 16:00 UTC
-**Status:** COMPLETE
+## Status: COMPLETE
 
-## RW-14: Coverage Audit — 1000-Test Goal Verification
+## Task: Orchestrator → Developer Handoff (RW-16 Implementation)
 
-**Commit:** `d1908d1` on `swe-k8-manifest-validator`
-**Commit Message:** `feat(RW-14): coverage audit - 1000-test goal verification`
+**Completed:**
+- Verified CI workflow in `.github/workflows/ci.yml` already correctly runs all phase4 tests:
+  - `go test ./...` for unit tests
+  - `./scripts/test.sh` for fixture/integration tests (runs all phase4 CR/CRD fixtures)
+  - Uses Go 1.26 (matches `go.mod` requirement)
+  - Runs on `ubuntu-latest`
+- Added `timeout-minutes: 20` to the `test` job (was missing, now set appropriately for full test suite)
+- Committed and pushed: `feat(RW-16): CI wiring - ensure test workflow runs all phase4 tests`
+- Commit: 75c5ca0 (pushed to origin)
 
-### Coverage Audit Results (pre-commit counts, static analysis)
 
-| File | Valid | Invalid | Total |
-|------|-------|---------|-------|
-| phase4_realworld_argocd_test.go | 55 | 55 | 110 |
-| phase4_realworld_flux_test.go | 50 | 60 | 110 |
-| phase4_realworld_istio_test.go | 0 | 55 | 55 |
-| phase4_realworld_postgresql_test.go | 55 | 55 | 110 |
-| phase4_realworld_prometheus_test.go | 55 | 55 | 110 |
-| phase4_realworld_redis_test.go | 0 | 55 | 55 |
-| phase4_realworld_strimzi_test.go | 55 | 55 | 110 |
-| phase4_realworld_dedup_test.go | 0 | 0 | 0 |
-| phase4_realworld_malformed_test.go | 7 | 53 | 60 |
-| phase4_capabilities_test.go | 34 | 14 | 48 |
-| phase4_realworld_nodeaffinity_test.go | 27 | 4 | 31 |
-| phase4_selinux_test.go | 29 | 20 | 49 |
-| phase4_semantic_security_test.go | 11 | 12 | 23 |
-| **TOTAL** | **378** | **493** | **871** |
-
-### Gap Analysis
-
-- **Current total: 871 test cases**
-- **Goal: 1000 test cases**
-- **Short by: 129 test cases**
-
-### RW-14 Audit File Created
-
-**`pkg/validator/phase4_realworld_coverage_audit_test.go`** — audit test that verifies:
-1. Total test case count >= 1000
-2. Valid/invalid split approximately 50/50 (30-70% tolerance)
-3. All 8 operator groups (cert-manager, strimzi, prometheus, argo-cd, istio, redis, postgresql, flux) covered
-
-The audit test currently **FAILS** because 871 < 1000. It will pass once 129 more test cases are added.
-
-### Deliverables Completed
-
-- [x] Count total test functions across all `phase4_*.go` files
-- [x] Create `pkg/validator/phase4_realworld_coverage_audit_test.go` with audit assertions
-- [x] Document gap: 871/1000 (short by 129)
-- [x] Stage, commit, and push on `swe-k8-manifest-validator`
-
-### Next Steps
-
-- Add ~129 more test cases (distributed across under-covered operator groups: istio, redis, malformed edge cases)
-- Re-run audit test once goal is reached
-- Await QA review
+**Branch:** swe-k8-manifest-validator (pushed to origin)
 
 ---
 
-## RW-13: Malformed Test Injection (COMPLETED)
+## Previous Task: Orchestrator → Developer Handoff (RW-15 Implementation)
 
-**Commit:** `daf8367` on `swe-k8-manifest-validator`
-**Commit Message:** `feat(RW-13): malformed test injection - edge case rejection tests`
+**Completed:**
+- Created `pkg/validator/phase4_performance_test.go` with:
+  - `TestPhase4_Performance_RunAll`: runs all phase4 tests and verifies total time < 60s
+  - Skips in `testing.Short()` mode (e.g., `go test -short`)
+  - Discovers all `phase4_*.go` test files in `pkg/validator/`
+  - Executes all `TestPhase4_*` functions via `go test -timeout 65s`
+  - Reports timing breakdown per operator group
+  - `BenchmarkPhase4_RunAll`: benchmark variant for profiling
+  - Helper functions for pass/fail count parsing and timing reporting
+- Committed and pushed: `feat(RW-15): performance validation - 60s runtime check`
+- Commit: f66d1a0
+
+**Branch:** swe-k8-manifest-validator (pushed to origin)
+
+---
+
+## Previous Task: cert-manager Test Cases
+
+**Completed:**
+- Created `pkg/validator/phase4_realworld_certmanager_test.go` with 110 test cases
+- 55 valid: RW-4.CertManager.Valid.1 through RW-4.CertManager.Valid.55
+  - Certificate (20 valid): secretName, issuerRef, dnsNames, ipAddresses, uriSANs, issuerRef kind/group, duration/renewBefore, usages, secretTemplate, emailSANs, revisionHistoryLimit, privateKey (encoding/algorithm/size/rotationPolicy), encodeUsagesInRequest, nameConstraints
+  - Issuer (12 valid): ACME (server/email/privateKeySecretRef/solvers), HTTP01 solver, CA secretName, selfSigned, Venafi, Vault (tokenSecretRef/appRole), externalAccountBinding, preferredChain
+  - ClusterIssuer (8 valid): ACME, Cloudflare DNS, CA secretName, selfSigned, Venafi, Vault
+  - CertificateRequest (15 valid): issuerRef, request, dnsNames, commonName, usages, isCA, ipAddresses, emailSANs, uriSANs, revision, issuerRef kind/group
+- 55 invalid: RW-4.CertManager.Invalid.1 through RW-4.CertManager.Invalid.55
+  - Missing required fields (secretName, issuerRef.name, request, etc.)
+  - Wrong types (string instead of array for dnsNames, boolean instead of string, etc.)
+  - Empty strings (secretName: "", issuerRef.name: "")
+  - Non-integer types (revisionHistoryLimit: "5", size: "2048")
+  - Non-object types (issuerRef: my-issuer, privateKey: "RSA")
+  - Wrong kind (BadCertificate, BadIssuer, BadClusterIssuer, BadCertificateRequest)
+- CRDs: Certificate, Issuer, ClusterIssuer, CertificateRequest (inline for test isolation)
+- Pattern: table-driven with name, crYAML, wantErr, errSubstr
+- Committed and pushed: `feat(RW-4): cert-manager operator real-world test cases (110 tests)`
+- Commit: 5a4b0e6

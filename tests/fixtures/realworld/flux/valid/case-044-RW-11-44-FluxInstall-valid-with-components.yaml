@@ -1,0 +1,12 @@
+apiVersion: installation.toolkit.fluxcd.io/v1
+kind: FluxInstall
+metadata:
+  name: flux-components
+  namespace: flux-system
+spec:
+  version: latest
+  interval: 1m0s
+  components:
+    - source-controller
+    - kustomize-controller
+    - helm-controller

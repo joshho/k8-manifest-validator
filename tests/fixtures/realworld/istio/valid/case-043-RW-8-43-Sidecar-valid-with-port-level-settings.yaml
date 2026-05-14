@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: port-sidecar
+  namespace: default
+spec:
+  egress:
+  - hosts:
+    - "*/*"
+    port:
+      number: 8080
+      protocol: HTTP
+      name: egress-http

@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bad-renewbefore
+  namespace: default
+spec:
+  secretName: my-cert-tls
+  issuerRef:
+    name: my-issuer
+  renewBefore: not-a-duration
+  dnsNames:
+    - example.com

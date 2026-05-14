@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: my-prometheus-rule
+  namespace: monitoring
+spec:
+  groups:
+  - name: recordings
+    rules:
+    - record: job:http_requests:rate5m
+      expr: rate(http_requests_total[5m])

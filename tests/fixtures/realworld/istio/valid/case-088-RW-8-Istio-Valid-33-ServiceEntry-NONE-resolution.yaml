@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: none-res-svc
+  namespace: default
+spec:
+  hosts:
+  - external.example.com
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: NONE

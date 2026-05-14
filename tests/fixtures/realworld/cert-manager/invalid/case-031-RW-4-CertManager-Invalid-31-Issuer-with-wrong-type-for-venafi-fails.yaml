@@ -1,0 +1,7 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: wrong-venafi-type
+  namespace: default
+spec:
+  venafi: zone

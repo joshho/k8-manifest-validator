@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: CertificateRequest
+metadata:
+  name: csr-ca-cert
+  namespace: default
+spec:
+  issuerRef:
+    name: my-issuer
+  request: TESTREQUESTBASE64==
+  isCA: true

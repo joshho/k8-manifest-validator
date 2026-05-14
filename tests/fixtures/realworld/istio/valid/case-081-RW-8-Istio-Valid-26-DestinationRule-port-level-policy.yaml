@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: port-level-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    portLevelSettings:
+    - port:
+        number: 9080
+      loadBalancer:
+        simple: LEAST_CONN

@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: cluster-dns-issuer
+  namespace: default
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: admin@example.com
+    privateKeySecretRef:
+      name: acme-account-key
+    solvers:
+    - dns01:
+        route53:
+          region: us-east-1
+          clusterDNSName: cluster.example.com

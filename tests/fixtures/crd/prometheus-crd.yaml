@@ -1,0 +1,55 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: prometheuses.monitoring.coreos.com
+spec:
+  group: monitoring.coreos.com
+  names:
+    kind: Prometheus
+    plural: prometheuses
+    singular: prometheus
+    listKind: PrometheusList
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              replicas:
+                type: integer
+                minimum: 1
+              version:
+                type: string
+              image:
+                type: string
+              resources:
+                type: object
+              serviceAccountName:
+                type: string
+              serviceMonitorSelector:
+                type: object
+              podMonitorSelector:
+                type: object
+              ruleSelector:
+                type: object
+              alertmanagerConfigSelector:
+                type: object
+              retention:
+                type: string
+              retentionSize:
+                type: string
+              securityContext:
+                type: object
+              containers:
+                type: array
+              volumes:
+                type: array
+            required:
+            - replicas
+            - serviceAccountName

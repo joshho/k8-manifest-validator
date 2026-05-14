@@ -1,0 +1,39 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: kafkamirrormaker2s.strimzi.io
+spec:
+  group: strimzi.io
+  names:
+    kind: KafkaMirrorMaker2
+    plural: kafkamirrormaker2s
+    singular: kafkamirrormaker2
+    listKind: KafkaMirrorMaker2List
+  scope: Namespaced
+  versions:
+  - name: v1beta2
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              replicas:
+                type: integer
+              version:
+                type: string
+              connectCluster:
+                type: string
+              mirrors:
+                type: array
+              resources:
+                type: object
+            required:
+            - replicas
+            - connectCluster
+            - mirrors
+  storedVersions:
+  - v1beta2

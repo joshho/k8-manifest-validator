@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: udp-svc
+  namespace: default
+spec:
+  hosts:
+  - dns-service
+  ports:
+  - number: 53
+    name: dns-udp
+    protocol: UDP
+  resolution: DNS

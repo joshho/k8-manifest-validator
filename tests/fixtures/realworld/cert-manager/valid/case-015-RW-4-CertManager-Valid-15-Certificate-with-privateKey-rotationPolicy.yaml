@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pk-rotation-cert
+  namespace: default
+spec:
+  secretName: pk-rotation-tls
+  issuerRef:
+    name: my-issuer
+  privateKey:
+    rotationPolicy: Always
+    encoding: PKCS8
+    algorithm: ECDSAP256
+  dnsNames:
+    - pk-rotation.example.com

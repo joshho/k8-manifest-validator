@@ -1,0 +1,9 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: invalid-http-array
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http: "invalid"

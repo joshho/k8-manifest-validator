@@ -1,0 +1,7 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: NotAPgbackup
+metadata:
+  name: my-backup
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres

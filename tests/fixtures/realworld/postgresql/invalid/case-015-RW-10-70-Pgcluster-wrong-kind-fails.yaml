@@ -1,0 +1,15 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: WrongKind
+metadata:
+  name: my-postgres
+  namespace: postgres-operator
+spec:
+  name: my-postgres
+  postgresVersion: 13
+  instances:
+  - name: instance1
+    replicas: 1
+    dataVolumeClaimSpec:
+      resources:
+        requests:
+          storage: 1Gi

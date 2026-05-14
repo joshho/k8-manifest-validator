@@ -1,0 +1,9 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: no-selector
+  namespace: default
+spec:
+  egress:
+  - hosts:
+    - "default/*"

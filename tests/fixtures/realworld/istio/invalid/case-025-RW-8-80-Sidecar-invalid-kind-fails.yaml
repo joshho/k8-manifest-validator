@@ -1,0 +1,9 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: BadSidecar
+metadata:
+  name: wrong-kind
+  namespace: default
+spec:
+  egress:
+  - hosts:
+    - "*/*"

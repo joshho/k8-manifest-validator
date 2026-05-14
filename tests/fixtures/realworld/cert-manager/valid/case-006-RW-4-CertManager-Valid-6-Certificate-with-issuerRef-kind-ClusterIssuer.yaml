@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cluster-issuer-cert
+  namespace: default
+spec:
+  secretName: cluster-issuer-tls
+  issuerRef:
+    name: my-cluster-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - cluster.example.com

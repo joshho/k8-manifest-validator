@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: subset-svc
+  namespace: default
+spec:
+  hosts:
+  - subset-svc.example.com
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  location: MESH_EXTERNAL
+  resolution: DNS
+  subjectAltNames:
+  - subset-svc.example.com

@@ -1,0 +1,7 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: wrong-egress-type
+  namespace: default
+spec:
+  egress: "invalid"

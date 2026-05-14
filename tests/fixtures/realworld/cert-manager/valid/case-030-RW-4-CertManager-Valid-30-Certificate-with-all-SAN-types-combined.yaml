@@ -1,0 +1,19 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: all-san-cert
+  namespace: default
+spec:
+  secretName: all-san-tls
+  issuerRef:
+    name: my-issuer
+  commonName: allsan.example.com
+  dnsNames:
+    - allsan.example.com
+    - www.allsan.example.com
+  ipAddresses:
+    - "10.0.0.1"
+  emailSANs:
+    - admin@allsan.example.com
+  uriSANs:
+    - spiffe://allsan.example.com/sa/default

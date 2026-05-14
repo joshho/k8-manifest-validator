@@ -1,0 +1,8 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgtask
+metadata:
+  name: my-task
+  namespace: postgres-operator
+spec:
+  clusterName: ""
+  taskType: backup

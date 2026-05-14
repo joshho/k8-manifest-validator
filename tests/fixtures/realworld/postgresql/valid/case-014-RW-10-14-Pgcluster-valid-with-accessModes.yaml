@@ -1,0 +1,17 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgcluster
+metadata:
+  name: my-postgres
+  namespace: postgres-operator
+spec:
+  name: my-postgres
+  postgresVersion: 13
+  instances:
+  - name: instance1
+    replicas: 1
+    dataVolumeClaimSpec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi

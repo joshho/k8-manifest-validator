@@ -1,0 +1,11 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: my-connect
+  namespace: kafka
+spec:
+  bootstrapServers: my-cluster-kafka:9092
+  resources:
+    limits:
+      cpu: "1"
+      memory: 2Gi

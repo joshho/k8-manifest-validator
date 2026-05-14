@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: venafi-no-url
+  namespace: default
+spec:
+  venafi:
+    zone: my-zone
+    apiTokenSecretRef:
+      name: venafi-token

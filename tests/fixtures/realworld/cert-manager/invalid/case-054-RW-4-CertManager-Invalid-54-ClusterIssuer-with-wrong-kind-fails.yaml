@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: BadClusterIssuer
+metadata:
+  name: wrong-kind-clusterissuer
+spec:
+  acme:
+    server: https://acme.example.com
+    email: admin@example.com
+    privateKeySecretRef:
+      name: acme-key

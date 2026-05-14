@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: usages-cert
+  namespace: default
+spec:
+  secretName: usages-tls
+  issuerRef:
+    name: my-issuer
+  usages:
+    - digital signature
+    - key encipherment
+  dnsNames:
+    - usages.example.com

@@ -1,0 +1,55 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: appprojects.argoproj.io
+spec:
+  group: argoproj.io
+  names:
+    kind: AppProject
+    plural: appprojects
+    singular: appproject
+    listKind: AppProjectList
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              description:
+                type: string
+              sourceRepos:
+                type: array
+                items:
+                  type: string
+              destinations:
+                type: array
+                properties:
+                  server:
+                    type: string
+                  namespace:
+                    type: string
+                  name:
+                    type: string
+                required:
+                - namespace
+              clusterResourceBlacklist:
+                type: array
+              namespaceResourceBlacklist:
+                type: array
+              permittedOnly:
+                type: boolean
+              syncWindows:
+                type: array
+              roles:
+                type: array
+              signatureKeys:
+                type: array
+            required:
+            - sourceRepos
+            - destinations

@@ -1,0 +1,9 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Alertmanager
+metadata:
+  name: alertmanager-ha
+  namespace: monitoring
+spec:
+  replicas: 5
+  serviceAccountName: alertmanager
+  version: v0.26.0

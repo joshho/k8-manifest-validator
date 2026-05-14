@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: multi-endpoint-svc
+  namespace: default
+spec:
+  hosts:
+  - replicated.example.com
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  location: MESH_EXTERNAL
+  resolution: STATIC
+  endpoints:
+  - address: 10.0.0.1
+    locality: us-west-1
+    ports:
+      http: 8080
+  - address: 10.0.0.2
+    locality: us-east-1
+    ports:
+      http: 8080

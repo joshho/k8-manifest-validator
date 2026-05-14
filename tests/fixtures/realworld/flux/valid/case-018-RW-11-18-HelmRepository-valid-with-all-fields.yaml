@@ -1,0 +1,14 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: bitnami-full
+  namespace: flux-system
+spec:
+  interval: 3m0s
+  timeout: 30s
+  url: https://charts.bitnami.com/bitnami
+  secretRef:
+    name: helm-repo-secret
+  passCredentials: false
+  provider: generic
+  suspend: false

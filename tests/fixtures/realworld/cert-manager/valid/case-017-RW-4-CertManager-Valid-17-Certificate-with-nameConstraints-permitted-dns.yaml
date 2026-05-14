@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nc-cert
+  namespace: default
+spec:
+  secretName: nc-tls
+  issuerRef:
+    name: my-issuer
+  nameConstraints:
+    permitted:
+      dns:
+        - example.com
+        - "*.example.com"
+  dnsNames:
+    - nc.example.com

@@ -1,0 +1,18 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: podinfo-full
+  namespace: flux-system
+spec:
+  interval: 30s
+  timeout: 1m0s
+  url: https://github.com/stefanprodan/podinfo
+  ref:
+    branch: develop
+  secretRef:
+    name: git-auth
+  ignore: |
+    .circleci/**
+    Makefile
+  suspend: false
+  gitImplementation: go-git

@@ -1,0 +1,65 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: kafka.strimzi.io
+spec:
+  group: strimzi.io
+  names:
+    kind: Kafka
+    plural: kafkas
+    singular: kafka
+    listKind: KafkaList
+  scope: Namespaced
+  versions:
+  - name: v1beta3
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              kafka:
+                type: object
+                properties:
+                  replicas:
+                    type: integer
+                    minimum: 1
+                  version:
+                    type: string
+                  replicas:
+                    type: integer
+                  resources:
+                    type: object
+                  listeners:
+                    type: array
+                  config:
+                    type: object
+                  storage:
+                    type: object
+                  listeners:
+                    type: array
+                    items:
+                      type: object
+                required:
+                - replicas
+              zookeeper:
+                type: object
+                properties:
+                  replicas:
+                    type: integer
+                  resources:
+                    type: object
+              entityOperator:
+                type: object
+                properties:
+                  topicOperator:
+                    type: object
+                  userOperator:
+                    type: object
+              cruiseControl:
+                type: object
+  storedVersions:
+  - v1beta3

@@ -1,0 +1,11 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: empty-hosts
+  namespace: default
+spec:
+  hosts: []
+  http:
+  - route:
+    - destination:
+        host: reviews

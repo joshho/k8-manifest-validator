@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: CertificateRequest
+metadata:
+  name: csr-cn-cert
+  namespace: default
+spec:
+  issuerRef:
+    name: my-issuer
+  commonName: csr.example.com
+  request: TESTREQUESTBASE64==

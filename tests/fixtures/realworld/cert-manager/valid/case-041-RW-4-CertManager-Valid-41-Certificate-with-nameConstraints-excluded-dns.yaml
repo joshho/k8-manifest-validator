@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nc-excl-cert
+  namespace: default
+spec:
+  secretName: nc-excl-tls
+  issuerRef:
+    name: my-issuer
+  nameConstraints:
+    excluded:
+      dns:
+        - excluded.example.com
+  dnsNames:
+    - nc.example.com

@@ -1,0 +1,11 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgbackup
+metadata:
+  name: my-backup
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres
+  storageSource:
+    type: azure
+    endpoint: https://myaccount.blob.core.windows.net
+    bucket: my-container

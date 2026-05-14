@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wrong-cn-type
+  namespace: default
+spec:
+  secretName: my-cert-tls
+  issuerRef:
+    name: my-issuer
+  commonName: 12345
+  dnsNames:
+    - example.com

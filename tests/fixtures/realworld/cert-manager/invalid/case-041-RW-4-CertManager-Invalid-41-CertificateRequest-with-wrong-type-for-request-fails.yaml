@@ -1,0 +1,9 @@
+apiVersion: cert-manager.io/v1
+kind: CertificateRequest
+metadata:
+  name: wrong-request-type-csr
+  namespace: default
+spec:
+  issuerRef:
+    name: my-issuer
+  request: 12345

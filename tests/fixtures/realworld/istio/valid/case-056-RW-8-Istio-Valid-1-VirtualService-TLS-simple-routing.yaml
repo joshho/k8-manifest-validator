@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: tls-route
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  tls:
+  - match:
+    - port: 443
+      sniHosts:
+      - reviews
+    route:
+    - destination:
+        host: reviews
+        port:
+          number: 443

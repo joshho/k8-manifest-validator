@@ -1,0 +1,10 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: tls-user
+  namespace: kafka
+spec:
+  authentication:
+    type: tls
+    certificates:
+    - cert data

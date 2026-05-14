@@ -1,0 +1,7 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: wrong-acme-type
+  namespace: default
+spec:
+  acme: server

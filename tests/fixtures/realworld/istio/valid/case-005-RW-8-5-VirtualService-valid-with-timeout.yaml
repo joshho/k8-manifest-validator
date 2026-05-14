@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: timeout-route
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - timeout: 5s
+    route:
+    - destination:
+        host: reviews
+        subset: v1

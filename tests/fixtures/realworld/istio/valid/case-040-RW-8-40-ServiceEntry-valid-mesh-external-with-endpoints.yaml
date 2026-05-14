@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: mesh-external-svc
+  namespace: default
+spec:
+  hosts:
+  - external-db.example.com
+  ports:
+  - number: 3306
+    name: mysql
+    protocol: TCP
+  location: MESH_EXTERNAL
+  resolution: STATIC
+  endpoints:
+  - address: 192.168.1.100
+    ports:
+      mysql: 3306

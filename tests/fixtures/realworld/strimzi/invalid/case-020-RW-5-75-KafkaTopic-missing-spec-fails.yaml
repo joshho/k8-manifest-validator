@@ -1,0 +1,5 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: my-topic
+  namespace: kafka

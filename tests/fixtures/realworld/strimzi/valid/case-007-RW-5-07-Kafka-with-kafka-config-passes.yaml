@@ -1,0 +1,11 @@
+apiVersion: strimzi.io/v1beta3
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: kafka
+spec:
+  kafka:
+    replicas: 3
+    config:
+      num.partitions: 3
+      num.io.threads: 8

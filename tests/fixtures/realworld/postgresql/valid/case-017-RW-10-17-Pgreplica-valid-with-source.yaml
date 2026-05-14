@@ -1,0 +1,10 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgreplica
+metadata:
+  name: my-replica
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres
+  source:
+    name: my-postgres
+    namespace: postgres-operator

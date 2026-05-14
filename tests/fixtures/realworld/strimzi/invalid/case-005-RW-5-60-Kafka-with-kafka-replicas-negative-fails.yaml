@@ -1,0 +1,8 @@
+apiVersion: strimzi.io/v1beta3
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: kafka
+spec:
+  kafka:
+    replicas: -1

@@ -1,0 +1,10 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: no-ports
+  namespace: default
+spec:
+  hosts:
+  - example.com
+  location: MESH_EXTERNAL
+  resolution: DNS

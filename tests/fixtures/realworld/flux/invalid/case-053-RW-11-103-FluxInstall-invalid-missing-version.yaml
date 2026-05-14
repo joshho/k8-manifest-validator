@@ -1,0 +1,7 @@
+apiVersion: installation.toolkit.fluxcd.io/v1
+kind: FluxInstall
+metadata:
+  name: flux
+  namespace: flux-system
+spec:
+  interval: 1m0s

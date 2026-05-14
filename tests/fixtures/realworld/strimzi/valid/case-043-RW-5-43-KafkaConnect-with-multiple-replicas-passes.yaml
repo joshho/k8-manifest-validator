@@ -1,0 +1,8 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: multi-connect
+  namespace: kafka
+spec:
+  replicas: 5
+  bootstrapServers: my-cluster-kafka:9092

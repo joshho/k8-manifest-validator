@@ -1,0 +1,19 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaMirrorMaker2
+metadata:
+  name: my-mm2
+  namespace: kafka
+spec:
+  replicas: 2
+  connectCluster: target-cluster
+  mirrors:
+  - sourceCluster: cluster-us
+    targetCluster: target-cluster
+    sourceTopic: us-topic-1
+  - sourceCluster: cluster-eu
+    targetCluster: target-cluster
+    sourceTopic: eu-topic-1
+  resources:
+    limits:
+      cpu: "1"
+      memory: 2Gi

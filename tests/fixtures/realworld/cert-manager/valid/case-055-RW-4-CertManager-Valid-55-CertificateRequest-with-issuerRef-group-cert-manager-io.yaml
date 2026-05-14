@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: CertificateRequest
+metadata:
+  name: csr-group-cert
+  namespace: default
+spec:
+  issuerRef:
+    name: my-issuer
+    kind: Issuer
+    group: cert-manager.io
+  request: TESTREQUESTBASE64==

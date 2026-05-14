@@ -1,0 +1,12 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: match-port-sidecar
+  namespace: default
+spec:
+  egress:
+  - port:
+      port: 443
+      protocol: HTTPS
+    hosts:
+    - "*/secure-service"

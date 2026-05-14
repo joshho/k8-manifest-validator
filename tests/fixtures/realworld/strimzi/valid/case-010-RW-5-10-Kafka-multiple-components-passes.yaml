@@ -1,0 +1,19 @@
+apiVersion: strimzi.io/v1beta3
+kind: Kafka
+metadata:
+  name: prod-cluster
+  namespace: kafka
+spec:
+  kafka:
+    replicas: 5
+    version: "3.5.0"
+    listeners:
+    - name: plain
+      port: 9092
+    - name: tls
+      port: 9093
+  zookeeper:
+    replicas: 3
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}

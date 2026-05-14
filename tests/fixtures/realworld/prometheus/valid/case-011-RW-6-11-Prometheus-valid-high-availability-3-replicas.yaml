@@ -1,0 +1,10 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus-ha
+  namespace: monitoring
+spec:
+  replicas: 3
+  serviceAccountName: prometheus
+  version: v2.50.0
+  retention: 30d

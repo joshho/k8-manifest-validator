@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: encode-true-cert
+  namespace: default
+spec:
+  secretName: encode-true-tls
+  issuerRef:
+    name: my-issuer
+  encodeUsagesInRequest: true
+  dnsNames:
+    - encode.example.com

@@ -1,0 +1,6 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: my-connect
+  namespace: kafka
+spec: {}

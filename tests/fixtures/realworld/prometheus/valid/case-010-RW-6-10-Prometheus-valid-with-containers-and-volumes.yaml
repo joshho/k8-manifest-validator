@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  replicas: 2
+  serviceAccountName: prometheus
+  containers:
+  - name: prometheus
+    image: quay.io/prometheus/prometheus:v2.50.0
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  volumes:
+  - name: storage
+    emptyDir: {}

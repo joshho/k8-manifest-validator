@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: uri-cert
+  namespace: default
+spec:
+  secretName: uri-cert-tls
+  issuerRef:
+    name: my-issuer
+  uriSANs:
+    - "spiffe://example.com/ns/default/sa/default"

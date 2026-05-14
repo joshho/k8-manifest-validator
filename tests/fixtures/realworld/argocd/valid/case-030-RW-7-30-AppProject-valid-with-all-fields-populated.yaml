@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: full-project
+  namespace: argocd
+spec:
+  description: Full featured project
+  sourceRepos:
+  - https://github.com/argoproj/argocd-example-apps
+  - https://github.com/argoproj/argo-cd
+  destinations:
+  - server: https://kubernetes.default.svc
+    namespace: production
+  clusterResourceBlacklist:
+  - group: ""
+    kind: ConfigMap
+  namespaceResourceBlacklist:
+  - group: ""
+    kind: Secret
+  permittedOnly: false
+  syncWindows:
+  - kind: allow
+    schedule: "0 8-17 * * 1-5"
+    duration: 8h
+    applications:
+    - "*"
+  roles:
+  - name: admin
+    description: Project administrator

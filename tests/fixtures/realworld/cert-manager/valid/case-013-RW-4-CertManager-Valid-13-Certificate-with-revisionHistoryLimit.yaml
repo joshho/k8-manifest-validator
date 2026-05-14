@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: revision-cert
+  namespace: default
+spec:
+  secretName: revision-tls
+  issuerRef:
+    name: my-issuer
+  revisionHistoryLimit: 5
+  dnsNames:
+    - revision.example.com

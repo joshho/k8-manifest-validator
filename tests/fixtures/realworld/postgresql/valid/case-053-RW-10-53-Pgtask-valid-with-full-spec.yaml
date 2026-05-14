@@ -1,0 +1,19 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgtask
+metadata:
+  name: my-task
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres
+  taskType: restore
+  taskName: restore-from-backup
+  parameters:
+    backup-url: s3://my-bucket/backups/latest
+    target-timestamp: "2024-05-01T00:00:00Z"
+  jobRef:
+    name: restore-job-xyz
+    namespace: postgres-operator
+  owner: my-postgres
+status:
+  message: restore in progress
+  state: running

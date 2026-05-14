@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: my-prometheus-rule
+  namespace: monitoring
+spec:
+  groups:
+  - name: example
+    rules:
+    - alert: InstanceMemoryUsage
+      expr: (node_memory_MemTotal_bytes - node_memory_MemFree_bytes) / node_memory_MemTotal_bytes > 0.85
+      for: 10m
+      labels:
+        severity: warning

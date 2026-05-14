@@ -1,0 +1,13 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: invalid-timeout
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - timeout: invalid
+    route:
+    - destination:
+        host: reviews

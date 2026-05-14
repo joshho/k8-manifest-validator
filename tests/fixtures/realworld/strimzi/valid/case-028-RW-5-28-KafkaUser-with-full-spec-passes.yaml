@@ -1,0 +1,18 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: full-user
+  namespace: kafka
+spec:
+  authentication:
+    type: tls
+  authorization:
+    type: simple
+    acls:
+    - resource:
+        type: topic
+        name: my-topic
+      operation: Read
+  quotas:
+    producer_byte_rate: 1048576
+    consumer_byte_rate: 1048576

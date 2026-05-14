@@ -1,0 +1,6 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgbackup
+metadata:
+  name: my-backup
+  namespace: postgres-operator
+spec: {}

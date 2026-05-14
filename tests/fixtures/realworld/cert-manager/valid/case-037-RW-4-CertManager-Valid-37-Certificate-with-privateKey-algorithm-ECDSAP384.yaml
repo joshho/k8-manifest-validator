@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ecdsa-384-cert
+  namespace: default
+spec:
+  secretName: ecdsa-384-tls
+  issuerRef:
+    name: my-issuer
+  privateKey:
+    algorithm: ECDSAP384
+  dnsNames:
+    - ecdsa.example.com

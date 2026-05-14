@@ -1,0 +1,112 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: pgclusters.postgres-operator.crunchydata.com
+spec:
+  group: postgres-operator.crunchydata.com
+  names:
+    kind: Pgcluster
+    plural: pgclusters
+    singular: pgcluster
+    listKind: PgclusterList
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              name:
+                type: string
+              clusterName:
+                type: string
+              postgresVersion:
+                type: integer
+                minimum: 10
+              instances:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    replicas:
+                      type: integer
+                      minimum: 1
+                    dataVolumeClaimSpec:
+                      type: object
+                      properties:
+                        storageClassName:
+                          type: string
+                        accessModes:
+                          type: array
+                          items:
+                            type: string
+                        resources:
+                          type: object
+                      required:
+                      - resources
+              port:
+                type: integer
+                minimum: 1024
+                maximum: 65535
+              serviceType:
+                type: string
+                enum:
+                - ClusterIP
+                - NodePort
+                - LoadBalancer
+              image:
+                type: string
+              imagePullPolicy:
+                type: string
+                enum:
+                - Always
+                - IfNotPresent
+                - Never
+              backupURL:
+                type: string
+              backupSecret:
+                type: string
+              postgresConfig:
+                type: string
+              tls:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                  secretName:
+                    type: string
+              proxy:
+                type: object
+                properties:
+                  pgport:
+                    type: integer
+                  serviceType:
+                    type: string
+              userInterface:
+                type: object
+                properties:
+                  serviceType:
+                    type: string
+              dataSource:
+                type: object
+                properties:
+                  method:
+                    type: string
+                  url:
+                    type: string
+                  secretName:
+                    type: string
+            required:
+            - name
+            - postgresVersion
+            - instances
+
+          status:
+            type: object

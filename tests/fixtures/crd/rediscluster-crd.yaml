@@ -1,0 +1,55 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: redisclusters.redisilient.github.com
+spec:
+  group: redisilient.github.com
+  names:
+    kind: RedisCluster
+    plural: redisclusters
+    singular: rediscluster
+    listKind: RedisClusterList
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              kubernetesConfig:
+                type: object
+                properties:
+                  image:
+                    type: string
+                  imagePullPolicy:
+                    type: string
+                  env:
+                    type: array
+                  resources:
+                    type: object
+              clusterSize:
+                type: integer
+                minimum: 1
+                maximum: 100
+              redisConfig:
+                type: object
+                properties:
+                  maxmemory:
+                    type: string
+                  maxmemoryPolicy:
+                    type: string
+                  appendonly:
+                    type: string
+              storage:
+                type: object
+                properties:
+                  persistentVolumeClaim:
+                    type: object
+            required:
+            - kubernetesConfig
+            - clusterSize

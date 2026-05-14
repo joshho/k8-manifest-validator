@@ -1,0 +1,2 @@
+: apps/v1
+kind: Deployment

@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: ecdsa256-cert
+  namespace: default
+spec:
+  secretName: ecdsa256-tls
+  issuerRef:
+    name: my-issuer
+  privateKey:
+    algorithm: ECDSAP256
+  dnsNames:
+    - ecdsa256.example.com

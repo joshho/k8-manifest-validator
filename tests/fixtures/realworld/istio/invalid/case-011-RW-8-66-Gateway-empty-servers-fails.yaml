@@ -1,0 +1,9 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: empty-servers
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers: []

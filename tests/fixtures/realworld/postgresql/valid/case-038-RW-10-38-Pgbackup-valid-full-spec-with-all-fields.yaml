@@ -1,0 +1,19 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgbackup
+metadata:
+  name: my-backup
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres
+  method: full
+  backupURL: s3://my-bucket/backups
+  backupPath: /backups/my-postgres/latest
+  backupStatus: in-progress
+  storageType: s3
+  storageSource:
+    type: s3
+    endpoint: https://s3.amazonaws.com
+    bucket: my-bucket
+    region: us-west-2
+  schedule: "0 3 * * *"
+  retentionPeriod: 30d

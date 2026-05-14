@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: my-prometheus-rule
+  namespace: monitoring
+spec:
+  groups:
+  - name: group1
+    rules:
+    - alert: Alert1
+      expr: up == 0
+      for: 5m
+  - name: group2
+    rules:
+    - alert: Alert2
+      expr: rate(errors_total[5m]) > 0.1
+      for: 10m

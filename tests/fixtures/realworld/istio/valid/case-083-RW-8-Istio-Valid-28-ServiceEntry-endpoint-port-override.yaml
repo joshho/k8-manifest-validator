@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: port-override-svc
+  namespace: default
+spec:
+  hosts:
+  - mongo
+  ports:
+  - number: 27017
+    name: mongo
+    protocol: MONGO
+  resolution: STATIC
+  endpoints:
+  - address: 10.0.0.5
+    ports:
+      mongo: 27017

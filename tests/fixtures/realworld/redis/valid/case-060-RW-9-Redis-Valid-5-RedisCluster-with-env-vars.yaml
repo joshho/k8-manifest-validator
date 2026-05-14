@@ -1,0 +1,12 @@
+apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+    env:
+    - name: REDIS_CLUSTER_SLEEP
+      value: "1000"
+  clusterSize: 3

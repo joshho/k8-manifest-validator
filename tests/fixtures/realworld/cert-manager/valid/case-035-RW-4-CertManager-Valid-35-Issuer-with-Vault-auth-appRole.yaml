@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: vault-approle-issuer
+  namespace: default
+spec:
+  vault:
+    server: https://vault.example.com:8200
+    path: certs/example.com
+    caBundle: TESTBUNDLEBASE64
+    auth:
+      appRole:
+        secretRef:
+          name: vault-approle-secret
+          key: secret-id

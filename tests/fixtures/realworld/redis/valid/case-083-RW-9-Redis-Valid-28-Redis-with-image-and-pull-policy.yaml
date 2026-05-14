@@ -1,0 +1,9 @@
+apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-alpine
+    imagePullPolicy: IfNotPresent

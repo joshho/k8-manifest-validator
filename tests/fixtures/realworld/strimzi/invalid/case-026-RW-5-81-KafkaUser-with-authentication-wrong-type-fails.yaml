@@ -1,0 +1,7 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: my-user
+  namespace: kafka
+spec:
+  authentication: "tls"

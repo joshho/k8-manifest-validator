@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: static-svc
+  namespace: default
+spec:
+  hosts:
+  - static-service
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: STATIC
+  endpoints:
+  - address: 10.0.0.1
+    ports:
+      http: 80

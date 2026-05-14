@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nc-uri-cert
+  namespace: default
+spec:
+  secretName: nc-uri-tls
+  issuerRef:
+    name: my-issuer
+  nameConstraints:
+    permitted:
+      uri:
+        - spiffe://example.com
+  dnsNames:
+    - nc-uri.example.com

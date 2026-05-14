@@ -1,0 +1,62 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: pgtasks.postgres-operator.crunchydata.com
+spec:
+  group: postgres-operator.crunchydata.com
+  names:
+    kind: Pgtask
+    plural: pgtasks
+    singular: pgtask
+    listKind: PgtaskList
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              clusterName:
+                type: string
+              taskType:
+                type: string
+                enum:
+                - backup
+                - restore
+                - clone
+                - upgrade
+                - migrate
+              taskName:
+                type: string
+              parameters:
+                type: object
+                additionalProperties:
+                  type: string
+              status:
+                type: string
+              jobRef:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+              owner:
+                type: string
+            required:
+            - clusterName
+            - taskType
+          status:
+            type: object
+            properties:
+              message:
+                type: string
+              state:
+                type: string
+              nextscheduletime:
+                type: string

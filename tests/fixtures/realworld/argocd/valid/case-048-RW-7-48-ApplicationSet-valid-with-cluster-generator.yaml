@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-appset
+  namespace: argocd
+spec:
+  generators:
+  - clusters:
+      values:
+        environment: production
+  template:
+    metadata:
+      name: 'cluster-{{name}}-app'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/argoproj/argocd-example-apps
+        path: guestbook
+        targetRevision: HEAD
+      destination:
+        server: '{{server}}'
+        namespace: production

@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: retry-route
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+    route:
+    - destination:
+        host: reviews
+        subset: v1

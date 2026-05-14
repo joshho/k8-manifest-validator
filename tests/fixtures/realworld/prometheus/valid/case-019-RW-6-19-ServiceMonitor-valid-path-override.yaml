@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: my-service-monitor
+  namespace: monitoring
+spec:
+  jobName: http-metrics
+  endpoints:
+  - port: web
+    path: /custom/metrics
+  selector:
+    matchLabels:
+      tier: api

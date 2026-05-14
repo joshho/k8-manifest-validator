@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: BadIssuer
+metadata:
+  name: wrong-kind-issuer
+  namespace: default
+spec:
+  acme:
+    server: https://acme.example.com
+    email: admin@example.com
+    privateKeySecretRef:
+      name: acme-key

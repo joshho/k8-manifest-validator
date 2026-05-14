@@ -1,0 +1,11 @@
+apiVersion: monitoring.coreos.com/v1
+kind: BadPrometheusRule
+metadata:
+  name: my-prometheus-rule
+  namespace: monitoring
+spec:
+  groups:
+  - name: example
+    rules:
+    - alert: ExampleAlert
+      expr: up == 0

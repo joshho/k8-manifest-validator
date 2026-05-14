@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: CertificateRequest
+metadata:
+  name: csr-ip-cert
+  namespace: default
+spec:
+  issuerRef:
+    name: my-issuer
+  request: TESTREQUESTBASE64==
+  ipAddresses:
+    - "10.0.0.1"
+    - "192.168.1.100"

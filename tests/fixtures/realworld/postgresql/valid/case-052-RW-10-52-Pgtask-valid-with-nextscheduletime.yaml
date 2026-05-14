@@ -1,0 +1,11 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgtask
+metadata:
+  name: my-task
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres
+  taskType: backup
+status:
+  state: running
+  nextscheduletime: "2024-05-15T02:00:00Z"

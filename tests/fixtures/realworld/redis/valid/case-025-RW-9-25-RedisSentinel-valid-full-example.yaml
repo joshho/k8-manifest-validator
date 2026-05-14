@@ -1,0 +1,34 @@
+apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-redis-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    imagePullPolicy: IfNotPresent
+    env:
+    - name: REDIS_PASSWORD
+      value: sentinelsecret
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+  sentinelConfig:
+    quorum: 2
+    downAfterMilliseconds: 30000
+    failTimeout: 180000
+  redisConfig:
+    maxmemory: 1gb
+    maxmemoryPolicy: allkeys-lru
+  masterSize: 2Gi
+  storage:
+    persistentVolumeClaim:
+      metadata:
+        name: sentinel-pvc
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 5Gi

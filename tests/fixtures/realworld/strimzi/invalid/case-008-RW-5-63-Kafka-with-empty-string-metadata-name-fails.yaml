@@ -1,0 +1,8 @@
+apiVersion: strimzi.io/v1beta3
+kind: Kafka
+metadata:
+  name: ""
+  namespace: kafka
+spec:
+  kafka:
+    replicas: 3

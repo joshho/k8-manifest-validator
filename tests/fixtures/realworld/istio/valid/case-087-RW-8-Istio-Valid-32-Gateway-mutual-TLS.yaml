@@ -1,0 +1,20 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: mutual-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https-mutual
+      protocol: HTTPS
+    tls:
+      mode: MUTUAL
+      serverCertificate: /etc/istio/cert/cert.pem
+      privateKey: /etc/istio/cert/key.pem
+      caCertificates: /etc/istio/cert/ca.pem
+    hosts:
+    - "mutual.example.com"

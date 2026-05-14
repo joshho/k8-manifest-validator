@@ -1,0 +1,8 @@
+apiVersion: redisilient.github.com/v2
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0

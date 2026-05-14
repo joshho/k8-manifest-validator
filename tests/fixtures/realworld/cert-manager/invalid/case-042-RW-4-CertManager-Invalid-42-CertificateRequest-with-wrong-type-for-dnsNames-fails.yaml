@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: CertificateRequest
+metadata:
+  name: wrong-dnsnames-type-csr
+  namespace: default
+spec:
+  issuerRef:
+    name: my-issuer
+  request: TESTREQUESTBASE64==
+  dnsNames: example.com

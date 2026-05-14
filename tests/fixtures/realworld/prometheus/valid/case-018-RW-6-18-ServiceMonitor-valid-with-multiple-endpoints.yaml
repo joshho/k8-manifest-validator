@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: my-service-monitor
+  namespace: monitoring
+spec:
+  jobName: multi-metrics
+  endpoints:
+  - port: web
+    interval: 30s
+  - port: metrics
+    interval: 15s
+  selector:
+    matchLabels:
+      tier: api

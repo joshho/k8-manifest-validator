@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: locality-ep
+  namespace: default
+spec:
+  hosts:
+  - localized-svc
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: STATIC
+  endpoints:
+  - address: 10.0.0.10
+    locality: us-west/us-west-1
+    ports:
+      http: 80

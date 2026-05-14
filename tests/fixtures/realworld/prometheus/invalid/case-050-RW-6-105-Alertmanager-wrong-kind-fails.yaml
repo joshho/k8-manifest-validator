@@ -1,0 +1,8 @@
+apiVersion: monitoring.coreos.com/v1
+kind: BadAlertmanager
+metadata:
+  name: alertmanager
+  namespace: monitoring
+spec:
+  replicas: 3
+  serviceAccountName: alertmanager

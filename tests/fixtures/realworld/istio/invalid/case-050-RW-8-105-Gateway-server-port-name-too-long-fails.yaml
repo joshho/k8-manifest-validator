@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: long-port-name
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: this-is-a-very-long-port-name-that-exceeds-reasonable-limits-for-istio-configuration-to-test-validation-behavior
+      protocol: HTTP
+    hosts:
+    - example.com

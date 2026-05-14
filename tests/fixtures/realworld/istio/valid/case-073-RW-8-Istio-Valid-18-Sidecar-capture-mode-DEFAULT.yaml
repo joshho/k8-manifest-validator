@@ -1,0 +1,10 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: default-capture
+  namespace: default
+spec:
+  egress:
+  - captureMode: DEFAULT
+    hosts:
+    - "*/httpbin.org"

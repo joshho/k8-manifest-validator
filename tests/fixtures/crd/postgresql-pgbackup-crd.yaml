@@ -1,0 +1,58 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: pgbackups.postgres-operator.crunchydata.com
+spec:
+  group: postgres-operator.crunchydata.com
+  names:
+    kind: Pgbackup
+    plural: pgbackups
+    singular: pgbackup
+    listKind: PgbackupList
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              clusterName:
+                type: string
+              method:
+                type: string
+                enum:
+                - full
+                - incr
+                - diff
+              backupURL:
+                type: string
+              backupPath:
+                type: string
+              backupStatus:
+                type: string
+              storageType:
+                type: string
+              storageSource:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  endpoint:
+                    type: string
+                  bucket:
+                    type: string
+                  region:
+                    type: string
+              schedule:
+                type: string
+              retentionPeriod:
+                type: string
+            required:
+            - clusterName
+          status:
+            type: object

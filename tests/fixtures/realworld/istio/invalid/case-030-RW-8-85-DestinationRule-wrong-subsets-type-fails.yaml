@@ -1,0 +1,8 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: wrong-subsets-type
+  namespace: default
+spec:
+  host: reviews
+  subsets: "v1"

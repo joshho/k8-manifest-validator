@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: multi-listener
+  namespace: default
+spec:
+  egress:
+  - port:
+      port: 3306
+      protocol: TCP
+    bind: 0.0.0.0
+    hosts:
+    - "*/mysql"
+  - hosts:
+    - "*/*"

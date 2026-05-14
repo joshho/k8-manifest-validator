@@ -1,0 +1,12 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wrong-pk-type
+  namespace: default
+spec:
+  secretName: my-cert-tls
+  issuerRef:
+    name: my-issuer
+  privateKey: "RSA"
+  dnsNames:
+    - example.com

@@ -1,0 +1,6 @@
+apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-redis-sentinel
+  namespace: default
+spec:

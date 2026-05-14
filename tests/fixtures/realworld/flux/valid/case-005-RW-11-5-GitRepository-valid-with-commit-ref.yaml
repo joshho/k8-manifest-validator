@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: podinfo-commit
+  namespace: default
+spec:
+  interval: 1m0s
+  url: https://github.com/stefanprodan/podinfo
+  ref:
+    commit: 6c18a65f73e1e48c82f3a49a1c3b8eb4c2e0a24e

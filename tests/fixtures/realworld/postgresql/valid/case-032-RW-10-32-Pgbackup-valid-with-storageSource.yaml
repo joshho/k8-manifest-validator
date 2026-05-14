@@ -1,0 +1,12 @@
+apiVersion: postgres-operator.crunchydata.com/v1
+kind: Pgbackup
+metadata:
+  name: my-backup
+  namespace: postgres-operator
+spec:
+  clusterName: my-postgres
+  storageSource:
+    type: s3
+    endpoint: https://s3.amazonaws.com
+    bucket: my-backup-bucket
+    region: us-east-1

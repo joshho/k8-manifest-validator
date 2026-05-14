@@ -1,0 +1,9 @@
+apiVersion: installation.toolkit.fluxcd.io/v1
+kind: FluxInstall
+metadata:
+  name: flux-registry
+  namespace: flux-system
+spec:
+  version: latest
+  interval: 1m0s
+  registry: ghcr.io/fluxcd

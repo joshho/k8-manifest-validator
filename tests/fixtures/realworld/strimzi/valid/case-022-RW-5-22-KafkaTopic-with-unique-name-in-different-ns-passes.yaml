@@ -1,0 +1,8 @@
+apiVersion: strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: cross-ns-topic
+  namespace: kafka-ns
+spec:
+  partitions: 3
+  replicas: 3
