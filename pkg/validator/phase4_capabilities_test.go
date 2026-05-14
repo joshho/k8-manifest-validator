@@ -592,27 +592,3 @@ func withInitContainerCapAddMulti(caps ...string) func(*appsv1.Deployment) {
 		d.Spec.Template.Spec.InitContainers = []corev1.Container{initC}
 	}
 }
-
-// withPodCapAdd sets capability add on pod-level SecurityContext
-func withPodCapAdd(cap string) func(*appsv1.Deployment) {
-	return func(d *appsv1.Deployment) {
-		if d.Spec.Template.Spec.SecurityContext == nil {
-			d.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{}
-		}
-		d.Spec.Template.Spec.SecurityContext.Capabilities = &corev1.Capabilities{
-			Add: []corev1.Capability{corev1.Capability(cap)},
-		}
-	}
-}
-
-// withPodCapDrop sets capability drop on pod-level SecurityContext
-func withPodCapDrop(cap string) func(*appsv1.Deployment) {
-	return func(d *appsv1.Deployment) {
-		if d.Spec.Template.Spec.SecurityContext == nil {
-			d.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{}
-		}
-		d.Spec.Template.Spec.SecurityContext.Capabilities = &corev1.Capabilities{
-			Drop: []corev1.Capability{corev1.Capability(cap)},
-		}
-	}
-}
