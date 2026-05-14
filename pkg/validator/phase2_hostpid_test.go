@@ -196,10 +196,12 @@ func withShareProcessNamespace(v bool) func(*appsv1.Deployment) {
 func withLivenessProbeHTTP(path string, port int32) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Containers[0].LivenessProbe = &corev1.Probe{
-			HTTPGet: &corev1.HTTPGetAction{
-				Path:   path,
-				Port:   intstr.FromInt(int(port)),
-				Scheme: corev1.URISchemeHTTP,
+			ProbeHandler: corev1.ProbeHandler{
+				HTTPGet: &corev1.HTTPGetAction{
+					Path:   path,
+					Port:   intstr.FromInt(int(port)),
+					Scheme: corev1.URISchemeHTTP,
+				},
 			},
 			InitialDelaySeconds: 5,
 			PeriodSeconds:       10,
