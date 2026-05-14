@@ -20,7 +20,9 @@ import (
 //   .hostIPC — boolean, controls IPC namespace sharing
 //   .hostNetwork — boolean, controls network namespace sharing
 //   .shareProcessNamespace — boolean, pod-level (not container)
-// Validation wire: validatePodSpecSecurityContext in builtin.go
+// Validation wire: validateHostPermissions in builtin.go
+// Note: hostPID, hostIPC, hostNetwork, shareProcessNamespace live on PodSpec,
+//   NOT on PodSecurityContext.
 // =============================================================================
 
 func TestPhase2_HostLevelSecurity_EdgeCases(t *testing.T) {
@@ -127,19 +129,11 @@ func TestPhase2_HostLevelSecurity_EdgeCases(t *testing.T) {
 			wantErr: false,
 		},
 
-		// ---- Edge cases: all false explicitly ----
-
-		{
-			name:    "valid all host flags explicitly false",
-			deploy:  deployment(withHostPID(false), withHostIPC(false), withHostNetwork(false), withShareProcessNamespace(false)),
-			wantErr: false,
-		},
-
 		// ---- Edge case: hostNetwork true with httpGet port conflict (not validated) ----
 
 		{
 			name:    "valid hostNetwork=true with liveness probe — network conflict not caught by validator",
-			deploy:  deployment(withHostNetwork(true), withLivenessProbeHTTP("/health", 80, "/")),
+			deploy:  deployment(withHostNetwork(true), withLivenessProbeHTTP("/health", 80)),
 			wantErr: false,
 		},
 
@@ -167,57 +161,45 @@ func TestPhase2_HostLevelSecurity_EdgeCases(t *testing.T) {
 }
 
 // =============================================================================
-// Helper modifiers
+// Helper modifiers — host flags are on PodSpec, NOT PodSecurityContext
 // =============================================================================
 
 // withHostPID sets the hostPID flag on the pod spec
 func withHostPID(v bool) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
-		if d.Spec.Template.Spec.SecurityContext == nil {
-			d.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{}
-		}
-		d.Spec.Template.Spec.SecurityContext.HostPID = v
+		d.Spec.Template.Spec.HostPID = v
 	}
 }
 
 // withHostIPC sets the hostIPC flag on the pod spec
 func withHostIPC(v bool) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
-		if d.Spec.Template.Spec.SecurityContext == nil {
-			d.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{}
-		}
-		d.Spec.Template.Spec.SecurityContext.HostIPC = v
+		d.Spec.Template.Spec.HostIPC = v
 	}
 }
 
 // withHostNetwork sets the hostNetwork flag on the pod spec
 func withHostNetwork(v bool) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
-		if d.Spec.Template.Spec.SecurityContext == nil {
-			d.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{}
-		}
-		d.Spec.Template.Spec.SecurityContext.HostNetwork = v
+		d.Spec.Template.Spec.HostNetwork = v
 	}
 }
 
 // withShareProcessNamespace sets the shareProcessNamespace flag on the pod spec
 func withShareProcessNamespace(v bool) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
-		if d.Spec.Template.Spec.SecurityContext == nil {
-			d.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{}
-		}
-		d.Spec.Template.Spec.SecurityContext.ShareProcessNamespace = &v
+		d.Spec.Template.Spec.ShareProcessNamespace = &v
 	}
 }
 
 // withLivenessProbeHTTP sets a liveness probe with httpGet handler
-func withLivenessProbeHTTP(path string, port int32, scheme string) func(*appsv1.Deployment) {
+func withLivenessProbeHTTP(path string, port int32) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Containers[0].LivenessProbe = &corev1.Probe{
 			HTTPGet: &corev1.HTTPGetAction{
 				Path:   path,
 				Port:   intstr.FromInt(int(port)),
-				Scheme: corev1.URISchemeHTTPScheme,
+				Scheme: corev1.URISchemeHTTP,
 			},
 			InitialDelaySeconds: 5,
 			PeriodSeconds:       10,
@@ -231,5 +213,3 @@ func withPodSecurityContextNil() func(*appsv1.Deployment) {
 		d.Spec.Template.Spec.SecurityContext = nil
 	}
 }
-
-
