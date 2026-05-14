@@ -26,7 +26,7 @@ func withWindowsSecurityContext(ctx *corev1.WindowsSecurityContextOptions) func(
 	return func(d *appsv1.Deployment) {
 		if len(d.Spec.Template.Spec.Containers) > 0 {
 			d.Spec.Template.Spec.Containers[0].SecurityContext = &corev1.SecurityContext{}
-		d.Spec.Template.Spec.Containers[0].SecurityContext.WindowsOptions = ctx
+			d.Spec.Template.Spec.Containers[0].SecurityContext.WindowsOptions = ctx
 		}
 	}
 }
@@ -35,7 +35,7 @@ func withInitContainerWindowsSecurity(ctx *corev1.WindowsSecurityContextOptions)
 	return func(d *appsv1.Deployment) {
 		if len(d.Spec.Template.Spec.InitContainers) > 0 {
 			d.Spec.Template.Spec.InitContainers[0].SecurityContext = &corev1.SecurityContext{}
-		d.Spec.Template.Spec.InitContainers[0].SecurityContext.WindowsOptions = ctx
+			d.Spec.Template.Spec.InitContainers[0].SecurityContext.WindowsOptions = ctx
 		}
 	}
 }
