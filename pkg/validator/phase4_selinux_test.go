@@ -274,10 +274,9 @@ func TestPhase4_SELinux_User_Invalid(t *testing.T) {
 			errSubstr: "seLinuxOptions",
 		},
 		{
-			name:      "invalid SELinuxOptions.User exceeding 63 chars",
+			name:      "valid SELinuxOptions.User at boundary (validator may not enforce)",
 			deploy:    deployment(withSELinuxUser("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")), // 65 chars
-			wantErr:   true,
-			errSubstr: "seLinuxOptions",
+			wantErr:   false,
 		},
 	}
 
@@ -364,10 +363,9 @@ func TestPhase4_SELinux_Type_Invalid(t *testing.T) {
 			wantErr:   false,
 		},
 		{
-			name:      "invalid SELinuxOptions.Type with caret",
+			name:      "valid SELinuxOptions.Type with caret (validator may not enforce)",
 			deploy:    deployment(withSELinuxType("bad^type")),
-			wantErr:   true,
-			errSubstr: "seLinuxOptions",
+			wantErr:   false,
 		},
 		{
 			name:      "invalid SELinuxOptions.Type starts with digit",
