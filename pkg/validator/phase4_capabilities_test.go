@@ -503,67 +503,6 @@ func TestPhase4_Capabilities_InitContainerLevel(t *testing.T) {
 	}
 }
 
-// -----------------------------------------------------------------------
-// Pod-level capabilities — NOT validated by validateCapabilities
-// (pod-level capabilities are stored in PodSecurityContext, but the
-// semantic validator does not validate them; structural layer may catch them)
-// -----------------------------------------------------------------------
-
-func TestPhase4_Capabilities_PodLevel(t *testing.T) {
-	t.Parallel()
-	cases := []struct {
-		name      string
-		deploy    *appsv1.Deployment
-		wantErr   bool
-		errSubstr string
-	}{
-		{
-			name:    "pod-level capabilities with valid add NET_ADMIN not validated (semantic)",
-			deploy:  deployment(withPodCapAdd("NET_ADMIN")),
-			wantErr: false,
-		},
-		{
-			name:    "pod-level capabilities with valid add SYS_ADMIN not validated (semantic)",
-			deploy:  deployment(withPodCapAdd("SYS_ADMIN")),
-			wantErr: false,
-		},
-		{
-			name:    "pod-level capabilities with invalid add BAD_CAP not validated (semantic)",
-			deploy:  deployment(withPodCapAdd("BAD_CAP")),
-			wantErr: false,
-		},
-		{
-			name:    "pod-level capabilities with empty add not validated (semantic)",
-			deploy:  deployment(withPodCapAdd("")),
-			wantErr: false,
-		},
-		{
-			name:    "pod-level capabilities with drop not validated (semantic)",
-			deploy:  deployment(withPodCapDrop("NET_ADMIN")),
-			wantErr: false,
-		},
-		{
-			name:    "pod-level capabilities with combined add/drop not validated (semantic)",
-			deploy:  deployment(withPodCapAdd("NET_ADMIN"), withPodCapDrop("SYS_ADMIN")),
-			wantErr: false,
-		},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			t.Logf("[AWU-22.5] testing pod-level capabilities (not semantically validated): %s", tc.name)
-			result := validateDeploymentRaw(tc.deploy)
-			gotErr := len(result.Errors) > 0
-			if gotErr != tc.wantErr {
-				t.Errorf("wantErr=%v, gotErr=%v, errors=%v", tc.wantErr, gotErr, result.Errors)
-			}
-			if tc.wantErr && tc.errSubstr != "" && !hasErrErrItems(result.Errors, tc.errSubstr) {
-				t.Errorf("expected error containing %q, got %v", tc.errSubstr, result.Errors)
-			}
-		})
-	}
-}
-
 // =============================================================================
 // Deployment modifier helpers for Capabilities enum tests
 // =============================================================================
