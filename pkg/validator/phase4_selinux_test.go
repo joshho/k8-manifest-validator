@@ -198,8 +198,10 @@ func TestPhase4_SELinux_AllFields_Valid(t *testing.T) {
 		errSubstr string
 	}{
 		{
-			name: "valid SELinuxOptions with all four fields set together",
+			name: "invalid SELinuxOptions with all four fields (colon in level)",
 			deploy: deployment(withSELinuxOptionsAll("system_u", "object_r", "container_t", "s0:c1,c2")),
+			wantErr: true,
+			errSubstr: "level",
 			wantErr: false,
 		},
 		{
