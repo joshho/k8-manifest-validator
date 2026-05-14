@@ -37,8 +37,6 @@ func iscsiMounts(mounts []corev1.VolumeMount) func(*appsv1.Deployment) {
 	}
 }
 
-// withInitContainers is a deployFn modifier that sets initContainers on the PodSpec.
-}
 
 // TestPhase3_ISCSI_Volume tests Volume.ISCSIVolumeSource fields via cross-struct
 // traversal: PodSpec → volumes[*] → ISCSI → targetPortal/iqn/lun and optional fields.
