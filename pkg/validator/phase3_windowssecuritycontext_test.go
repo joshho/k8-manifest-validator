@@ -124,6 +124,7 @@ func TestPhase3_WindowsSecurityContext_GMSA(t *testing.T) {
 			name: "valid — WindowsSecurityContext on pod spec (not container-level)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(func(d *appsv1.Deployment) {
+					d.Spec.Template.Spec.SecurityContext = &corev1.PodSecurityContext{}
 					d.Spec.Template.Spec.SecurityContext.WindowsOptions = &corev1.WindowsSecurityContextOptions{
 						GMSACredentialSpecName: strPtr("pod-level-gmsa"),
 					}
