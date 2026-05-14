@@ -29,7 +29,7 @@ func addVol(vol *corev1.Volume) func(*appsv1.Deployment) {
 
 
 // withVolumeMounts is a deployFn modifier that appends volumeMounts to the first container.
-func withVolumeMounts(mounts []corev1.VolumeMount) func(*appsv1.Deployment) {
+func volMounts(mounts []corev1.VolumeMount) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Containers[0].VolumeMounts = append(d.Spec.Template.Spec.Containers[0].VolumeMounts, mounts...)
 	}
@@ -66,7 +66,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 							},
 						},
 					}),
-					withVolumeMounts([]corev1.VolumeMount{{Name: "ephemeral-config", MountPath: "/etc/config"}}),
+					volMounts([]corev1.VolumeMount{{Name: "ephemeral-config", MountPath: "/etc/config"}}),
 				)
 			},
 			wantErr: false,
@@ -79,7 +79,6 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 						Name: "ephemeral-readonly",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
-								ReadOnly: true,
 								VolumeClaimTemplate: &corev1.PersistentVolumeClaimTemplate{
 									Spec: corev1.PersistentVolumeClaimSpec{
 										AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadOnlyMany},
@@ -88,7 +87,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 							},
 						},
 					}),
-					withVolumeMounts([]corev1.VolumeMount{{Name: "ephemeral-readonly", MountPath: "/data", ReadOnly: true}}),
+					volMounts([]corev1.VolumeMount{{Name: "ephemeral-readonly", MountPath: "/data", ReadOnly: true}}),
 				)
 			},
 			wantErr: false,
@@ -133,7 +132,6 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 						Name: "ephemeral-rw",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
-								ReadOnly: false,
 								VolumeClaimTemplate: &corev1.PersistentVolumeClaimTemplate{
 									Spec: corev1.PersistentVolumeClaimSpec{
 										AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
@@ -142,7 +140,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 							},
 						},
 					}),
-					withVolumeMounts([]corev1.VolumeMount{{Name: "ephemeral-rw", MountPath: "/shared"}}),
+					volMounts([]corev1.VolumeMount{{Name: "ephemeral-rw", MountPath: "/shared"}}),
 				)
 			},
 			wantErr: false,
@@ -201,7 +199,6 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 						Name: "ephemeral-a",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
-								ReadOnly: false,
 								VolumeClaimTemplate: &corev1.PersistentVolumeClaimTemplate{
 									Spec: corev1.PersistentVolumeClaimSpec{
 										AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteOnce},
@@ -214,7 +211,6 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 						Name: "ephemeral-b",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
-								ReadOnly: true,
 								VolumeClaimTemplate: &corev1.PersistentVolumeClaimTemplate{
 									Spec: corev1.PersistentVolumeClaimSpec{
 										AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadOnlyMany},
@@ -246,7 +242,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 							},
 						},
 					}),
-					withVolumeMounts([]corev1.VolumeMount{{Name: "ephemeral-named", MountPath: "/mnt/named"}}),
+					volMounts([]corev1.VolumeMount{{Name: "ephemeral-named", MountPath: "/mnt/named"}}),
 				)
 			},
 			wantErr: false,
