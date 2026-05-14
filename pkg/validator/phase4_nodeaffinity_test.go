@@ -343,7 +343,7 @@ func TestPhase4_NodeAffinity_InitContainer(t *testing.T) {
 		},
 		{
 			name:    "valid pod-level nodeAffinity applies to init container",
-			deploy:  deployment(withNodeAffinityRequired([]corev1.NodeSelectorTerm{{MatchExpressions: []corev1.NodeSelectorRequirement{{Key: "kubernetes.io/os", Operator: corev1.NodeSelectorOpIn, Values: []string{"linux"}}}})),
+			deploy:  deployment(withNodeAffinityRequired([]corev1.NodeSelectorTerm{{MatchExpressions: []corev1.NodeSelectorRequirement{{Key: "kubernetes.io/os", Operator: corev1.NodeSelectorOpIn, Values: []string{"linux"}}}}})),
 			wantErr: false,
 		},
 	}
