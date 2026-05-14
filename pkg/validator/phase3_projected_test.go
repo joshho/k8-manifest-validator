@@ -450,6 +450,12 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
+			defer func() {
+				if r := recover(); r != nil {
+					t.Logf("PANIC in test case: %v", r)
+					t.Fail()
+				}
+			}()
 			t.Logf("[Phase3-Volume-Projected] testing: %s", tc.name)
 			result := validateDeploymentRaw(tc.deployFn())
 			gotErr := len(result.Errors) > 0
