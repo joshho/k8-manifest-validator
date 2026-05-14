@@ -136,6 +136,7 @@ func TestPhase3_WindowsSecurityContext_GMSA(t *testing.T) {
 			name: "valid — multi-container pod, first container with WindowsSecurityContext",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(func(d *appsv1.Deployment) {
+					d.Spec.Template.Spec.Containers[0].SecurityContext = &corev1.SecurityContext{}
 					d.Spec.Template.Spec.Containers[0].SecurityContext.WindowsOptions = windowsSecurityContext()
 					d.Spec.Template.Spec.Containers = append(d.Spec.Template.Spec.Containers, corev1.Container{
 						Name:  "secondary",
