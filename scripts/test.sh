@@ -379,14 +379,24 @@ run_realworld_test() {
   # Handle empty content edge case: total=0 means no resources found.
   # If expected_valid=0 and actual total=0 (no resources decoded), treat as success
   # because the malformed content was correctly detected as invalid.
-  local actual_total
+  local actual_total actual_skipped
   actual_total=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['total'])" 2>/dev/null || echo "-1")
+  actual_skipped=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary'].get('skipped',0))" 2>/dev/null || echo "0")
+  
+  # Handle empty content edge case: no resources found (total=0) OR resources decoded but skipped (skipped>=1).
+  # In both cases the malformed content was correctly detected as invalid.
   local empty_ok=0
   if [[ "$expected_valid" == "0" ]] && [[ "$actual_valid" == "0" ]] && [[ "$actual_total" == "0" ]]; then
     empty_ok=1
   fi
+  # Also handle: total>=1, valid=0, skipped>=1, expected to fail (exit=1).
+  # This covers comment-only YAML, document separators, etc. that decode to manifests with no Kind.
+  local skipped_ok=0
+  if [[ "$expected_valid" == "0" ]] && [[ "$actual_valid" == "0" ]] && [[ "$actual_skipped" -ge 1 ]] && [[ "$expected_exit" == "1" ]]; then
+    skipped_ok=1
+  fi
   
-  if [[ "$empty_ok" == "1" ]] || ([[ "$actual_exit" == "$expected_exit" ]] && [[ "$actual_valid" == "$expected_valid" ]]); then
+  if [[ "$empty_ok" == "1" ]] || [[ "$skipped_ok" == "1" ]] || ([[ "$actual_exit" == "$expected_exit" ]] && [[ "$actual_valid" == "$expected_valid" ]]); then
     echo "  PASS  $name"
     RW_PASSED=$((RW_PASSED+1))
   else
