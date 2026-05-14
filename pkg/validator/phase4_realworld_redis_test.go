@@ -1119,6 +1119,895 @@ spec:
 }
 
 // =============================================================================
+// Additional Valid Redis Test Cases (filling gap from audit)
+// =============================================================================
+
+var redisValidAdditionalCases = []struct {
+	name  string
+	crYAML []byte
+}{
+	// RW-9.Redis.Valid.1 - Redis with env vars array
+	{
+		name: "RW-9.Redis.Valid.1 Redis with multiple env vars",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    env:
+    - name: REDIS_PASSWORD
+      value: password123
+    - name: REDIS_MAXMEMORY
+      value: 1gb
+`),
+	},
+	// RW-9.Redis.Valid.2 - RedisCluster with clusterSize 5
+	{
+		name: "RW-9.Redis.Valid.2 RedisCluster cluster size 5",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 5
+`),
+	},
+	// RW-9.Redis.Valid.3 - RedisSentinel with quorum
+	{
+		name: "RW-9.Redis.Valid.3 RedisSentinel with quorum",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinelConfig:
+    quorum: 2
+`),
+	},
+	// RW-9.Redis.Valid.4 - Redis with imagePullPolicy Always
+	{
+		name: "RW-9.Redis.Valid.4 Redis image pull policy Always",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    imagePullPolicy: Always
+`),
+	},
+	// RW-9.Redis.Valid.5 - RedisCluster with env vars
+	{
+		name: "RW-9.Redis.Valid.5 RedisCluster with env vars",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+    env:
+    - name: REDIS_CLUSTER_SLEEP
+      value: "1000"
+  clusterSize: 3
+`),
+	},
+	// RW-9.Redis.Valid.6 - RedisSentinel with downAfterMilliseconds
+	{
+		name: "RW-9.Redis.Valid.6 RedisSentinel downAfter config",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinelConfig:
+    downAfterMilliseconds: 30000
+`),
+	},
+	// RW-9.Redis.Valid.7 - Redis with resources limits only
+	{
+		name: "RW-9.Redis.Valid.7 Redis with memory limits",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    resources:
+      limits:
+        memory: 2Gi
+`),
+	},
+	// RW-9.Redis.Valid.8 - RedisCluster with redis config
+	{
+		name: "RW-9.Redis.Valid.8 RedisCluster with redis config",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+  redisConfig:
+    maxmemory: 1gb
+    maxmemoryPolicy: allkeys-lru
+`),
+	},
+	// RW-9.Redis.Valid.9 - RedisSentinel with failTimeout
+	{
+		name: "RW-9.Redis.Valid.9 RedisSentinel failTimeout config",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinelConfig:
+    failTimeout: 180000
+`),
+	},
+	// RW-9.Redis.Valid.10 - Redis with empty env array
+	{
+		name: "RW-9.Redis.Valid.10 Redis with empty env array",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    env: []
+`),
+	},
+	// RW-9.Redis.Valid.11 - RedisCluster with clusterSize 7
+	{
+		name: "RW-9.Redis.Valid.11 RedisCluster cluster size 7",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 7
+`),
+	},
+	// RW-9.Redis.Valid.12 - RedisSentinel with sentinel replicas
+	{
+		name: "RW-9.Redis.Valid.12 RedisSentinel with replicas",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinel:
+    replicas: 3
+`),
+	},
+	// RW-9.Redis.Valid.13 - Redis with imagePullPolicy Never
+	{
+		name: "RW-9.Redis.Valid.13 Redis image pull policy Never",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    imagePullPolicy: Never
+`),
+	},
+	// RW-9.Redis.Valid.14 - RedisCluster with imagePullPolicy IfNotPresent
+	{
+		name: "RW-9.Redis.Valid.14 RedisCluster image pull IfNotPresent",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+    imagePullPolicy: IfNotPresent
+  clusterSize: 3
+`),
+	},
+	// RW-9.Redis.Valid.15 - RedisSentinel with redis config
+	{
+		name: "RW-9.Redis.Valid.15 RedisSentinel with redis config",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  redisConfig:
+    maxmemory: 500mb
+    maxmemoryPolicy: volatile-lru
+`),
+	},
+	// RW-9.Redis.Valid.16 - Redis with cpu and memory requests
+	{
+		name: "RW-9.Redis.Valid.16 Redis with cpu and memory requests",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+`),
+	},
+	// RW-9.Redis.Valid.17 - RedisCluster with storage
+	{
+		name: "RW-9.Redis.Valid.17 RedisCluster with PVC storage",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+  storage:
+    persistentVolumeClaim:
+      metadata:
+        name: redis-cluster-pvc
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Gi
+`),
+	},
+	// RW-9.Redis.Valid.18 - RedisSentinel with masterSize
+	{
+		name: "RW-9.Redis.Valid.18 RedisSentinel with masterSize",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  masterSize: 2c4g
+`),
+	},
+	// RW-9.Redis.Valid.19 - Redis with redis storage and PVC
+	{
+		name: "RW-9.Redis.Valid.19 Redis with PVC storage",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  redis:
+    storage:
+      persistentVolumeClaim:
+        metadata:
+          name: redis-pvc
+        spec:
+          accessModes:
+          - ReadWriteOnce
+          resources:
+            requests:
+              storage: 5Gi
+`),
+	},
+	// RW-9.Redis.Valid.20 - RedisCluster with appendonly config
+	{
+		name: "RW-9.Redis.Valid.20 RedisCluster with appendonly",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+  redisConfig:
+    appendonly: "yes"
+`),
+	},
+	// RW-9.Redis.Valid.21 - RedisSentinel with storage
+	{
+		name: "RW-9.Redis.Valid.21 RedisSentinel with storage",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  storage:
+    persistentVolumeClaim:
+      metadata:
+        name: sentinel-pvc
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+`),
+	},
+	// RW-9.Redis.Valid.22 - Redis with image tag latest
+	{
+		name: "RW-9.Redis.Valid.22 Redis with latest image tag",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:latest
+`),
+	},
+	// RW-9.Redis.Valid.23 - RedisCluster with image tag latest
+	{
+		name: "RW-9.Redis.Valid.23 RedisCluster with latest image tag",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis-cluster:latest
+  clusterSize: 3
+`),
+	},
+	// RW-9.Redis.Valid.24 - RedisSentinel with sentinel only
+	{
+		name: "RW-9.Redis.Valid.24 RedisSentinel sentinel config only",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinelConfig:
+    quorum: 1
+`),
+	},
+	// RW-9.Redis.Valid.25 - Redis with redis config maxmemory 2gb
+	{
+		name: "RW-9.Redis.Valid.25 Redis with 2gb maxmemory",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  redis:
+    config:
+      maxmemory: 2gb
+`),
+	},
+	// RW-9.Redis.Valid.26 - RedisCluster with clusterSize 9
+	{
+		name: "RW-9.Redis.Valid.26 RedisCluster cluster size 9",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 9
+`),
+	},
+	// RW-9.Redis.Valid.27 - RedisSentinel with downAfter and failTimeout
+	{
+		name: "RW-9.Redis.Valid.27 RedisSentinel downAfter and failTimeout",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinelConfig:
+    downAfterMilliseconds: 10000
+    failTimeout: 60000
+`),
+	},
+	// RW-9.Redis.Valid.28 - Redis with image and imagePullPolicy
+	{
+		name: "RW-9.Redis.Valid.28 Redis with image and pull policy",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-alpine
+    imagePullPolicy: IfNotPresent
+`),
+	},
+	// RW-9.Redis.Valid.29 - RedisCluster with full redis config
+	{
+		name: "RW-9.Redis.Valid.29 RedisCluster full redis config",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+  redisConfig:
+    maxmemory: 1gb
+    maxmemoryPolicy: allkeys-lru
+    appendonly: "yes"
+`),
+	},
+	// RW-9.Redis.Valid.30 - RedisSentinel with redis and sentinel config
+	{
+		name: "RW-9.Redis.Valid.30 RedisSentinel with redis and sentinel config",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinelConfig:
+    quorum: 2
+    downAfterMilliseconds: 5000
+  redisConfig:
+    maxmemory: 512mb
+`),
+	},
+	// RW-9.Redis.Valid.31 - Redis with redis section empty config
+	{
+		name: "RW-9.Redis.Valid.31 Redis with empty redis config",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  redis:
+    config: {}
+`),
+	},
+	// RW-9.Redis.Valid.32 - RedisCluster with clusterSize 11
+	{
+		name: "RW-9.Redis.Valid.32 RedisCluster cluster size 11",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 11
+`),
+	},
+	// RW-9.Redis.Valid.33 - RedisSentinel with min-slave config
+	{
+		name: "RW-9.Redis.Valid.33 RedisSentinel basic sentinel",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+`),
+	},
+	// RW-9.Redis.Valid.34 - Redis with sentinel section
+	{
+		name: "RW-9.Redis.Valid.34 Redis with sentinel replicas section",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinel:
+    replicas: 1
+`),
+	},
+	// RW-9.Redis.Valid.35 - RedisCluster with sentinel image
+	{
+		name: "RW-9.Redis.Valid.35 RedisCluster with kubernetesConfig only",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+`),
+	},
+	// RW-9.Redis.Valid.36 - RedisSentinel with env secret
+	{
+		name: "RW-9.Redis.Valid.36 RedisSentinel with env secret",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    env:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: redis-secret
+          key: password
+`),
+	},
+	// RW-9.Redis.Valid.37 - Redis with empty resources
+	{
+		name: "RW-9.Redis.Valid.37 Redis with empty resources",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    resources: {}
+`),
+	},
+	// RW-9.Redis.Valid.38 - RedisCluster with empty redisConfig
+	{
+		name: "RW-9.Redis.Valid.38 RedisCluster with empty redisConfig",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+  redisConfig: {}
+`),
+	},
+	// RW-9.Redis.Valid.39 - RedisSentinel with empty storage
+	{
+		name: "RW-9.Redis.Valid.39 RedisSentinel with empty storage",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  storage: {}
+`),
+	},
+	// RW-9.Redis.Valid.40 - Redis with all maxmemory policies
+	{
+		name: "RW-9.Redis.Valid.40 Redis volatile-random maxmemory policy",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  redis:
+    config:
+      maxmemoryPolicy: volatile-random
+`),
+	},
+	// RW-9.Redis.Valid.41 - RedisCluster with clusterSize 13
+	{
+		name: "RW-9.Redis.Valid.41 RedisCluster cluster size 13",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 13
+`),
+	},
+	// RW-9.Redis.Valid.42 - RedisSentinel with quorum 3
+	{
+		name: "RW-9.Redis.Valid.42 RedisSentinel quorum 3",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinelConfig:
+    quorum: 3
+`),
+	},
+	// RW-9.Redis.Valid.43 - Redis with no optional fields
+	{
+		name: "RW-9.Redis.Valid.43 Redis minimal with image only",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: minimal-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+`),
+	},
+	// RW-9.Redis.Valid.44 - RedisCluster with storage class
+	{
+		name: "RW-9.Redis.Valid.44 RedisCluster with storage class",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+  storage:
+    persistentVolumeClaim:
+      metadata:
+        name: redis-cluster-pvc
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+        storageClassName: fast-ssd
+`),
+	},
+	// RW-9.Redis.Valid.45 - RedisSentinel with resources
+	{
+		name: "RW-9.Redis.Valid.45 RedisSentinel with resources",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    resources:
+      limits:
+        cpu: "1"
+        memory: 1Gi
+`),
+	},
+	// RW-9.Redis.Valid.46 - Redis with lru maxmemory policy
+	{
+		name: "RW-9.Redis.Valid.46 Redis lru maxmemory policy",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  redis:
+    config:
+      maxmemoryPolicy: lru
+`),
+	},
+	// RW-9.Redis.Valid.47 - RedisCluster with maxmemory 256mb
+	{
+		name: "RW-9.Redis.Valid.47 RedisCluster maxmemory 256mb",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+  redisConfig:
+    maxmemory: 256mb
+`),
+	},
+	// RW-9.Redis.Valid.48 - RedisSentinel with all fields
+	{
+		name: "RW-9.Redis.Valid.48 RedisSentinel full config",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+  sentinelConfig:
+    quorum: 2
+    downAfterMilliseconds: 30000
+    failTimeout: 180000
+  redisConfig:
+    maxmemory: 512mb
+    maxmemoryPolicy: allkeys-lru
+`),
+	},
+	// RW-9.Redis.Valid.49 - Redis with ttl maxmemory policy
+	{
+		name: "RW-9.Redis.Valid.49 Redis ttl maxmemory policy",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  redis:
+    config:
+      maxmemoryPolicy: ttl
+`),
+	},
+	// RW-9.Redis.Valid.50 - RedisCluster with clusterSize 15
+	{
+		name: "RW-9.Redis.Valid.50 RedisCluster cluster size 15",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 15
+`),
+	},
+	// RW-9.Redis.Valid.51 - RedisSentinel with nofailover config
+	{
+		name: "RW-9.Redis.Valid.51 RedisSentinel basic with image",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisSentinel
+metadata:
+  name: my-sentinel
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+`),
+	},
+	// RW-9.Redis.Valid.52 - Redis with no redis section
+	{
+		name: "RW-9.Redis.Valid.52 Redis with only kubernetesConfig",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+`),
+	},
+	// RW-9.Redis.Valid.53 - RedisCluster with imagePullSecrets
+	{
+		name: "RW-9.Redis.Valid.53 RedisCluster clusterSize 3",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: RedisCluster
+metadata:
+  name: my-redis-cluster
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0-cluster
+  clusterSize: 3
+`),
+	},
+	// RW-9.Redis.Valid.54 - RedisSentinel with sentinel replicas 5
+	{
+		name: "RW-9.Redis.Valid.54 RedisSentinel replicas 5",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  sentinel:
+    replicas: 5
+`),
+	},
+	// RW-9.Redis.Valid.55 - Redis with no-suggested maxmemory policy
+	{
+		name: "RW-9.Redis.Valid.55 Redis no maxmemory policy",
+		crYAML: []byte(`apiVersion: redisilient.github.com/v1
+kind: Redis
+metadata:
+  name: my-redis
+  namespace: default
+spec:
+  kubernetesConfig:
+    image: redis:7.0
+  redis:
+    config:
+      maxmemory: 1gb
+`),
+	},
+}
+
+// =============================================================================
 // Invalid Redis Test Cases
 // =============================================================================
 
@@ -1955,6 +2844,15 @@ func TestRedisRealWorldValid(t *testing.T) {
 	for _, tc := range redisValidCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Logf("[RW-9] testing redis valid: %s", tc.name)
+			result := engine.Validate(tc.crYAML)
+			if len(result.Errors) > 0 {
+				t.Errorf("expected valid, got errors: %v", result.Errors)
+			}
+		})
+	}
+	for _, tc := range redisValidAdditionalCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Logf("[RW-9] testing redis valid additional: %s", tc.name)
 			result := engine.Validate(tc.crYAML)
 			if len(result.Errors) > 0 {
 				t.Errorf("expected valid, got errors: %v", result.Errors)

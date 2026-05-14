@@ -1292,6 +1292,1050 @@ spec:
 }
 
 // =============================================================================
+// Additional Valid Istio Test Cases (filling gap from audit)
+// =============================================================================
+
+var istioValidAdditionalCases = []struct {
+	name  string
+	crYAML []byte
+}{
+	// RW-8.Istio.Valid.1 - VirtualService with TLS simple routing
+	{
+		name: "RW-8.Istio.Valid.1 VirtualService TLS simple routing",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: tls-route
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  tls:
+  - match:
+    - port: 443
+      sniHosts:
+      - reviews
+    route:
+    - destination:
+        host: reviews
+        port:
+          number: 443
+`),
+	},
+	// RW-8.Istio.Valid.2 - VirtualService with TCP routing
+	{
+		name: "RW-8.Istio.Valid.2 VirtualService TCP routing",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: tcp-route
+  namespace: default
+spec:
+  hosts:
+  - mysql
+  tcp:
+  - match:
+    - port: 3306
+    route:
+    - destination:
+        host: mysql
+        port:
+          number: 3306
+`),
+	},
+	// RW-8.Istio.Valid.3 - DestinationRule with simple load balancer
+	{
+		name: "RW-8.Istio.Valid.3 DestinationRule simple load balancer",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: reviews-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+`),
+	},
+	// RW-8.Istio.Valid.4 - DestinationRule with passthrough TLS
+	{
+		name: "RW-8.Istio.Valid.4 DestinationRule passthrough TLS",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: mtls-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    tls:
+      mode: ISTIO_MUTUAL
+`),
+	},
+	// RW-8.Istio.Valid.5 - Gateway with HTTPS using SIMPLE mode
+	{
+		name: "RW-8.Istio.Valid.5 Gateway HTTPS SIMPLE mode",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: https-gateway
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/cert/cert.pem
+      privateKey: /etc/istio/cert/key.pem
+    hosts:
+    - "*.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.6 - ServiceEntry with DNS location
+	{
+		name: "RW-8.Istio.Valid.6 ServiceEntry DNS location",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: external-svc
+  namespace: default
+spec:
+  hosts:
+  - external.example.com
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  location: DNS
+  resolution: DNS
+`),
+	},
+	// RW-8.Istio.Valid.7 - Sidecar with egress to wildcard hosts
+	{
+		name: "RW-8.Istio.Valid.7 Sidecar egress wildcard hosts",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: wildcard-egress
+  namespace: default
+spec:
+  egress:
+  - hosts:
+    - "*/*"
+`),
+	},
+	// RW-8.Istio.Valid.8 - VirtualService with single match rule
+	{
+		name: "RW-8.Istio.Valid.8 VirtualService single match rule",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: match-route
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: jason
+    route:
+    - destination:
+        host: reviews
+        subset: v2
+`),
+	},
+	// RW-8.Istio.Valid.9 - VirtualService with redirect
+	{
+		name: "RW-8.Istio.Valid.9 VirtualService with redirect",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: redirect-route
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - redirect:
+      authority: new-reviews.example.com
+`),
+	},
+	// RW-8.Istio.Valid.10 - DestinationRule with localityLbSetting
+	{
+		name: "RW-8.Istio.Valid.10 DestinationRule locality load balancing",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: locality-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    localityLbSetting:
+      enabled: true
+`),
+	},
+	// RW-8.Istio.Valid.11 - Gateway with multiple hosts
+	{
+		name: "RW-8.Istio.Valid.11 Gateway multiple hosts",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: multi-host-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "productpage.example.com"
+    - "reviews.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.12 - ServiceEntry mesh internal
+	{
+		name: "RW-8.Istio.Valid.12 ServiceEntry mesh internal",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: internal-svc
+  namespace: default
+spec:
+  hosts:
+  - internal-service
+  ports:
+  - number: 8080
+    name: http
+    protocol: HTTP
+  location: MESH_INTERNAL
+  resolution: STATIC
+`),
+	},
+	// RW-8.Istio.Valid.13 - Sidecar with specific namespace hosts
+	{
+		name: "RW-8.Istio.Valid.13 Sidecar specific namespace hosts",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: ns-egress
+  namespace: default
+spec:
+  egress:
+  - hosts:
+    - "istio-system/*"
+`),
+	},
+	// RW-8.Istio.Valid.14 - VirtualService with percent-based weight
+	{
+		name: "RW-8.Istio.Valid.14 VirtualService percent-based weight",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: weighted-route
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+      weight: 90
+    - destination:
+        host: reviews
+        subset: v2
+      weight: 10
+`),
+	},
+	// RW-8.Istio.Valid.15 - DestinationRule with connectionPool TCP
+	{
+		name: "RW-8.Istio.Valid.15 DestinationRule TCP connection pool",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: tcp-pool-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    connectionPool:
+      tcp:
+        maxConnections: 100
+`),
+	},
+	// RW-8.Istio.Valid.16 - Gateway with TLS passthrough
+	{
+		name: "RW-8.Istio.Valid.16 Gateway TLS passthrough",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: passthrough-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: tls
+      protocol: TLS
+    tls:
+      mode: PASSTHROUGH
+    hosts:
+    - "secure.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.17 - ServiceEntry with STATIC resolution
+	{
+		name: "RW-8.Istio.Valid.17 ServiceEntry STATIC resolution",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: static-svc
+  namespace: default
+spec:
+  hosts:
+  - static-service
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: STATIC
+  endpoints:
+  - address: 10.0.0.1
+    ports:
+      http: 80
+`),
+	},
+	// RW-8.Istio.Valid.18 - Sidecar with captureMode DEFAULT
+	{
+		name: "RW-8.Istio.Valid.18 Sidecar capture mode DEFAULT",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: default-capture
+  namespace: default
+spec:
+  egress:
+  - captureMode: DEFAULT
+    hosts:
+    - "*/httpbin.org"
+`),
+	},
+	// RW-8.Istio.Valid.19 - VirtualService with external service reference
+	{
+		name: "RW-8.Istio.Valid.19 VirtualService external service",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: external-vs
+  namespace: default
+spec:
+  hosts:
+  - httpbin.org
+  http:
+  - route:
+    - destination:
+        host: httpbin.org
+`),
+	},
+	// RW-8.Istio.Valid.20 - DestinationRule with outlierDetection
+	{
+		name: "RW-8.Istio.Valid.20 DestinationRule outlier detection",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: outlier-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    outlierDetection:
+      consecutive5xxErrors: 5
+      interval: 30s
+      baseEjectionTime: 30s
+`),
+	},
+	// RW-8.Istio.Valid.21 - VirtualService with mirror percentage
+	{
+		name: "RW-8.Istio.Valid.21 VirtualService mirror with percentage",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: mirror-vs
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+    mirror:
+      host: reviews
+      subset: v2
+    mirrorPercent: 50
+`),
+	},
+	// RW-8.Istio.Valid.22 - Gateway with HTTP/2 protocol
+	{
+		name: "RW-8.Istio.Valid.22 Gateway HTTP/2 protocol",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: http2-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 8080
+      name: http2
+      protocol: HTTP2
+    hosts:
+    - "http2.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.23 - ServiceEntry with MESH_EXTERNAL location
+	{
+		name: "RW-8.Istio.Valid.23 ServiceEntry mesh external",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: external-api
+  namespace: default
+spec:
+  hosts:
+  - api.external.com
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  location: MESH_EXTERNAL
+  resolution: DNS
+`),
+	},
+	// RW-8.Istio.Valid.24 - Sidecar with workloadSelector
+	{
+		name: "RW-8.Istio.Valid.24 Sidecar workload selector",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: workload-sidecar
+  namespace: default
+spec:
+  workloadSelector:
+    labels:
+      app: reviews
+  egress:
+  - hosts:
+    - "istio-system/*"
+`),
+	},
+	// RW-8.Istio.Valid.25 - VirtualService with timeout zero
+	{
+		name: "RW-8.Istio.Valid.25 VirtualService zero timeout",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: timeout-zero
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+    timeout: 0s
+`),
+	},
+	// RW-8.Istio.Valid.26 - DestinationRule with port-level policy
+	{
+		name: "RW-8.Istio.Valid.26 DestinationRule port-level policy",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: port-level-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    portLevelSettings:
+    - port:
+        number: 9080
+      loadBalancer:
+        simple: LEAST_CONN
+`),
+	},
+	// RW-8.Istio.Valid.27 - Gateway with GRPC protocol
+	{
+		name: "RW-8.Istio.Valid.27 Gateway GRPC protocol",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: grpc-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 50051
+      name: grpc
+      protocol: GRPC
+    hosts:
+    - "grpc.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.28 - ServiceEntry with endpoint port override
+	{
+		name: "RW-8.Istio.Valid.28 ServiceEntry endpoint port override",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: port-override-svc
+  namespace: default
+spec:
+  hosts:
+  - mongo
+  ports:
+  - number: 27017
+    name: mongo
+    protocol: MONGO
+  resolution: STATIC
+  endpoints:
+  - address: 10.0.0.5
+    ports:
+      mongo: 27017
+`),
+	},
+	// RW-8.Istio.Valid.29 - Sidecar with multiple egress listeners
+	{
+		name: "RW-8.Istio.Valid.29 Sidecar multiple egress listeners",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: multi-listener
+  namespace: default
+spec:
+  egress:
+  - port:
+      port: 3306
+      protocol: TCP
+    bind: 0.0.0.0
+    hosts:
+    - "*/mysql"
+  - hosts:
+    - "*/*"
+`),
+	},
+	// RW-8.Istio.Valid.30 - VirtualService with appendHeaders
+	{
+		name: "RW-8.Istio.Valid.30 VirtualService append headers",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: append-headers
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+    appendHeaders:
+      x-custom-header: value
+`),
+	},
+	// RW-8.Istio.Valid.31 - DestinationRule consistent hash with http cookie
+	{
+		name: "RW-8.Istio.Valid.31 DestinationRule consistent hash cookie",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: cookie-hash-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    loadBalancer:
+      consistentHash:
+        httpCookie:
+          name: user
+          ttl: 0s
+`),
+	},
+	// RW-8.Istio.Valid.32 - Gateway with HTTPS using MUTUAL mode
+	{
+		name: "RW-8.Istio.Valid.32 Gateway mutual TLS",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: mutual-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https-mutual
+      protocol: HTTPS
+    tls:
+      mode: MUTUAL
+      serverCertificate: /etc/istio/cert/cert.pem
+      privateKey: /etc/istio/cert/key.pem
+      caCertificates: /etc/istio/cert/ca.pem
+    hosts:
+    - "mutual.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.33 - ServiceEntry with NONE resolution
+	{
+		name: "RW-8.Istio.Valid.33 ServiceEntry NONE resolution",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: none-res-svc
+  namespace: default
+spec:
+  hosts:
+  - external.example.com
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: NONE
+`),
+	},
+	// RW-8.Istio.Valid.34 - Sidecar with bind to empty string
+	{
+		name: "RW-8.Istio.Valid.34 Sidecar bind empty",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: bind-empty
+  namespace: default
+spec:
+  egress:
+  - bind: ""
+    hosts:
+    - "*/*"
+`),
+	},
+	// RW-8.Istio.Valid.35 - VirtualService with removeResponseHeader
+	{
+		name: "RW-8.Istio.Valid.35 VirtualService remove response header",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: rm-header
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+    removeResponseHeader: x-removed
+`),
+	},
+	// RW-8.Istio.Valid.36 - DestinationRule with http2 connection pool
+	{
+		name: "RW-8.Istio.Valid.36 DestinationRule HTTP2 connection pool",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: http2-pool-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    connectionPool:
+      http:
+        h2UpgradePolicy: UPGRADE
+        http1MaxPendingRequests: 100
+`),
+	},
+	// RW-8.Istio.Valid.37 - Gateway with PROXY protocol
+	{
+		name: "RW-8.Istio.Valid.37 Gateway PROXY protocol",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: proxy-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: proxy
+      protocol: PROXY
+    hosts:
+    - "proxy.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.38 - ServiceEntry with multiple ports
+	{
+		name: "RW-8.Istio.Valid.38 ServiceEntry multiple ports",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: multi-port-svc
+  namespace: default
+spec:
+  hosts:
+  - multi-port
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  - number: 443
+    name: https
+    protocol: HTTPS
+  resolution: DNS
+`),
+	},
+	// RW-8.Istio.Valid.39 - Sidecar without workloadSelector
+	{
+		name: "RW-8.Istio.Valid.39 Sidecar without workload selector",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: no-selector
+  namespace: default
+spec:
+  egress:
+  - hosts:
+    - "default/*"
+`),
+	},
+	// RW-8.Istio.Valid.40 - VirtualService with injectMetadataHeaders
+	{
+		name: "RW-8.Istio.Valid.40 VirtualService inject metadata headers",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: inject-headers
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+`),
+	},
+	// RW-8.Istio.Valid.41 - DestinationRule with simple LEAST_REQUEST
+	{
+		name: "RW-8.Istio.Valid.41 DestinationRule least request lb",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: least-req-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    loadBalancer:
+      simple: LEAST_REQUEST
+`),
+	},
+	// RW-8.Istio.Valid.42 - Gateway with HTTP protocol
+	{
+		name: "RW-8.Istio.Valid.42 Gateway HTTP protocol",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: http-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "http.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.43 - ServiceEntry with endpoint locality label
+	{
+		name: "RW-8.Istio.Valid.43 ServiceEntry endpoint with locality",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: locality-ep
+  namespace: default
+spec:
+  hosts:
+  - localized-svc
+  ports:
+  - number: 80
+    name: http
+    protocol: HTTP
+  resolution: STATIC
+  endpoints:
+  - address: 10.0.0.10
+    locality: us-west/us-west-1
+    ports:
+      http: 80
+`),
+	},
+	// RW-8.Istio.Valid.44 - Sidecar with APP choice for capture mode
+	{
+		name: "RW-8.Istio.Valid.44 Sidecar capture mode APP",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: capture-app
+  namespace: default
+spec:
+  egress:
+  - captureMode: APP
+    hosts:
+    - "*/httpbin.org"
+`),
+	},
+	// RW-8.Istio.Valid.45 - VirtualService with setResponseHeader
+	{
+		name: "RW-8.Istio.Valid.45 VirtualService set response header",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: set-header
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+    setResponseHeader:
+      x-added: value
+`),
+	},
+	// RW-8.Istio.Valid.46 - DestinationRule with MAGLEV load balancer
+	{
+		name: "RW-8.Istio.Valid.46 DestinationRule MAGLEV load balancer",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: maglev-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    loadBalancer:
+      simple: MAGLEV
+`),
+	},
+	// RW-8.Istio.Valid.47 - Gateway with TERMINATE mode for TLS
+	{
+		name: "RW-8.Istio.Valid.47 Gateway TLS TERMINATE mode",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: terminate-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      serverCertificate: /etc/istio/cert/cert.pem
+      privateKey: /etc/istio/cert/key.pem
+    hosts:
+    - "terminate.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.48 - ServiceEntry with UDP protocol
+	{
+		name: "RW-8.Istio.Valid.48 ServiceEntry UDP protocol",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: udp-svc
+  namespace: default
+spec:
+  hosts:
+  - dns-service
+  ports:
+  - number: 53
+    name: dns-udp
+    protocol: UDP
+  resolution: DNS
+`),
+	},
+	// RW-8.Istio.Valid.49 - Sidecar with egress bind 127.0.0.1
+	{
+		name: "RW-8.Istio.Valid.49 Sidecar egress localhost bind",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: localhost-egress
+  namespace: default
+spec:
+  egress:
+  - bind: 127.0.0.1
+    hosts:
+    - "*/*"
+`),
+	},
+	// RW-8.Istio.Valid.50 - VirtualService with retry attempts 3
+	{
+		name: "RW-8.Istio.Valid.50 VirtualService retry 3 attempts",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: retry-vs
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - route:
+    - destination:
+        host: reviews
+        subset: v1
+  - retries:
+      attempts: 3
+      perTryTimeout: 2s
+    route:
+    - destination:
+        host: reviews
+        subset: v1
+`),
+	},
+	// RW-8.Istio.Valid.51 - DestinationRule with simple RANDOM
+	{
+		name: "RW-8.Istio.Valid.51 DestinationRule random load balancer",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: random-dr
+  namespace: default
+spec:
+  host: reviews
+  trafficPolicy:
+    loadBalancer:
+      simple: RANDOM
+`),
+	},
+	// RW-8.Istio.Valid.52 - Gateway with TCP protocol
+	{
+		name: "RW-8.Istio.Valid.52 Gateway TCP protocol",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: tcp-gw
+  namespace: istio-system
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 9000
+      name: tcp
+      protocol: TCP
+    hosts:
+    - "tcp.example.com"
+`),
+	},
+	// RW-8.Istio.Valid.53 - ServiceEntry with HTTP resolution
+	{
+		name: "RW-8.Istio.Valid.53 ServiceEntry HTTP resolution",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: ServiceEntry
+metadata:
+  name: http-res-svc
+  namespace: default
+spec:
+  hosts:
+  - http-svc
+  ports:
+  - number: 8080
+    name: http
+    protocol: HTTP
+  resolution: HTTP
+`),
+	},
+	// RW-8.Istio.Valid.54 - Sidecar egress with match port
+	{
+		name: "RW-8.Istio.Valid.54 Sidecar egress with match port",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: Sidecar
+metadata:
+  name: match-port-sidecar
+  namespace: default
+spec:
+  egress:
+  - port:
+      port: 443
+      protocol: HTTPS
+    hosts:
+    - "*/secure-service"
+`),
+	},
+	// RW-8.Istio.Valid.55 - VirtualService with fault delay
+	{
+		name: "RW-8.Istio.Valid.55 VirtualService fault delay",
+		crYAML: []byte(`apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: delay-vs
+  namespace: default
+spec:
+  hosts:
+  - reviews
+  http:
+  - fault:
+      delay:
+        percent: 10
+        fixedDelay: 5s
+    route:
+    - destination:
+        host: reviews
+        subset: v1
+`),
+	},
+}
+
+// =============================================================================
 // Invalid Istio Test Cases
 // =============================================================================
 
@@ -2238,6 +3282,15 @@ func TestIstioRealWorldValid(t *testing.T) {
 	for _, tc := range istioValidCases {
 		t.Run(tc.name, func(t *testing.T) {
 			t.Logf("[RW-8] testing istio valid: %s", tc.name)
+			result := engine.Validate(tc.crYAML)
+			if len(result.Errors) > 0 {
+				t.Errorf("expected valid, got errors: %v", result.Errors)
+			}
+		})
+	}
+	for _, tc := range istioValidAdditionalCases {
+		t.Run(tc.name, func(t *testing.T) {
+			t.Logf("[RW-8] testing istio valid additional: %s", tc.name)
 			result := engine.Validate(tc.crYAML)
 			if len(result.Errors) > 0 {
 				t.Errorf("expected valid, got errors: %v", result.Errors)
