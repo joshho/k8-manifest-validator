@@ -202,7 +202,6 @@ func TestPhase4_SELinux_AllFields_Valid(t *testing.T) {
 			deploy: deployment(withSELinuxOptionsAll("system_u", "object_r", "container_t", "s0:c1,c2")),
 			wantErr: true,
 			errSubstr: "level",
-			wantErr: false,
 		},
 		{
 			name: "valid SELinuxOptions with all four fields max length",
