@@ -388,7 +388,7 @@ run_realworld_test() {
 REALWORLD_DIR="tests/fixtures/realworld"
 
 # Test each operator's valid manifests
-ois operators="strimzi prometheus argocd istio redis postgresql flux cert-manager"
+operators="strimzi prometheus argocd istio redis postgresql flux cert-manager"
 for op in $operators; do
   if [[ -d "$REALWORLD_DIR/$op/valid" ]]; then
     echo "  Testing $op valid..."
