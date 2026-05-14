@@ -19,9 +19,6 @@ func windowsSecurityContext() *corev1.WindowsSecurityContextOptions {
 		GMSACredentialSpecName: strPtr("my-gmsa-credspec"),
 		GMSACredentialSpec:     strPtr("credential-spec-content"),
 		RunAsUserName:          strPtr("ContainerAdministrator"),
-		WindowsOptions: &corev1.WindowsOSOptions{
-			// GMSACredentialSpecName is the main field for GMSA
-		},
 	}
 }
 
