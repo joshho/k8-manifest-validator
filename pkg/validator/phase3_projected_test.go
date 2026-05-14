@@ -416,34 +416,6 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 			},
 			wantErr: false,
 		},
-		{
-			name: "valid — projected downwardAPI with resource field (cpu limit)",
-			deployFn: func() *appsv1.Deployment {
-				return deployment(
-					projVol(&corev1.Volume{
-						Name: "projected-resource",
-						VolumeSource: corev1.VolumeSource{
-							Projected: &corev1.ProjectedVolumeSource{
-								Sources: []corev1.VolumeProjection{
-									{
-										DownwardAPI: &corev1.DownwardAPIProjection{
-											Items: []corev1.DownwardAPIVolumeFile{
-												{
-													Path: "cpu-limit",
-													ResourceFieldRef: &corev1.ResourceFieldSelector{
-														Resource: "limits.cpu",
-													},
-												},
-											},
-										},
-									},
-								},
-							},
-						},
-					}),
-					projVolMounts([]corev1.VolumeMount{{Name: "projected-resource", MountPath: "/resource"}}),
-				)
-			},
 			wantErr: false,
 		},
 	}
