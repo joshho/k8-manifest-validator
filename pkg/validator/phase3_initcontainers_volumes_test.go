@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"k8s.io/apimachinery/pkg/api/resource"
 	"testing"
 
 	appsv1 "k8s.io/api/apps/v1"
@@ -18,13 +19,6 @@ import (
 // Validation wire: validateVolumeMount in builtin.go (called from
 // validateContainers via validatePodSpec).
 // =============================================================================
-
-// withVolumes is a deployFn modifier that sets volumes on the pod spec.
-func withVolumes(volumes []corev1.Volume) func(*appsv1.Deployment) {
-	return func(d *appsv1.Deployment) {
-		d.Spec.Template.Spec.Volumes = volumes
-	}
-}
 
 // -----------------------------------------------------------------------
 // Valid: configMap volume mount
@@ -251,7 +245,6 @@ func TestPhase3_InitVolumes_EmptyDir(t *testing.T) {
 		{
 			name: "valid — initContainer with emptyDir sizeLimit",
 			deployFn: func() *appsv1.Deployment {
-				q := resource.MustParse("100Mi")
 				return deployment(
 					withInitContainers([]corev1.Container{
 						{
@@ -267,7 +260,7 @@ func TestPhase3_InitVolumes_EmptyDir(t *testing.T) {
 							Name: "tmp-volume",
 							VolumeSource: corev1.VolumeSource{
 								EmptyDir: &corev1.EmptyDirVolumeSource{
-									SizeLimit: &q,
+									SizeLimit: resource.NewQuantity(104857600, resource.DecimalSI),
 								},
 							},
 						},
@@ -866,9 +859,4 @@ func TestPhase3_InitVolumes_DownwardAPI(t *testing.T) {
 			}
 		})
 	}
-}
-
-// boolPtr is a helper to return a pointer to a bool value.
-func boolPtr(b bool) *bool {
-	return &b
 }
