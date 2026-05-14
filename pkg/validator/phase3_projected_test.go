@@ -416,8 +416,6 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 			},
 			wantErr: false,
 		},
-			wantErr: false,
-		},
 	}
 
 	for _, tc := range cases {
