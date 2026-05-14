@@ -320,7 +320,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-											Name: "readonly-cfg",
+											LocalObjectReference: corev1.LocalObjectReference{Name: "readonly-cfg"},
 											Items: []corev1.KeyToPath{
 												{Key: "key1", Path: "file1", Mode: int32Ptr(0444)},
 											},
@@ -400,7 +400,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										Secret: &corev1.SecretProjection{
-											Name: "multi-key-secret",
+											LocalObjectReference: corev1.LocalObjectReference{Name: "multi-key-secret"},
 											Items: []corev1.KeyToPath{
 												{Key: "username", Path: "user.txt"},
 												{Key: "password", Path: "pass.txt"},
