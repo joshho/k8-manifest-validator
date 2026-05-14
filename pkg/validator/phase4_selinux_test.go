@@ -158,14 +158,16 @@ func TestPhase4_SELinux_Level_Valid(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "valid SELinuxOptions.Level with s0:c1,c2",
+			name:    "invalid SELinuxOptions.Level with colon (s0:c1,c2)",
 			deploy:  deployment(withSELinuxLevel("s0:c1,c2")),
-			wantErr: false,
+			wantErr: true,
+			errSubstr: "level",
 		},
 		{
-			name:    "valid SELinuxOptions.Level with s0:c1,c2,c3",
+			name:    "invalid SELinuxOptions.Level with colon (s0:c1,c2,c3)",
 			deploy:  deployment(withSELinuxLevel("s0:c1,c2,c3")),
-			wantErr: false,
+			wantErr: true,
+			errSubstr: "level",
 		},
 		{
 			name:    "valid SELinuxOptions.Level with SystemLow",
