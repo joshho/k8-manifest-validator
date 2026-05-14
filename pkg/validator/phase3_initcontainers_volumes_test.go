@@ -245,6 +245,7 @@ func TestPhase3_InitVolumes_EmptyDir(t *testing.T) {
 		{
 			name: "valid — initContainer with emptyDir sizeLimit",
 			deployFn: func() *appsv1.Deployment {
+				q := resource.NewQuantity(104857600, resource.DecimalSI)
 				return deployment(
 					withInitContainers([]corev1.Container{
 						{
@@ -260,7 +261,7 @@ func TestPhase3_InitVolumes_EmptyDir(t *testing.T) {
 							Name: "tmp-volume",
 							VolumeSource: corev1.VolumeSource{
 								EmptyDir: &corev1.EmptyDirVolumeSource{
-									SizeLimit: resource.NewQuantity(104857600, resource.DecimalSI),
+									SizeLimit: &q,
 								},
 							},
 						},
