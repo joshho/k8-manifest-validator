@@ -71,6 +71,8 @@ spec:
             properties:
               conditions:
                 type: array
+                items:
+                  type: object
               ca:
                 type: string
                 format: byte

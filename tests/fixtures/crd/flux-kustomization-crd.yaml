@@ -48,6 +48,8 @@ spec:
                 type: boolean
               healthChecks:
                 type: array
+                items:
+                  type: object
               retryInterval:
                 type: string
             required:

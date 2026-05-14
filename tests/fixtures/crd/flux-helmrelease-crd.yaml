@@ -54,6 +54,8 @@ spec:
                 type: object
               postRenderers:
                 type: array
+                items:
+                  type: object
               install:
                 type: object
               upgrade:

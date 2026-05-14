@@ -48,8 +48,12 @@ spec:
                 type: object
               containers:
                 type: array
+                items:
+                  type: object
               volumes:
                 type: array
+                items:
+                  type: object
             required:
             - replicas
             - serviceAccountName

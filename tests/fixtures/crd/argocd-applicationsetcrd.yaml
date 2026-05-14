@@ -23,6 +23,8 @@ spec:
             properties:
               generators:
                 type: array
+                items:
+                  type: object
               template:
                 type: object
                 properties:
@@ -37,6 +39,8 @@ spec:
                 type: object
               strategy:
                 type: array
+                items:
+                  type: object
             required:
             - generators
             - template

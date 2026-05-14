@@ -23,5 +23,7 @@ spec:
             properties:
               groups:
                 type: array
+                items:
+                  type: object
             required:
             - groups

@@ -1,7 +1,7 @@
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
-  name: kafka.strimzi.io
+  name: kafkas.strimzi.io
 spec:
   group: strimzi.io
   names:
@@ -26,23 +26,18 @@ spec:
                 properties:
                   replicas:
                     type: integer
-                    minimum: 1
                   version:
                     type: string
-                  replicas:
-                    type: integer
                   resources:
-                    type: object
-                  listeners:
-                    type: array
-                  config:
-                    type: object
-                  storage:
                     type: object
                   listeners:
                     type: array
                     items:
                       type: object
+                  config:
+                    type: object
+                  storage:
+                    type: object
                 required:
                 - replicas
               zookeeper:

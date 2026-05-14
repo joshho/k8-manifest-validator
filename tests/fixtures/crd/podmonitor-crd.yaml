@@ -25,6 +25,8 @@ spec:
                 type: string
               podMetricsEndpoints:
                 type: array
+                items:
+                  type: object
               selector:
                 type: object
               namespaceSelector:

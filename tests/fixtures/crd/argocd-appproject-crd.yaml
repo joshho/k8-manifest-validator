@@ -38,18 +38,30 @@ spec:
                     type: string
                 required:
                 - namespace
+                items:
+                  type: object
               clusterResourceBlacklist:
                 type: array
+                items:
+                  type: object
               namespaceResourceBlacklist:
                 type: array
+                items:
+                  type: object
               permittedOnly:
                 type: boolean
               syncWindows:
                 type: array
+                items:
+                  type: object
               roles:
                 type: array
+                items:
+                  type: object
               signatureKeys:
                 type: array
+                items:
+                  type: object
             required:
             - sourceRepos
             - destinations

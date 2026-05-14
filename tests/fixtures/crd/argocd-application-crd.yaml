@@ -62,8 +62,12 @@ spec:
                       type: string
               ignoreDifferences:
                 type: array
+                items:
+                  type: object
               info:
                 type: array
+                items:
+                  type: object
             required:
             - project
             - source

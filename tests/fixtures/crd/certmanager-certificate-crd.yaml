@@ -114,6 +114,8 @@ spec:
             properties:
               conditions:
                 type: array
+                items:
+                  type: object
               nextPrivateKeySecretName:
                 type: string
               secretName:

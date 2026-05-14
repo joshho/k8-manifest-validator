@@ -14,6 +14,12 @@ spec:
   - name: v1alpha3
     served: true
     storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
   - name: v1beta1
     served: true
     storage: false
@@ -34,9 +40,15 @@ spec:
                   type: string
               http:
                 type: array
+                items:
+                  type: object
               tcp:
                 type: array
+                items:
+                  type: object
               tls:
                 type: array
+                items:
+                  type: object
             required:
             - hosts

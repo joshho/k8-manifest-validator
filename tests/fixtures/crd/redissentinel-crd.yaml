@@ -30,6 +30,8 @@ spec:
                     type: string
                   env:
                     type: array
+                    items:
+                      type: object
                   resources:
                     type: object
               sentinelConfig:
