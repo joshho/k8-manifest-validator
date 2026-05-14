@@ -83,8 +83,6 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 								Lun:               1,
 								ISCSIInterface:    "default",
 								SecretRef:         &corev1.LocalObjectReference{Name: "iscsi-secret"},
-								ChapAuthDiscovery: true,
-								ChapAuthSession:   true,
 							},
 						},
 					}),
