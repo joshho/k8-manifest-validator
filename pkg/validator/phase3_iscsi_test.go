@@ -24,24 +24,20 @@ import (
 // =============================================================================
 
 // addVol is a deployFn modifier that appends a volume to the deployment's PodSpec.
-func addVol(vol *corev1.Volume) func(*appsv1.Deployment) {
+func iscsiVol(vol *corev1.Volume) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Volumes = append(d.Spec.Template.Spec.Volumes, *vol)
 	}
 }
 
 // volMounts is a deployFn modifier that appends volumeMounts to the first container.
-func volMounts(mounts []corev1.VolumeMount) func(*appsv1.Deployment) {
+func iscsiMounts(mounts []corev1.VolumeMount) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Containers[0].VolumeMounts = append(d.Spec.Template.Spec.Containers[0].VolumeMounts, mounts...)
 	}
 }
 
 // withInitContainers is a deployFn modifier that sets initContainers on the PodSpec.
-func withInitContainers(containers []corev1.Container) func(*appsv1.Deployment) {
-	return func(d *appsv1.Deployment) {
-		d.Spec.Template.Spec.InitContainers = containers
-	}
 }
 
 // TestPhase3_ISCSI_Volume tests Volume.ISCSIVolumeSource fields via cross-struct
@@ -60,7 +56,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "valid — iscsi with required fields only (targetPortal+iqn+lun)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-required",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -70,7 +66,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 							},
 						},
 					}),
-					volMounts([]corev1.VolumeMount{{Name: "iscsi-required", MountPath: "/mnt/iscsi"}}),
+					iscsiMounts([]corev1.VolumeMount{{Name: "iscsi-required", MountPath: "/mnt/iscsi"}}),
 				)
 			},
 			wantErr: false,
@@ -79,7 +75,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "valid — iscsi with all optional fields (portals, chapAuth, secret, interface)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-full",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -89,12 +85,12 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 								Lun:               1,
 								ISCSIInterface:    "default",
 								SecretRef:         &corev1.LocalObjectReference{Name: "iscsi-secret"},
-								ChapAuthDiscovery: true,
-								ChapAuthSession:   true,
+								CHAPAuthDiscovery: true,
+								CHAPAuthSession:   true,
 							},
 						},
 					}),
-					volMounts([]corev1.VolumeMount{{Name: "iscsi-full", MountPath: "/mnt/iscsi-full"}}),
+					iscsiMounts([]corev1.VolumeMount{{Name: "iscsi-full", MountPath: "/mnt/iscsi-full"}}),
 				)
 			},
 			wantErr: false,
@@ -104,7 +100,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			deployFn: func() *appsv1.Deployment {
 				initiatorName := "iqn.2024-05.com.example:initiator.node1"
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-initiator",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -130,7 +126,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 					},
 				}
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-init",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -166,7 +162,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 					func(d *appsv1.Deployment) {
 						d.Spec.Template.Spec.Containers = []corev1.Container{container1, container2}
 					},
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-shared",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -185,7 +181,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "valid — iscsi with fsType and readOnly",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-fstype",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -197,7 +193,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 							},
 						},
 					}),
-					volMounts([]corev1.VolumeMount{{Name: "iscsi-fstype", MountPath: "/mnt/xfs"}}),
+					iscsiMounts([]corev1.VolumeMount{{Name: "iscsi-fstype", MountPath: "/mnt/xfs"}}),
 				)
 			},
 			wantErr: false,
@@ -209,7 +205,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "invalid — iscsi missing targetPortal (empty string)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-no-portal",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -228,7 +224,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "invalid — iscsi missing targetPortal (zero value, field absent)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-no-portal-zero",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -247,7 +243,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "invalid — iscsi missing iqn (empty string)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-no-iqn",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -266,7 +262,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "invalid — iscsi missing iqn (zero value, field absent)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-no-iqn-zero",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -285,7 +281,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "invalid — iscsi missing lun (zero value, field absent)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-no-lun",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
@@ -304,7 +300,7 @@ func TestPhase3_ISCSI_Volume(t *testing.T) {
 			name: "invalid — iscsi with empty portals slice (different from absent)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					addVol(&corev1.Volume{
+					iscsiVol(&corev1.Volume{
 						Name: "iscsi-empty-portals",
 						VolumeSource: corev1.VolumeSource{
 							ISCSI: &corev1.ISCSIVolumeSource{
