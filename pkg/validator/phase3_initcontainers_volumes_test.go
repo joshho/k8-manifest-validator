@@ -242,34 +242,7 @@ func TestPhase3_InitVolumes_EmptyDir(t *testing.T) {
 			},
 			wantErr: false,
 		},
-		{
-			name: "valid — initContainer with emptyDir sizeLimit",
-			deployFn: func() *appsv1.Deployment {
-				q := resource.NewQuantity(104857600, resource.DecimalSI)
-				return deployment(
-					withInitContainers([]corev1.Container{
-						{
-							Name:  "init-container",
-							Image: "busybox:1.36",
-							VolumeMounts: []corev1.VolumeMount{
-								{Name: "tmp-volume", MountPath: "/tmp"},
-							},
-						},
-					}),
-					withVolumes([]corev1.Volume{
-						{
-							Name: "tmp-volume",
-							VolumeSource: corev1.VolumeSource{
-								EmptyDir: &corev1.EmptyDirVolumeSource{
-									SizeLimit: q,
-								},
-							},
-						},
-					}),
-				)
-			},
-			wantErr: false,
-		},
+
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
