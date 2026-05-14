@@ -747,8 +747,10 @@ func (v *BuiltinValidator) validateDeployment(deploy *appsv1.Deployment) field.E
 		allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "replicas"), *deploy.Spec.Replicas, "must be >= 0"))
 	}
 
-	// Validate selector
-	if deploy.Spec.Selector != nil {
+	// Validate selector — required for Deployment
+	if deploy.Spec.Selector == nil {
+		allErrs = append(allErrs, field.Required(field.NewPath("spec", "selector"), "must be specified"))
+	} else {
 		selector, err := metav1.LabelSelectorAsSelector(deploy.Spec.Selector)
 		if err != nil {
 			allErrs = append(allErrs, field.Invalid(field.NewPath("spec", "selector"), deploy.Spec.Selector, err.Error()))
