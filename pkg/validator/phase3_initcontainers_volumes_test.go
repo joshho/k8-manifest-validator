@@ -483,7 +483,7 @@ func TestPhase3_InitVolumes_NonExistentVolume(t *testing.T) {
 				)
 			},
 			wantErr:   true,
-			errSubstr: "non-existent-volume",
+			errSubstr: "not found in volumes",
 		},
 		{
 			name: "invalid — initContainer volumeMount.name references volume declared after it",
@@ -504,7 +504,7 @@ func TestPhase3_InitVolumes_NonExistentVolume(t *testing.T) {
 				)
 			},
 			wantErr:   true,
-			errSubstr: "late-volume",
+			errSubstr: "not found in volumes",
 		},
 		{
 			name: "invalid — initContainer has multiple mounts, one references non-existent volume",
@@ -526,7 +526,7 @@ func TestPhase3_InitVolumes_NonExistentVolume(t *testing.T) {
 				)
 			},
 			wantErr:   true,
-			errSubstr: "missing-volume",
+			errSubstr: "not found in volumes",
 		},
 	}
 	for _, tc := range cases {
