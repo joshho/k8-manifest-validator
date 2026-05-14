@@ -462,14 +462,3 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 		})
 	}
 }
-
-// hasErrErrItems checks if any error in the list contains the given substring.
-func hasErrErrItems(errs []ErrorItem, substr string) bool {
-	for _, e := range errs {
-		es := fmt.Sprintf("%+v", e)
-		if strings.Contains(es, substr) {
-			return true
-		}
-	}
-	return false
-}
