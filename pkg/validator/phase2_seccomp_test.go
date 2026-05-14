@@ -42,9 +42,10 @@ func TestPhase2_SeccompProfile_EdgeCases(t *testing.T) {
 		// ---- Valid: empty seccompProfile (type not emitted in YAML — zero value) ----
 
 		{
-			name: "valid seccompProfile.type not emitted — empty struct, type=zero (omitted by YAML)",
-			deploy: deployment(withSeccompProfileEmpty), // struct present but type field not set
-			wantErr: false,
+			name: "invalid seccompProfile.type=zero — empty struct is not emitted by YAML marshaler but IS a zero-value in Go (errors)",
+			deploy: deployment(withSeccompProfileEmpty()),
+			wantErr:    true,
+			errSubstr:  "seccompProfile",
 		},
 
 		// ---- Valid: known enum values ----
