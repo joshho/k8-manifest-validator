@@ -1,7 +1,7 @@
 package validator
 
 import (
-	"k8s.io/apimachinery/pkg/api/resource"
+	
 	"testing"
 
 	appsv1 "k8s.io/api/apps/v1"
