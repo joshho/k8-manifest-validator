@@ -228,14 +228,16 @@ func TestPhase4_NodeAffinity_MatchExpressions(t *testing.T) {
 			wantErr:   false,
 		},
 		{
-			name:      "valid matchExpressions NotIn with empty values",
+			name:      "invalid matchExpressions NotIn with empty values (validator enforces)",
 			deploy:    deployment(withNodeAffinityInvalidNotInEmptyValues()),
-			wantErr:   false,
+			wantErr:   true,
+			errSubstr: "values",
 		},
 		{
-			name:      "valid matchExpressions In with empty values",
+			name:      "invalid matchExpressions In with empty values (validator enforces)",
 			deploy:    deployment(withNodeAffinityInvalidInEmptyValues()),
-			wantErr:   false,
+			wantErr:   true,
+			errSubstr: "values",
 		},
 	}
 
