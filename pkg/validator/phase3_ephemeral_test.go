@@ -6,6 +6,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // =============================================================================
@@ -20,25 +21,12 @@ import (
 // =============================================================================
 
 // withVolume is a deployFn modifier that attaches a single volume to the deployment.
-func withVolume(vol *corev1.Volume) func(*appsv1.Deployment) {
+func addVol(vol *corev1.Volume) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Volumes = append(d.Spec.Template.Spec.Volumes, *vol)
 	}
 }
 
-// withInitContainers sets init containers on the pod spec.
-func withInitContainers(containers []corev1.Container) func(*appsv1.Deployment) {
-	return func(d *appsv1.Deployment) {
-		d.Spec.Template.Spec.InitContainers = containers
-	}
-}
-
-
-// resourceMustParse is a test helper to parse quantity strings.
-func resourceMustParse(s string) *resource.Quantity {
-	q, _ := resource.ParseQuantity(s)
-	return &q
-}
 
 // withVolumeMounts is a deployFn modifier that appends volumeMounts to the first container.
 func withVolumeMounts(mounts []corev1.VolumeMount) func(*appsv1.Deployment) {
@@ -61,16 +49,16 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 			name: "valid — ephemeral with volumeClaimTemplate (genericEphemeralVolume)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-config",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
 								VolumeClaimTemplate: &corev1.PersistentVolumeClaimTemplate{
 									Spec: corev1.PersistentVolumeClaimSpec{
 										AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteOnce},
-										Resources: corev1.ResourceRequirements{
+										Resources: corev1.VolumeResourceRequirements{
 											Requests: corev1.ResourceList{
-												corev1.ResourceStorage: resourceMustParse("10Mi"),
+												corev1.ResourceStorage: *resource.NewQuantity(10*1024*1024, resource.DecimalSI),
 											},
 										},
 									},
@@ -87,7 +75,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 			name: "valid — ephemeral with readOnly: true",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-readonly",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
@@ -109,7 +97,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 			name: "valid — ephemeral volumeClaimTemplate with empty spec (minimal valid)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-minimal",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
@@ -125,7 +113,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 			name: "valid — ephemeral absent volumeClaimTemplate (not required per codegen)",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-no-claim",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
@@ -141,7 +129,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 			name: "valid — ephemeral with readOnly: false explicitly",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-rw",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
@@ -170,7 +158,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 					},
 				}
 				return deployment(
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-init",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
@@ -209,7 +197,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 					func(d *appsv1.Deployment) {
 						d.Spec.Template.Spec.Containers = []corev1.Container{container1, container2}
 					},
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-a",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
@@ -222,7 +210,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 							},
 						},
 					}),
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-b",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
@@ -243,7 +231,7 @@ func TestPhase3_Volume_Ephemeral(t *testing.T) {
 			name: "valid — ephemeral with volumeClaimTemplate.metadata.name set",
 			deployFn: func() *appsv1.Deployment {
 				return deployment(
-					withVolume(&corev1.Volume{
+					addVol(&corev1.Volume{
 						Name: "ephemeral-named",
 						VolumeSource: corev1.VolumeSource{
 							Ephemeral: &corev1.EphemeralVolumeSource{
