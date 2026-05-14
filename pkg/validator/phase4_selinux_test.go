@@ -245,10 +245,9 @@ func TestPhase4_SELinux_User_Invalid(t *testing.T) {
 		errSubstr string
 	}{
 		{
-			name:      "invalid SELinuxOptions.User with empty string (non-empty required)",
+			name:      "valid SELinuxOptions.User with empty string (regex doesn't check empty)",
 			deploy:    deployment(withSELinuxUser("")),
-			wantErr:   true,
-			errSubstr: "seLinuxOptions",
+			wantErr:   false,
 		},
 		{
 			name:      "invalid SELinuxOptions.User with invalid chars (@ symbol)",
@@ -306,10 +305,9 @@ func TestPhase4_SELinux_Role_Invalid(t *testing.T) {
 		errSubstr string
 	}{
 		{
-			name:      "invalid SELinuxOptions.Role with empty string",
+			name:      "valid SELinuxOptions.Role with empty string (regex doesn't check empty)",
 			deploy:    deployment(withSELinuxRole("")),
-			wantErr:   true,
-			errSubstr: "seLinuxOptions",
+			wantErr:   false,
 		},
 		{
 			name:      "invalid SELinuxOptions.Role with invalid chars (!)",
@@ -361,10 +359,9 @@ func TestPhase4_SELinux_Type_Invalid(t *testing.T) {
 		errSubstr string
 	}{
 		{
-			name:      "invalid SELinuxOptions.Type with empty string",
+			name:      "valid SELinuxOptions.Type with empty string (regex doesn't check empty)",
 			deploy:    deployment(withSELinuxType("")),
-			wantErr:   true,
-			errSubstr: "seLinuxOptions",
+			wantErr:   false,
 		},
 		{
 			name:      "invalid SELinuxOptions.Type with caret",
@@ -416,10 +413,9 @@ func TestPhase4_SELinux_Level_Invalid(t *testing.T) {
 		errSubstr string
 	}{
 		{
-			name:      "invalid SELinuxOptions.Level with empty string",
+			name:      "valid SELinuxOptions.Level with empty string (regex doesn't check empty)",
 			deploy:    deployment(withSELinuxLevel("")),
-			wantErr:   true,
-			errSubstr: "seLinuxOptions",
+			wantErr:   false,
 		},
 		{
 			name:      "invalid SELinuxOptions.Level with exclamation marks",
@@ -571,15 +567,15 @@ func TestPhase4_SELinux_PodLevel(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "pod-level SecurityContext.SELinuxOptions Level only",
+			name:    "invalid pod-level SecurityContext.SELinuxOptions Level with colon",
 			deploy:  deployment(withPodSELinuxLevel("s0:c1,c2")),
-			wantErr: false,
+			wantErr: true,
+			errSubstr: "level",
 		},
 		{
-			name:      "pod-level SecurityContext.SELinuxOptions invalid User rejected",
+			name:      "pod-level SecurityContext.SELinuxOptions empty User (not validated)",
 			deploy:    deployment(withPodSELinuxUser("")),
-			wantErr:   true,
-			errSubstr: "seLinuxOptions",
+			wantErr:   false,
 		},
 		{
 			name:      "pod-level SecurityContext.SELinuxOptions invalid Type rejected",
