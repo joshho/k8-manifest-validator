@@ -19,8 +19,6 @@ import (
 // =============================================================================
 
 // projVol is a deployFn modifier that attaches a single projected volume to the deployment.
-func int64Ptr(i int64) *int64 { return &i }
-
 func projVol(vol *corev1.Volume) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Volumes = append(d.Spec.Template.Spec.Volumes, *vol)
@@ -54,7 +52,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-									Name: "my-configmap",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "my-configmap"},
 									},
 									},
 								},
@@ -77,7 +75,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										Secret: &corev1.SecretProjection{
-									Name: "my-secret",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "my-secret"},
 									},
 									},
 								},
@@ -163,12 +161,12 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-									Name: "app-config",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "app-config"},
 									},
 									},
 									{
 										Secret: &corev1.SecretProjection{
-									Name: "app-secret",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "app-secret"},
 									},
 									},
 									{
@@ -204,12 +202,12 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-									Name: "cfg",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "cfg"},
 									},
 									},
 									{
 										Secret: &corev1.SecretProjection{
-									Name: "sec",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "sec"},
 									},
 									},
 									{
@@ -259,7 +257,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-									Name: "init-config",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "init-config"},
 									},
 									},
 								},
@@ -284,7 +282,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-									Name: "cfg-mode",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "cfg-mode"},
 									},
 									},
 								},
@@ -367,7 +365,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-									Name: "cfg-a",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "cfg-a"},
 									},
 									},
 								},
@@ -381,7 +379,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										Secret: &corev1.SecretProjection{
-									Name: "sec-b",
+										LocalObjectReference: corev1.LocalObjectReference{Name: "sec-b"},
 									},
 									},
 								},
