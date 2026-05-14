@@ -1,12 +1,10 @@
 package validator
 
 import (
-	"strings"
 	"testing"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // =============================================================================
@@ -19,6 +17,7 @@ import (
 // =============================================================================
 
 // projVol is a deployFn modifier that attaches a single projected volume to the deployment.
+
 func projVol(vol *corev1.Volume) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Volumes = append(d.Spec.Template.Spec.Volumes, *vol)
@@ -323,7 +322,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 										ConfigMap: &corev1.ConfigMapProjection{
 											Name: "readonly-cfg",
 											Items: []corev1.KeyToPath{
-												{Key: "key1", Path: "file1", Mode: int32(0444)},
+												{Key: "key1", Path: "file1", Mode: int32Ptr(0444)},
 											},
 										},
 									},
