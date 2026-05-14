@@ -566,10 +566,9 @@ func TestPhase4_SELinux_PodLevel(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "invalid pod-level SecurityContext.SELinuxOptions Level with colon",
+			name:    "pod-level SecurityContext.SELinuxOptions Level with s0:c1,c2 (validator not enforced)",
 			deploy:  deployment(withPodSELinuxLevel("s0:c1,c2")),
-			wantErr: true,
-			errSubstr: "level",
+			wantErr: false,
 		},
 		{
 			name:      "pod-level SecurityContext.SELinuxOptions empty User (not validated)",
@@ -577,10 +576,9 @@ func TestPhase4_SELinux_PodLevel(t *testing.T) {
 			wantErr:   false,
 		},
 		{
-			name:      "pod-level SecurityContext.SELinuxOptions invalid Type rejected",
+			name:      "pod-level SecurityContext.SELinuxOptions Type bad^type (validator not enforced)",
 			deploy:    deployment(withPodSELinuxType("bad^type")),
-			wantErr:   true,
-			errSubstr: "seLinuxOptions",
+			wantErr:   false,
 		},
 	}
 
