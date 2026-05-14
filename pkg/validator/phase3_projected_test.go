@@ -454,10 +454,10 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 			result := validateDeploymentRaw(tc.deployFn())
 			gotErr := len(result.Errors) > 0
 			if gotErr != tc.wantErr {
-				t.Errorf("wantErr=%v, gotErr=%v, errors=%v", tc.wantErr, gotErr, result.Errors)
+				t.Errorf("wantErr=%v, gotErr=%v", tc.wantErr, gotErr)
 			}
 			if tc.wantErr && tc.errSubstr != "" && !hasErrErrItems(result.Errors, tc.errSubstr) {
-				t.Errorf("expected error containing %q, got %v", tc.errSubstr, result.Errors)
+				t.Errorf("expected error containing %q, got %d errors", tc.errSubstr, len(result.Errors))
 			}
 		})
 	}
