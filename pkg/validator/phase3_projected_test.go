@@ -19,6 +19,8 @@ import (
 // =============================================================================
 
 // projVol is a deployFn modifier that attaches a single projected volume to the deployment.
+func int64Ptr(i int64) *int64 { return &i }
+
 func projVol(vol *corev1.Volume) func(*appsv1.Deployment) {
 	return func(d *appsv1.Deployment) {
 		d.Spec.Template.Spec.Volumes = append(d.Spec.Template.Spec.Volumes, *vol)
@@ -52,8 +54,8 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "my-configmap"},
-										},
+									Name: "my-configmap",
+									},
 									},
 								},
 							},
@@ -75,8 +77,8 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										Secret: &corev1.SecretProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "my-secret"},
-										},
+									Name: "my-secret",
+									},
 									},
 								},
 							},
@@ -137,7 +139,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 									{
 										ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
 											Audience:          "api",
-											ExpirationSeconds: 3600,
+											ExpirationSeconds: int64Ptr(3600),
 											Path:              "token",
 										},
 									},
@@ -161,13 +163,13 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "app-config"},
-										},
+									Name: "app-config",
+									},
 									},
 									{
 										Secret: &corev1.SecretProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "app-secret"},
-										},
+									Name: "app-secret",
+									},
 									},
 									{
 										DownwardAPI: &corev1.DownwardAPIProjection{
@@ -202,13 +204,13 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "cfg"},
-										},
+									Name: "cfg",
+									},
 									},
 									{
 										Secret: &corev1.SecretProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "sec"},
-										},
+									Name: "sec",
+									},
 									},
 									{
 										DownwardAPI: &corev1.DownwardAPIProjection{
@@ -226,7 +228,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 									{
 										ServiceAccountToken: &corev1.ServiceAccountTokenProjection{
 											Audience:          "api",
-											ExpirationSeconds: 3600,
+											ExpirationSeconds: int64Ptr(3600),
 											Path:              "token",
 										},
 									},
@@ -257,8 +259,8 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "init-config"},
-										},
+									Name: "init-config",
+									},
 									},
 								},
 							},
@@ -282,8 +284,8 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "cfg-mode"},
-										},
+									Name: "cfg-mode",
+									},
 									},
 								},
 							},
@@ -321,7 +323,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "readonly-cfg"},
+											Name: "readonly-cfg",
 											Items: []corev1.KeyToPath{
 												{Key: "key1", Path: "file1", Mode: int32(0444)},
 											},
@@ -365,8 +367,8 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										ConfigMap: &corev1.ConfigMapProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "cfg-a"},
-										},
+									Name: "cfg-a",
+									},
 									},
 								},
 							},
@@ -379,8 +381,8 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										Secret: &corev1.SecretProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "sec-b"},
-										},
+									Name: "sec-b",
+									},
 									},
 								},
 							},
@@ -401,7 +403,7 @@ func TestPhase3_Volume_Projected(t *testing.T) {
 								Sources: []corev1.VolumeProjection{
 									{
 										Secret: &corev1.SecretProjection{
-											ObjectMeta: metav1.ObjectMeta{Name: "multi-key-secret"},
+											Name: "multi-key-secret",
 											Items: []corev1.KeyToPath{
 												{Key: "username", Path: "user.txt"},
 												{Key: "password", Path: "pass.txt"},
