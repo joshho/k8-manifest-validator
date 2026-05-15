@@ -658,25 +658,25 @@ done
 # cert-manager
 # ---------------------------------------------------------------------------
 echo "--- cert-manager ---"
-for f in "$REALWORLD_DIR"/certmanager/valid/*.yaml; do
+for f in "$REALWORLD_DIR"/cert-manager/valid/*.yaml; do
   name=$(basename "$f")
   output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
   if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  certmanager/valid/$name"
+    echo "  PASS  cert-manager/valid/$name"
     PASSED=$((PASSED+1))
   else
-    echo "  FAIL  certmanager/valid/$name"
+    echo "  FAIL  cert-manager/valid/$name"
     FAILED=$((FAILED+1))
   fi
 done
-for f in "$REALWORLD_DIR"/certmanager/invalid/*.yaml; do
+for f in "$REALWORLD_DIR"/cert-manager/invalid/*.yaml; do
   name=$(basename "$f")
   output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
   if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  certmanager/invalid/$name (correctly rejected)"
+    echo "  PASS  cert-manager/invalid/$name (correctly rejected)"
     PASSED=$((PASSED+1))
   else
-    echo "  FAIL  certmanager/invalid/$name (should have been rejected)"
+    echo "  FAIL  cert-manager/invalid/$name (should have been rejected)"
     FAILED=$((FAILED+1))
   fi
 done
