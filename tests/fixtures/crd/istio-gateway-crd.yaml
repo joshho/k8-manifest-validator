@@ -20,6 +20,77 @@ spec:
         properties:
           spec:
             type: object
+            properties:
+              selector:
+                type: object
+                additionalProperties:
+                  type: string
+                description: "Labels to select the workloads where this gateway is applied."
+              servers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    port:
+                      type: object
+                      properties:
+                        number:
+                          type: integer
+                          minimum: 1
+                          maximum: 65535
+                        protocol:
+                          type: string
+                        name:
+                          type: string
+                        targetPort:
+                          type: integer
+                          minimum: 1
+                          maximum: 65535
+                      required:
+                        - number
+                        - protocol
+                    hosts:
+                      type: array
+                      items:
+                        type: string
+                    tls:
+                      type: object
+                      properties:
+                        mode:
+                          type: string
+                          enum:
+                            - SIMPLE
+                            - MUTUAL
+                            - PASSTHROUGH
+                            - AUTO_PASSTHROUGH
+                        serverCertificate:
+                          type: string
+                        privateKey:
+                          type: string
+                        caCertificates:
+                          type: string
+                        verifyCertificateHash:
+                          type: array
+                          items:
+                            type: string
+                        subjectAltNames:
+                          type: array
+                          items:
+                            type: string
+                    bind:
+                      type: string
+                    filters:
+                      type: array
+                      items:
+                        type: object
+                required:
+                  - port
+                  - hosts
+                description: "An ordered list of server definitions."
+            required:
+              - servers
+        required:
+          - spec
   - name: v1beta1
     served: true
     storage: false

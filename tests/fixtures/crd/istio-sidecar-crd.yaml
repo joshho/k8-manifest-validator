@@ -20,6 +20,99 @@ spec:
         properties:
           spec:
             type: object
+            properties:
+              workloadSelector:
+                type: object
+                properties:
+                  labels:
+                    type: object
+                    additionalProperties:
+                      type: string
+                description: "Selects the workloads where this Sidecar applies."
+              egress:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    port:
+                      type: object
+                      properties:
+                        number:
+                          type: integer
+                          minimum: 1
+                          maximum: 65535
+                        protocol:
+                          type: string
+                        name:
+                          type: string
+                    bind:
+                      type: string
+                    captureMode:
+                      type: string
+                      enum:
+                        - DEFAULT
+                        - IPTABLES
+                        - NONE
+                    hosts:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                    - hosts
+                  description: "Egress listener configuration."
+                description: "Configuration for outbound traffic for the Sidecar."
+              ingress:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    port:
+                      type: object
+                      properties:
+                        number:
+                          type: integer
+                          minimum: 1
+                          maximum: 65535
+                        protocol:
+                          type: string
+                        name:
+                          type: string
+                    bind:
+                      type: string
+                    captureMode:
+                      type: string
+                      enum:
+                        - DEFAULT
+                        - IPTABLES
+                        - NONE
+                  required:
+                    - port
+                  description: "Configuration for inbound traffic for the Sidecar."
+              outboundTrafficPolicy:
+                type: object
+                properties:
+                  mode:
+                    type: string
+                    enum:
+                      - ALLOW_ANY
+                      - REGISTRY_ONLY
+                      - VIRTUAL_SERVICE
+                  egressProxy:
+                    type: object
+                    properties:
+                      host:
+                        type: string
+                      port:
+                        type: object
+                        properties:
+                          number:
+                            type: integer
+                            minimum: 1
+                            maximum: 65535
+            required:
+              - egress
+        required:
+          - spec
   - name: v1beta1
     served: true
     storage: false

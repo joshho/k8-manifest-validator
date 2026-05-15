@@ -20,6 +20,103 @@ spec:
         properties:
           spec:
             type: object
+            properties:
+              hosts:
+                type: array
+                items:
+                  type: string
+                minItems: 1
+                description: "One or more hosts exposed by the VirtualService."
+              gateways:
+                type: array
+                items:
+                  type: string
+                description: "One or more gateway names bound to this VirtualService."
+              http:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    match:
+                      type: array
+                      items:
+                        type: object
+                    route:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          destination:
+                            type: object
+                            properties:
+                              host:
+                                type: string
+                              port:
+                                type: object
+                                properties:
+                                  number:
+                                    type: integer
+                                    minimum: 1
+                                    maximum: 65535
+                              subset:
+                                type: string
+                        required:
+                          - destination
+                    redirect:
+                      type: object
+                    rewrite:
+                      type: object
+                    timeout:
+                      type: string
+                    retries:
+                      type: object
+                    fault:
+                      type: object
+                    mirror:
+                      type: object
+                    mirrorPercentage:
+                      type: object
+                    corsPolicy:
+                      type: object
+                    headers:
+                      type: object
+                description: "An ordered list of routing rules for HTTP traffic."
+              tcp:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    match:
+                      type: array
+                      items:
+                        type: object
+                    route:
+                      type: array
+                      items:
+                        type: object
+                description: "An ordered list of routing rules for TCP traffic."
+              tls:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    match:
+                      type: array
+                      items:
+                        type: object
+                    route:
+                      type: array
+                      items:
+                        type: object
+                description: "An ordered list of routing rules for TLS traffic."
+            required:
+              - hosts
+            x-kubernetes-validations:
+              - rule: "self.hosts.size() > 0"
+        required:
+          - spec
   - name: v1beta1
     served: true
     storage: false

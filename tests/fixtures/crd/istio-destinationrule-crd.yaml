@@ -20,6 +20,54 @@ spec:
         properties:
           spec:
             type: object
+            properties:
+              host:
+                type: string
+                description: "The name of the service the traffic is sent to."
+              trafficPolicy:
+                type: object
+                properties:
+                  loadBalancer:
+                    type: object
+                  connectionPool:
+                    type: object
+                  outlierDetection:
+                    type: object
+                  tls:
+                    type: object
+                  portLevelSettings:
+                    type: array
+                    items:
+                      type: object
+                description: "Traffic policies to apply to the destination."
+              subsets:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    labels:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    trafficPolicy:
+                      type: object
+                  required:
+                    - name
+                  description: "A named subset of the destination service."
+              workloadSelector:
+                type: object
+                properties:
+                  labels:
+                    type: object
+                    additionalProperties:
+                      type: string
+                description: "Selects the workloads to apply the DestinationRule to."
+            required:
+              - host
+        required:
+          - spec
   - name: v1beta1
     served: true
     storage: false
