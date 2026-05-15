@@ -692,12 +692,11 @@ for f in "$REALWORLD_DIR"/malformed/*.yaml; do
   # BUT: edge case files (only_newlines, only_tabs, only_whitespace) are correctly
   # detected as malformed content that yields total=0, invalid=0, errors=0, skipped=0.
   # In those cases the binary correctly exits 0 (no resources to validate).
-  local pass=0
+  pass=0
   if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
     pass=1
   else
     # Check edge case: invalid=0 AND errors=0 AND (total=0 OR skipped>=1) → binary correctly handled
-    local actual_total actual_skipped
     actual_total=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['total'])" 2>/dev/null || echo "-1")
     actual_skipped=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary'].get('skipped',0))" 2>/dev/null || echo "0")
     if [[ "$actual_total" == "0" ]] || [[ "$actual_skipped" -ge 1 ]]; then
