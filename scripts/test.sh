@@ -501,8 +501,9 @@ if [[ "$RW_FAILED" -gt 0 ]]; then
   FAILED=$((FAILED+RW_FAILED))
 fi
 
-# Download upstream CRDs before realworld tests
-download_upstream_crds
+# CRDs in tests/fixtures/crd/ are sourced from upstream GitHub releases.
+# To refresh with latest upstream CRDs, run this function manually or via a separate script.
+# download_upstream_crds
 
 # =============================================================================
 # Real-World Operator Fixture Tests
