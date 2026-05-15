@@ -23,14 +23,45 @@ spec:
             properties:
               jobName:
                 type: string
+                minLength: 1
               endpoints:
                 type: array
                 items:
                   type: object
+                  properties:
+                    port:
+                      type: string
+                    url:
+                      type: string
+                    interval:
+                      type: string
+                    path:
+                      type: string
+                    scheme:
+                      type: string
+                    tlsConfig:
+                      type: object
+                    bearerTokenSecret:
+                      type: object
+                minItems: 1
               selector:
                 type: object
+                properties:
+                  matchLabels:
+                    type: object
+                    additionalProperties:
+                      type: string
+                  matchExpressions:
+                    type: array
+                    items:
+                      type: object
               namespaceSelector:
                 type: object
+                properties:
+                  matchNames:
+                    type: array
+                    items:
+                      type: string
               podTargetLabels:
                 type: array
                 items:

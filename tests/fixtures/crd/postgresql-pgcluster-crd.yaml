@@ -23,6 +23,7 @@ spec:
             properties:
               name:
                 type: string
+                minLength: 1
               clusterName:
                 type: string
               postgresVersion:
@@ -35,6 +36,7 @@ spec:
                   properties:
                     name:
                       type: string
+                      minLength: 1
                     replicas:
                       type: integer
                       minimum: 1
@@ -49,8 +51,25 @@ spec:
                             type: string
                         resources:
                           type: object
+                          properties:
+                            limits:
+                              type: object
+                              properties:
+                                storage:
+                                  type: string
+                            requests:
+                              type: object
+                              properties:
+                                storage:
+                                  type: string
+                          required:
+                          - resources
                       required:
                       - resources
+                  required:
+                  - name
+                  - dataVolumeClaimSpec
+                minItems: 1
               port:
                 type: integer
                 minimum: 1024
@@ -107,6 +126,12 @@ spec:
             - name
             - postgresVersion
             - instances
-
           status:
             type: object
+            properties:
+              phase:
+                type: string
+              instances:
+                type: array
+                items:
+                  type: object

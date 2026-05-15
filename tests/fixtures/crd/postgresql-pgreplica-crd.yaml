@@ -23,6 +23,7 @@ spec:
             properties:
               clusterName:
                 type: string
+                minLength: 1
               replicaName:
                 type: string
               source:
@@ -30,6 +31,7 @@ spec:
                 properties:
                   name:
                     type: string
+                    minLength: 1
                   namespace:
                     type: string
               image:
@@ -61,3 +63,6 @@ spec:
             - clusterName
           status:
             type: object
+            properties:
+              state:
+                type: string

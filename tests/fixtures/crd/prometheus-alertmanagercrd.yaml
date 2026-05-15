@@ -32,14 +32,41 @@ spec:
                 type: string
               securityContext:
                 type: object
+                properties:
+                  fsGroup:
+                    type: integer
+                  runAsNonRoot:
+                    type: boolean
+                  runAsUser:
+                    type: integer
               containers:
                 type: array
                 items:
                   type: object
+                  properties:
+                    name:
+                      type: string
+                    image:
+                      type: string
+                    ports:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          containerPort:
+                            type: integer
               volumes:
                 type: array
                 items:
                   type: object
+                  properties:
+                    name:
+                      type: string
+                    configMap:
+                      type: object
+                      properties:
+                        name:
+                          type: string
             required:
             - replicas
             - serviceAccountName

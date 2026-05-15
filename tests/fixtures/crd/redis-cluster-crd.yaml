@@ -26,14 +26,41 @@ spec:
                 properties:
                   image:
                     type: string
+                    minLength: 1
                   imagePullPolicy:
                     type: string
+                    enum:
+                    - Always
+                    - IfNotPresent
+                    - Never
                   env:
                     type: array
                     items:
                       type: object
+                      properties:
+                        name:
+                          type: string
+                        value:
+                          type: string
                   resources:
                     type: object
+                    properties:
+                      limits:
+                        type: object
+                        properties:
+                          cpu:
+                            type: string
+                          memory:
+                            type: string
+                      requests:
+                        type: object
+                        properties:
+                          cpu:
+                            type: string
+                          memory:
+                            type: string
+                required:
+                - image
               clusterSize:
                 type: integer
                 minimum: 1
@@ -45,13 +72,28 @@ spec:
                     type: string
                   maxmemoryPolicy:
                     type: string
+                    enum:
+                    - allkeys-lru
+                    - allkeys-lfu
+                    - allkeys-random
+                    - volatile-lru
+                    - volatile-lfu
+                    - volatile-random
+                    - volatile-ttl
+                    - noeviction
                   appendonly:
                     type: string
+                    enum:
+                    - "yes"
+                    - "no"
               storage:
                 type: object
                 properties:
                   persistentVolumeClaim:
                     type: object
+                    properties:
+                      claimName:
+                        type: string
             required:
             - kubernetesConfig
             - clusterSize

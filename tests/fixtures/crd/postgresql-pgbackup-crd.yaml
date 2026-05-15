@@ -23,6 +23,7 @@ spec:
             properties:
               clusterName:
                 type: string
+                minLength: 1
               method:
                 type: string
                 enum:
@@ -56,3 +57,10 @@ spec:
             - clusterName
           status:
             type: object
+            properties:
+              phase:
+                type: string
+              backupStartTime:
+                type: string
+              backupEndTime:
+                type: string

@@ -23,6 +23,7 @@ spec:
             properties:
               clusterName:
                 type: string
+                minLength: 1
               taskType:
                 type: string
                 enum:
@@ -44,6 +45,7 @@ spec:
                 properties:
                   name:
                     type: string
+                    minLength: 1
                   namespace:
                     type: string
               owner:

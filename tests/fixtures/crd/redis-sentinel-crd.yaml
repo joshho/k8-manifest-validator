@@ -26,23 +26,53 @@ spec:
                 properties:
                   image:
                     type: string
+                    minLength: 1
                   imagePullPolicy:
                     type: string
+                    enum:
+                    - Always
+                    - IfNotPresent
+                    - Never
                   env:
                     type: array
                     items:
                       type: object
+                      properties:
+                        name:
+                          type: string
+                        value:
+                          type: string
                   resources:
                     type: object
+                    properties:
+                      limits:
+                        type: object
+                        properties:
+                          cpu:
+                            type: string
+                          memory:
+                            type: string
+                      requests:
+                        type: object
+                        properties:
+                          cpu:
+                            type: string
+                          memory:
+                            type: string
+                required:
+                - image
               sentinelConfig:
                 type: object
                 properties:
                   quorum:
                     type: integer
+                    minimum: 1
                   downAfterMilliseconds:
                     type: integer
+                    minimum: 1
                   failTimeout:
                     type: integer
+                    minimum: 0
               redisConfig:
                 type: object
                 properties:
@@ -50,9 +80,29 @@ spec:
                     type: string
                   maxmemoryPolicy:
                     type: string
+                    enum:
+                    - allkeys-lru
+                    - allkeys-lfu
+                    - allkeys-random
+                    - volatile-lru
+                    - volatile-lfu
+                    - volatile-random
+                    - volatile-ttl
+                    - noeviction
+                  appendonly:
+                    type: string
+                    enum:
+                    - "yes"
+                    - "no"
               masterSize:
                 type: string
               storage:
                 type: object
+                properties:
+                  persistentVolumeClaim:
+                    type: object
+                    properties:
+                      claimName:
+                        type: string
             required:
             - kubernetesConfig
