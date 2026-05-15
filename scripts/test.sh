@@ -7,6 +7,55 @@ set -euo pipefail
 #   0 = all tests passed
 #   1 = test failed
 
+# =============================================================================
+# CRD Download Functions
+# Download latest stable CRDs from upstream sources at test time
+# =============================================================================
+download_upstream_crds() {
+  local crd_dir="tests/fixtures/crd"
+  mkdir -p "$crd_dir"
+  
+  echo "[download] Fetching upstream CRDs..."
+  
+  # Istio CRDs (v1.24.0)
+  echo "  [download] Istio v1.24.0..."
+  local istio_url="https://raw.githubusercontent.com/istio/istio/1.24.0/manifests/charts/base/files/crd-all.gen.yaml"
+  curl -sSL "$istio_url" -o "$crd_dir/istio-all.yaml" || echo "  Istio download failed, using existing"
+  
+  # cert-manager CRDs (v1.16.0)
+  echo "  [download] cert-manager v1.16.0..."
+  local cm_url="https://github.com/cert-manager/cert-manager/releases/download/v1.16.0/cert-manager.crds.yaml"
+  curl -sSL "$cm_url" -o "$crd_dir/cert-manager-all.yaml" || echo "  cert-manager download failed, using existing"
+  
+  # Prometheus Operator CRDs
+  echo "  [download] Prometheus Operator CRDs..."
+  curl -sSL "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_prometheuses.yaml" -o "$crd_dir/prometheus-crd.yaml"
+  curl -sSL "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_prometheusrules.yaml" -o "$crd_dir/prometheusrule-crd.yaml"
+  curl -sSL "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_servicemonitors.yaml" -o "$crd_dir/servicemonitor-crd.yaml"
+  curl -sSL "https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/main/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagers.yaml" -o "$crd_dir/prometheus-alertmanagercrd.yaml"
+  
+  # ArgoCD CRDs (v2.14.0)
+  echo "  [download] ArgoCD v2.14.0..."
+  curl -sSL "https://raw.githubusercontent.com/argoproj/argo-cd/v2.14.0/manifests/crds/application-crd.yaml" -o "$crd_dir/argocd-application-crd.yaml"
+  curl -sSL "https://raw.githubusercontent.com/argoproj/argo-cd/v2.14.0/manifests/crds/applicationset-crd.yaml" -o "$crd_dir/argocd-applicationset-crd.yaml"
+  curl -sSL "https://raw.githubusercontent.com/argoproj/argo-cd/v2.14.0/manifests/crds/appproject-crd.yaml" -o "$crd_dir/argocd-appproject-crd.yaml"
+  
+  # Flux CRDs (from release bundles)
+  echo "  [download] Flux CRDs..."
+  curl -sSL "https://github.com/fluxcd/source-controller/releases/download/v1.8.4/source-controller.crds.yaml" -o "$crd_dir/flux-source-controller-crds.yaml"
+  curl -sSL "https://github.com/fluxcd/kustomize-controller/releases/download/v1.8.5/kustomize-controller.crds.yaml" -o "$crd_dir/flux-kustomization-crd.yaml"
+  curl -sSL "https://github.com/fluxcd/helm-controller/releases/download/v1.5.4/helm-controller.crds.yaml" -o "$crd_dir/flux-helmrelease-crd.yaml"
+  curl -sSL "https://github.com/fluxcd/notification-controller/releases/download/v1.8.4/notification-controller.crds.yaml" -o "$crd_dir/flux-notification-controller-crds.yaml"
+  
+  # PostgreSQL PGO CRDs (v6.0.1)
+  echo "  [download] PostgreSQL PGO v6.0.1..."
+  curl -sSL "https://raw.githubusercontent.com/CrunchyData/postgres-operator/v6.0.1/config/crd/bases/postgres-operator.crunchydata.com_pgadmins.yaml" -o "$crd_dir/postgresql-pgadmin-crd.yaml"
+  curl -sSL "https://raw.githubusercontent.com/CrunchyData/postgres-operator/v6.0.1/config/crd/bases/postgres-operator.crunchydata.com_pgupgrades.yaml" -o "$crd_dir/postgresql-pgupgrade-crd.yaml"
+  curl -sSL "https://raw.githubusercontent.com/CrunchyData/postgres-operator/v6.0.1/config/crd/bases/postgres-operator.crunchydata.com_postgresclusters.yaml" -o "$crd_dir/postgresql-pgcluster-crd.yaml"
+  
+  echo "[download] CRDs refreshed from upstream"
+}
+
 SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$SCRIPT_DIR"
 
@@ -451,6 +500,9 @@ if [[ "$RW_FAILED" -gt 0 ]]; then
   echo "REALWORLD TESTS FAILED"
   FAILED=$((FAILED+RW_FAILED))
 fi
+
+# Download upstream CRDs before realworld tests
+download_upstream_crds
 
 # =============================================================================
 # Real-World Operator Fixture Tests

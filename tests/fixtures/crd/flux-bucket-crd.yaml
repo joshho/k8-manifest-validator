@@ -3,21 +3,19 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.19.0
-  name: helmrepositories.source.toolkit.fluxcd.io
+  name: buckets.source.toolkit.fluxcd.io
 spec:
   group: source.toolkit.fluxcd.io
   names:
-    kind: HelmRepository
-    listKind: HelmRepositoryList
-    plural: helmrepositories
-    shortNames:
-    - helmrepo
-    singular: helmrepository
+    kind: Bucket
+    listKind: BucketList
+    plural: buckets
+    singular: bucket
   scope: Namespaced
   versions:
   - additionalPrinterColumns:
-    - jsonPath: .spec.url
-      name: URL
+    - jsonPath: .spec.endpoint
+      name: Endpoint
       type: string
     - jsonPath: .metadata.creationTimestamp
       name: Age
@@ -31,7 +29,7 @@ spec:
     name: v1
     schema:
       openAPIV3Schema:
-        description: HelmRepository is the Schema for the helmrepositories API.
+        description: Bucket is the Schema for the buckets API.
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -60,47 +58,14 @@ spec:
           metadata:
             type: object
           spec:
-            description: 'HelmRepositorySpec specifies the required configuration
-              to produce an
+            description: 'BucketSpec specifies the required configuration to produce
+              an Artifact for
 
-              Artifact for a Helm repository index YAML.'
+              an object storage bucket.'
             properties:
-              accessFrom:
-                description: 'AccessFrom specifies an Access Control List for allowing
-                  cross-namespace
-
-                  references to this object.
-
-                  NOTE: Not implemented, provisional as of https://github.com/fluxcd/flux2/pull/2092'
-                properties:
-                  namespaceSelectors:
-                    description: 'NamespaceSelectors is the list of namespace selectors
-                      to which this ACL applies.
-
-                      Items in this list are evaluated using a logical OR operation.'
-                    items:
-                      description: 'NamespaceSelector selects the namespaces to which
-                        this ACL applies.
-
-                        An empty map of MatchLabels matches all namespaces in a cluster.'
-                      properties:
-                        matchLabels:
-                          additionalProperties:
-                            type: string
-                          description: 'MatchLabels is a map of {key,value} pairs.
-                            A single {key,value} in the matchLabels
-
-                            map is equivalent to an element of matchExpressions, whose
-                            key field is "key", the
-
-                            operator is "In", and the values array contains only "value".
-                            The requirements are ANDed.'
-                          type: object
-                      type: object
-                    type: array
-                required:
-                - namespaceSelectors
-                type: object
+              bucketName:
+                description: BucketName is the name of the object storage bucket.
+                type: string
               certSecretRef:
                 description: 'CertSecretRef can be given the name of a Secret containing
 
@@ -116,7 +81,7 @@ spec:
 
                   and whichever are supplied, will be used for connecting to the
 
-                  registry. The client cert and key are useful if you are
+                  bucket. The client cert and key are useful if you are
 
                   authenticating with a certificate; the CA cert is useful if
 
@@ -125,9 +90,7 @@ spec:
                   be of type `Opaque` or `kubernetes.io/tls`.
 
 
-                  It takes precedence over the values specified in the Secret referred
-
-                  to by `.spec.secretRef`.'
+                  This field is only supported for the `generic` provider.'
                 properties:
                   name:
                     description: Name of the referent.
@@ -135,67 +98,54 @@ spec:
                 required:
                 - name
                 type: object
-              insecure:
-                description: 'Insecure allows connecting to a non-TLS HTTP container
-                  registry.
+              endpoint:
+                description: Endpoint is the object storage address the BucketName
+                  is located at.
+                type: string
+              ignore:
+                description: 'Ignore overrides the set of excluded patterns in the
+                  .sourceignore format
 
-                  This field is only taken into account if the .spec.type field is
-                  set to ''oci''.'
+                  (which is the same as .gitignore). If not provided, a default will
+                  be used,
+
+                  consult the documentation for your version to find out what those
+                  are.'
+                type: string
+              insecure:
+                description: Insecure allows connecting to a non-TLS HTTP Endpoint.
                 type: boolean
               interval:
-                description: 'Interval at which the HelmRepository URL is checked
-                  for updates.
+                description: 'Interval at which the Bucket Endpoint is checked for
+                  updates.
 
                   This interval is approximate and may be subject to jitter to ensure
 
                   efficient use of resources.'
                 pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$
                 type: string
-              passCredentials:
-                description: 'PassCredentials allows the credentials from the SecretRef
-                  to be passed
-
-                  on to a host that does not match the host as defined in URL.
-
-                  This may be required if the host of the advertised chart URLs in
-                  the
-
-                  index differ from the defined URL.
-
-                  Enabling this should be done with caution, as it can potentially
-                  result
-
-                  in credentials getting stolen in a MITM-attack.'
-                type: boolean
+              prefix:
+                description: Prefix to use for server-side filtering of files in the
+                  Bucket.
+                type: string
               provider:
                 default: generic
-                description: 'Provider used for authentication, can be ''aws'', ''azure'',
-                  ''gcp'' or ''generic''.
+                description: 'Provider of the object storage bucket.
 
-                  This field is optional, and only taken into account if the .spec.type
-                  field is set to ''oci''.
+                  Defaults to ''generic'', which expects an S3 (API) compatible object
 
-                  When not specified, defaults to ''generic''.'
+                  storage.'
                 enum:
                 - generic
                 - aws
-                - azure
                 - gcp
+                - azure
                 type: string
-              secretRef:
-                description: 'SecretRef specifies the Secret containing authentication
-                  credentials
+              proxySecretRef:
+                description: 'ProxySecretRef specifies the Secret containing the proxy
+                  configuration
 
-                  for the HelmRepository.
-
-                  For HTTP/S basic auth the secret must contain ''username'' and ''password''
-
-                  fields.
-
-                  Support for TLS auth using the ''certFile'' and ''keyFile'', and/or
-                  ''caFile''
-
-                  keys is deprecated. Please use `.spec.certSecretRef` instead.'
+                  to use while communicating with the Bucket server.'
                 properties:
                   name:
                     description: Name of the referent.
@@ -203,51 +153,152 @@ spec:
                 required:
                 - name
                 type: object
+              region:
+                description: Region of the Endpoint where the BucketName is located
+                  in.
+                type: string
+              secretRef:
+                description: 'SecretRef specifies the Secret containing authentication
+                  credentials
+
+                  for the Bucket.'
+                properties:
+                  name:
+                    description: Name of the referent.
+                    type: string
+                required:
+                - name
+                type: object
+              serviceAccountName:
+                description: 'ServiceAccountName is the name of the Kubernetes ServiceAccount
+                  used to authenticate
+
+                  the bucket. This field is only supported for the ''gcp'' and ''aws''
+                  providers.
+
+                  For more information about workload identity:
+
+                  https://fluxcd.io/flux/components/source/buckets/#workload-identity'
+                type: string
+              sts:
+                description: 'STS specifies the required configuration to use a Security
+                  Token
+
+                  Service for fetching temporary credentials to authenticate in a
+
+                  Bucket provider.
+
+
+                  This field is only supported for the `aws` and `generic` providers.'
+                properties:
+                  certSecretRef:
+                    description: 'CertSecretRef can be given the name of a Secret
+                      containing
+
+                      either or both of
+
+
+                      - a PEM-encoded client certificate (`tls.crt`) and private
+
+                      key (`tls.key`);
+
+                      - a PEM-encoded CA certificate (`ca.crt`)
+
+
+                      and whichever are supplied, will be used for connecting to the
+
+                      STS endpoint. The client cert and key are useful if you are
+
+                      authenticating with a certificate; the CA cert is useful if
+
+                      you are using a self-signed server certificate. The Secret must
+
+                      be of type `Opaque` or `kubernetes.io/tls`.
+
+
+                      This field is only supported for the `ldap` provider.'
+                    properties:
+                      name:
+                        description: Name of the referent.
+                        type: string
+                    required:
+                    - name
+                    type: object
+                  endpoint:
+                    description: 'Endpoint is the HTTP/S endpoint of the Security
+                      Token Service from
+
+                      where temporary credentials will be fetched.'
+                    pattern: ^(http|https)://.*$
+                    type: string
+                  provider:
+                    description: Provider of the Security Token Service.
+                    enum:
+                    - aws
+                    - ldap
+                    type: string
+                  secretRef:
+                    description: 'SecretRef specifies the Secret containing authentication
+                      credentials
+
+                      for the STS endpoint. This Secret must contain the fields `username`
+
+                      and `password` and is supported only for the `ldap` provider.'
+                    properties:
+                      name:
+                        description: Name of the referent.
+                        type: string
+                    required:
+                    - name
+                    type: object
+                required:
+                - endpoint
+                - provider
+                type: object
               suspend:
                 description: 'Suspend tells the controller to suspend the reconciliation
                   of this
 
-                  HelmRepository.'
+                  Bucket.'
                 type: boolean
               timeout:
-                description: 'Timeout is used for the index fetch operation for an
-                  HTTPS helm repository,
-
-                  and for remote OCI Repository operations like pulling for an OCI
-                  helm
-
-                  chart by the associated HelmChart.
-
-                  Its default value is 60s.'
+                default: 60s
+                description: Timeout for fetch operations, defaults to 60s.
                 pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m))+$
                 type: string
-              type:
-                description: 'Type of the HelmRepository.
-
-                  When this field is set to  "oci", the URL field value must be prefixed
-                  with "oci://".'
-                enum:
-                - default
-                - oci
-                type: string
-              url:
-                description: 'URL of the Helm repository, a valid URL contains at
-                  least a protocol and
-
-                  host.'
-                pattern: ^(http|https|oci)://.*$
-                type: string
             required:
-            - url
+            - bucketName
+            - endpoint
+            - interval
             type: object
+            x-kubernetes-validations:
+            - message: STS configuration is only supported for the 'aws' and 'generic'
+                Bucket providers
+              rule: self.provider == 'aws' || self.provider == 'generic' || !has(self.sts)
+            - message: '''aws'' is the only supported STS provider for the ''aws''
+                Bucket provider'
+              rule: self.provider != 'aws' || !has(self.sts) || self.sts.provider
+                == 'aws'
+            - message: '''ldap'' is the only supported STS provider for the ''generic''
+                Bucket provider'
+              rule: self.provider != 'generic' || !has(self.sts) || self.sts.provider
+                == 'ldap'
+            - message: spec.sts.secretRef is not required for the 'aws' STS provider
+              rule: '!has(self.sts) || self.sts.provider != ''aws'' || !has(self.sts.secretRef)'
+            - message: spec.sts.certSecretRef is not required for the 'aws' STS provider
+              rule: '!has(self.sts) || self.sts.provider != ''aws'' || !has(self.sts.certSecretRef)'
+            - message: ServiceAccountName is not supported for the 'generic' Bucket
+                provider
+              rule: self.provider != 'generic' || !has(self.serviceAccountName)
+            - message: cannot set both .spec.secretRef and .spec.serviceAccountName
+              rule: '!has(self.secretRef) || !has(self.serviceAccountName)'
           status:
             default:
               observedGeneration: -1
-            description: HelmRepositoryStatus records the observed state of the HelmRepository.
+            description: BucketStatus records the observed state of a Bucket.
             properties:
               artifact:
-                description: Artifact represents the last successful HelmRepository
-                  reconciliation.
+                description: Artifact represents the last successful Bucket reconciliation.
                 properties:
                   digest:
                     description: Digest is the digest of the file in the form of '<algorithm>:<checksum>'.
@@ -303,7 +354,7 @@ spec:
                 - url
                 type: object
               conditions:
-                description: Conditions holds the conditions for the HelmRepository.
+                description: Conditions holds the conditions for the Bucket.
                 items:
                   description: Condition contains details for one aspect of the current
                     state of this API Resource.
@@ -380,18 +431,22 @@ spec:
                   can be detected.'
                 type: string
               observedGeneration:
-                description: 'ObservedGeneration is the last observed generation of
-                  the HelmRepository
-
-                  object.'
+                description: ObservedGeneration is the last observed generation of
+                  the Bucket object.
                 format: int64
                 type: integer
+              observedIgnore:
+                description: 'ObservedIgnore is the observed exclusion patterns used
+                  for constructing
+
+                  the source artifact.'
+                type: string
               url:
                 description: 'URL is the dynamic fetch link for the latest Artifact.
 
                   It is provided on a "best effort" basis, and using the precise
 
-                  HelmRepositoryStatus.Artifact data is recommended.'
+                  BucketStatus.Artifact data is recommended.'
                 type: string
             type: object
         type: object
