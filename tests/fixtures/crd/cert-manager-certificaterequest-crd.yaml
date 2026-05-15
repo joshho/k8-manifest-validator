@@ -56,7 +56,6 @@ spec:
                   type: string
               request:
                 type: string
-                format: byte
               isCA:
                 type: boolean
               encodeUsagesInRequest:

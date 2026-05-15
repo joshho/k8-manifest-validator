@@ -37,5 +37,7 @@ spec:
             - replicas
             - connectCluster
             - mirrors
+        required:
+        - spec
   storedVersions:
   - v1beta2

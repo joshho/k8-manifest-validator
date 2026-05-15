@@ -29,5 +29,7 @@ spec:
                 type: object
             required:
             - authentication
+        required:
+        - spec
   storedVersions:
   - v1beta2

@@ -35,5 +35,7 @@ spec:
                 type: object
             required:
             - bootstrapServers
+        required:
+        - spec
   storedVersions:
   - v1beta2

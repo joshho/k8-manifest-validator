@@ -32,7 +32,10 @@ spec:
               topicName:
                 type: string
             required:
+            - spec
             - partitions
             - replicas
+        required:
+        - spec
   storedVersions:
   - v1beta2

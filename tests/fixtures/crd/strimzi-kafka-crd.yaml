@@ -26,6 +26,7 @@ spec:
                 properties:
                   replicas:
                     type: integer
+                    minimum: 1
                   version:
                     type: string
                   resources:
@@ -45,6 +46,7 @@ spec:
                 properties:
                   replicas:
                     type: integer
+                    minimum: 1
                   resources:
                     type: object
               entityOperator:
@@ -56,5 +58,7 @@ spec:
                     type: object
               cruiseControl:
                 type: object
+        required:
+        - spec
   storedVersions:
   - v1beta3
