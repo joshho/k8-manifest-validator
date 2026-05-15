@@ -47,10 +47,10 @@ func TestScenarioKubeconformAligned(t *testing.T) {
 		{
 			name: "missing selector deployment",
 			file: "missing-selector-deployment.yaml",
-			// k8s Go struct doesn't enforce selector as required (JSON Schema does)
-			// This is a known, valid divergence
-			statuses:          []types.Status{types.StatusValid},
-			expectKcAlignment: false,
+			// k8s Go struct validation now requires selector (selector != nil)
+			// Both our validator and kubeconform now correctly reject this as invalid
+			statuses:          []types.Status{types.StatusInvalid},
+			expectKcAlignment: true,
 		},
 		{
 			name:              "wrong type value",
