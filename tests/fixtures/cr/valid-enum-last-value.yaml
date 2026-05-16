@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-enum-last
+spec:
+  enumField: "baz"
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

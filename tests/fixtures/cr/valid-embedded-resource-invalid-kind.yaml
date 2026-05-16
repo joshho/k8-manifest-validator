@@ -1,0 +1,14 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: test-embedded-invalid-kind
+spec:
+  embeddedField:
+    apiVersion: v1
+    kind: UnknownKind
+    metadata:
+      name: test
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test
+  v2OnlyField: v2

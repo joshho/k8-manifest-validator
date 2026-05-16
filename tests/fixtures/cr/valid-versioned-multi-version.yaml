@@ -1,0 +1,10 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: test-multi-version
+spec:
+  field: shared
+  v2OnlyField: present
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

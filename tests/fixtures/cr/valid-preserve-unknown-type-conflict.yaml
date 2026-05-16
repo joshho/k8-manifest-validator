@@ -1,0 +1,11 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: test-preserve-type-conflict
+spec:
+  preserveField:
+    someField: "unknown"
+  v2OnlyField: "value"
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

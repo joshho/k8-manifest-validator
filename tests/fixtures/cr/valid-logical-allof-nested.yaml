@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-allof-nested
+spec:
+  logicalField: "prefix-test"
+  requiredField: present
+  choiceField: option-a

@@ -1,0 +1,12 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-additional-props
+spec:
+  objField:
+    name: "test"
+    value: "test"
+    extra: "not-allowed"
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test
