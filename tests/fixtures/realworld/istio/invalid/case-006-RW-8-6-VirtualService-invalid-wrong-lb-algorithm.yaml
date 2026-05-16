@@ -1,0 +1,9 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: invalid-destinationrule-wrong-lb
+spec:
+  host: productpage
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN_NOT_A_THING

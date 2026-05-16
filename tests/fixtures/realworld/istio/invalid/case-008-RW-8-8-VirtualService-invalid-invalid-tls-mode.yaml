@@ -1,0 +1,9 @@
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: invalid-destinationrule-tls
+spec:
+  host: productpage
+  trafficPolicy:
+    tls:
+      mode: NOT_A_TLS_MODE

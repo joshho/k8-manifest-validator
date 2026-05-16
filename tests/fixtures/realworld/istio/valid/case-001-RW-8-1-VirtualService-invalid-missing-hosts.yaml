@@ -1,0 +1,10 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: invalid-missing-hosts
+spec:
+  http:
+  - route:
+    - destination:
+        host: productpage
+        subset: v1
