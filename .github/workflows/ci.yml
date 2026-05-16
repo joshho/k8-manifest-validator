@@ -70,7 +70,7 @@ jobs:
           chmod +x dist/k8-manifest-validator
 
       - name: Run unit tests
-        run: go test ./...
+        run: go test -buildvcs=false ./...
 
       - name: Run fixture tests
         run: ./scripts/test.sh
