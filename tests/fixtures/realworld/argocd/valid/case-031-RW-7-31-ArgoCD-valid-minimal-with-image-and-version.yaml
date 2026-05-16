@@ -1,8 +1,0 @@
-apiVersion: argoproj.io/v1alpha1
-kind: ArgoCD
-metadata:
-  name: argocd
-  namespace: argocd
-spec:
-  image: quay.io/argoproj/argocd
-  version: v2.8.0
