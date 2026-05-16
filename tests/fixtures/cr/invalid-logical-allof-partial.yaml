@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-allof-partial
+spec:
+  logicalField: "pre-test"
+  requiredField: present
+  choiceField: option-a

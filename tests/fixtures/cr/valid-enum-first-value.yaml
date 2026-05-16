@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-enum-first
+spec:
+  enumField: "foo"
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

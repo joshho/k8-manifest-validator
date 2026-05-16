@@ -1,0 +1,10 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-max-sint
+spec:
+  maxIntField: 100
+  intField: 2147483647
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

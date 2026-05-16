@@ -1,0 +1,12 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-min-equals-max
+spec:
+  minItemsField:
+    - "a"
+    - "b"
+    - "c"
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

@@ -1,0 +1,11 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-nested-array
+spec:
+  arrayField:
+    - - "nested"
+    - 1
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

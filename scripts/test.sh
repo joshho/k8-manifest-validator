@@ -164,6 +164,21 @@ run_fixture_test "invalid-string-pattern" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
+run_fixture_test "valid-string-empty" \
+  "$FIXTURES_DIR/cr/valid-string-empty.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "invalid-string-format-date" \
+  "$FIXTURES_DIR/cr/invalid-string-format-date.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "invalid-string-multiline" \
+  "$FIXTURES_DIR/cr/invalid-string-multiline.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
 # ---------------------------------------------------------------------------
 # Integer / number validations
 # ---------------------------------------------------------------------------
@@ -181,6 +196,31 @@ run_fixture_test "invalid-int-too-high" \
   "$FIXTURES_DIR/cr/invalid-int-too-high.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
+
+run_fixture_test "valid-int-zero" \
+  "$FIXTURES_DIR/cr/valid-int-zero.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "valid-int-negative" \
+  "$FIXTURES_DIR/cr/valid-int-negative.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "invalid-int-as-string" \
+  "$FIXTURES_DIR/cr/invalid-int-as-string.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "invalid-int-float" \
+  "$FIXTURES_DIR/cr/invalid-int-float.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "valid-int-max" \
+  "$FIXTURES_DIR/cr/valid-int-max.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
 
 # ---------------------------------------------------------------------------
 # Boolean
@@ -200,6 +240,11 @@ run_fixture_test "invalid-bool-as-string" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
+run_fixture_test "invalid-bool-as-number" \
+  "$FIXTURES_DIR/cr/invalid-bool-as-number.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
 # ---------------------------------------------------------------------------
 # Enum
 # ---------------------------------------------------------------------------
@@ -208,8 +253,23 @@ run_fixture_test "valid-enum-value" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
+run_fixture_test "valid-enum-first-value" \
+  "$FIXTURES_DIR/cr/valid-enum-first-value.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "valid-enum-last-value" \
+  "$FIXTURES_DIR/cr/valid-enum-last-value.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
 run_fixture_test "invalid-enum-value" \
   "$FIXTURES_DIR/cr/invalid-enum-value.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "invalid-enum-case-mismatch" \
+  "$FIXTURES_DIR/cr/invalid-enum-case-mismatch.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
@@ -226,6 +286,16 @@ run_fixture_test "invalid-required-missing" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
+run_fixture_test "invalid-required-null" \
+  "$FIXTURES_DIR/cr/invalid-required-null.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "invalid-required-empty-object" \
+  "$FIXTURES_DIR/cr/invalid-required-empty-object.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
 # ---------------------------------------------------------------------------
 # Array constraints
 # ---------------------------------------------------------------------------
@@ -234,8 +304,28 @@ run_fixture_test "valid-array-min-items" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
+run_fixture_test "valid-array-empty" \
+  "$FIXTURES_DIR/cr/valid-array-empty.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "valid-array-min-equals-max" \
+  "$FIXTURES_DIR/cr/valid-array-min-equals-max.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
 run_fixture_test "invalid-array-min-items" \
   "$FIXTURES_DIR/cr/invalid-array-min-items.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "invalid-array-type-mismatch" \
+  "$FIXTURES_DIR/cr/invalid-array-type-mismatch.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "invalid-array-nested-type" \
+  "$FIXTURES_DIR/cr/invalid-array-nested-type.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
@@ -249,6 +339,7 @@ run_fixture_test "invalid-array-max-items" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
+
 # ---------------------------------------------------------------------------
 # Object constraints
 # ---------------------------------------------------------------------------
@@ -257,8 +348,28 @@ run_fixture_test "valid-obj-min-props" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
+run_fixture_test "valid-object-empty" \
+  "$FIXTURES_DIR/cr/valid-object-empty.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "valid-object-optional-missing" \
+  "$FIXTURES_DIR/cr/valid-object-optional-missing.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
 run_fixture_test "invalid-obj-min-props" \
   "$FIXTURES_DIR/cr/invalid-obj-min-props.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "invalid-object-additional-props" \
+  "$FIXTURES_DIR/cr/invalid-object-additional-props.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "invalid-object-required-vs-optional" \
+  "$FIXTURES_DIR/cr/invalid-object-required-vs-optional.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
@@ -293,13 +404,29 @@ run_fixture_test "valid-logical-allof" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
+run_fixture_test "valid-logical-allof-nested" \
+  "$FIXTURES_DIR/cr/valid-logical-allof-nested.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
 run_fixture_test "invalid-logical-allof" \
   "$FIXTURES_DIR/cr/invalid-logical-allof.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
+run_fixture_test "invalid-logical-allof-partial" \
+  "$FIXTURES_DIR/cr/invalid-logical-allof-partial.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+
 run_fixture_test "valid-logical-anyof" \
   "$FIXTURES_DIR/cr/valid-logical-anyof.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "valid-logical-anyof-one-match" \
+  "$FIXTURES_DIR/cr/valid-logical-anyof-one-match.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
@@ -307,6 +434,12 @@ run_fixture_test "invalid-logical-anyof" \
   "$FIXTURES_DIR/cr/invalid-logical-anyof.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
+
+run_fixture_test "invalid-logical-anyof-none-match" \
+  "$FIXTURES_DIR/cr/invalid-logical-anyof-none-match.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
 
 run_fixture_test "valid-logical-not" \
   "$FIXTURES_DIR/cr/valid-logical-not.yaml" \
@@ -326,10 +459,20 @@ run_fixture_test "valid-int-or-string-int" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
+run_fixture_test "valid-int-or-string-zero" \
+  "$FIXTURES_DIR/cr/valid-int-or-string-zero.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
 run_fixture_test "valid-int-or-string-string" \
   "$FIXTURES_DIR/cr/valid-int-or-string-string.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
+
+run_fixture_test "invalid-int-or-string-object" \
+  "$FIXTURES_DIR/cr/invalid-int-or-string-object.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
 
 # ---------------------------------------------------------------------------
 # x-kubernetes-embedded-resource
@@ -338,6 +481,16 @@ run_fixture_test "valid-embedded-resource" \
   "$FIXTURES_DIR/cr/valid-embedded-resource.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
+
+run_fixture_test "valid-embedded-resource-with-namespace" \
+  "$FIXTURES_DIR/cr/valid-embedded-resource-with-namespace.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "invalid-embedded-resource-invalid-kind" \
+  "$FIXTURES_DIR/cr/invalid-embedded-resource-invalid-kind.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
 
 # ---------------------------------------------------------------------------
 # nullable
@@ -352,11 +505,34 @@ run_fixture_test "valid-nullable-value" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
+run_fixture_test "invalid-nullable-null-non-nullable" \
+  "$FIXTURES_DIR/cr/invalid-nullable-null-non-nullable.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
 # ---------------------------------------------------------------------------
 # preserve-unknown-fields
 # ---------------------------------------------------------------------------
 run_fixture_test "valid-preserve-unknown" \
   "$FIXTURES_DIR/cr/valid-preserve-unknown.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "valid-preserve-unknown-deep" \
+  "$FIXTURES_DIR/cr/valid-preserve-unknown-deep.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "invalid-preserve-unknown-type-conflict" \
+  "$FIXTURES_DIR/cr/invalid-preserve-unknown-type-conflict.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+# ---------------------------------------------------------------------------
+# Default field
+# ---------------------------------------------------------------------------
+run_fixture_test "valid-default-overridden" \
+  "$FIXTURES_DIR/cr/valid-default-overridden.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
@@ -393,6 +569,16 @@ run_fixture_test "valid-versioned-v1alpha1" \
 
 run_fixture_test "invalid-versioned-v1-missing-v1field" \
   "$FIXTURES_DIR/cr/invalid-versioned-v1-missing-v1field.yaml" \
+  "$CRD_DIR/versioned-crd.yaml" \
+  1 0
+
+run_fixture_test "valid-versioned-multi-version" \
+  "$FIXTURES_DIR/cr/valid-versioned-multi-version.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "invalid-versioned-v1alpha1-missing-field" \
+  "$FIXTURES_DIR/cr/invalid-versioned-v1alpha1-missing-field.yaml" \
   "$CRD_DIR/versioned-crd.yaml" \
   1 0
 

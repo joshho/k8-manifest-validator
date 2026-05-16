@@ -1,0 +1,7 @@
+apiVersion: versioned.example.com/v1alpha1
+kind: Versioned
+metadata:
+  name: test-v1alpha1-wrong-type
+spec:
+  name: not-an-integer
+  replicas: "three"

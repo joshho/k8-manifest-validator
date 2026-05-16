@@ -1,0 +1,14 @@
+apiVersion: example.com/v2
+kind: Comprehensive
+metadata:
+  name: test-preserve-deep
+spec:
+  preserveField:
+    deeply:
+      nested:
+        unknown:
+          fields: "allowed"
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test
+  v2OnlyField: v2
