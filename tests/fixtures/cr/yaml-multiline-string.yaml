@@ -1,0 +1,10 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+spec:
+  field: |
+    This is a literal
+    block scalar with
+    multiple lines.
+  requiredField: req
+  choiceField: option-a
+  logicalField: prefix-test
