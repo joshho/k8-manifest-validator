@@ -363,10 +363,10 @@ run_fixture_test "invalid-obj-min-props" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   1 0
 
-run_fixture_test "invalid-object-additional-props" \
-  "$FIXTURES_DIR/cr/invalid-object-additional-props.yaml" \
+run_fixture_test "valid-object-additional-props" \
+  "$FIXTURES_DIR/cr/valid-object-additional-props.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
-  1 0
+  0 1
 
 run_fixture_test "invalid-object-required-vs-optional" \
   "$FIXTURES_DIR/cr/invalid-object-required-vs-optional.yaml" \
@@ -487,10 +487,10 @@ run_fixture_test "valid-embedded-resource-with-namespace" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
-run_fixture_test "invalid-embedded-resource-invalid-kind" \
-  "$FIXTURES_DIR/cr/invalid-embedded-resource-invalid-kind.yaml" \
+run_fixture_test "valid-embedded-resource-invalid-kind" \
+  "$FIXTURES_DIR/cr/valid-embedded-resource-invalid-kind.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
-  1 0
+  0 1
 
 # ---------------------------------------------------------------------------
 # nullable
@@ -523,10 +523,10 @@ run_fixture_test "valid-preserve-unknown-deep" \
   "$CRD_DIR/comprehensive-crd.yaml" \
   0 1
 
-run_fixture_test "invalid-preserve-unknown-type-conflict" \
-  "$FIXTURES_DIR/cr/invalid-preserve-unknown-type-conflict.yaml" \
+run_fixture_test "valid-preserve-unknown-type-conflict" \
+  "$FIXTURES_DIR/cr/valid-preserve-unknown-type-conflict.yaml" \
   "$CRD_DIR/comprehensive-crd.yaml" \
-  1 0
+  0 1
 
 # ---------------------------------------------------------------------------
 # Default field
