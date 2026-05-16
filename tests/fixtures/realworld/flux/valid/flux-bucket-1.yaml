@@ -1,0 +1,12 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: Bucket
+metadata:
+  name: podinfo-bucket
+  namespace: default
+spec:
+  bucketName: podinfo
+  endpoint: s3://my-minio:9000
+  insecure: true
+  secretRef:
+    name: bucket-credentials
+  interval: 1m

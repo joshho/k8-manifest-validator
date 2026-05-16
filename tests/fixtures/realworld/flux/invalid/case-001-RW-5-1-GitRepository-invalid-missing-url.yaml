@@ -1,0 +1,7 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: invalid-gitrepo
+  namespace: default
+spec:
+  interval: 1m0s
