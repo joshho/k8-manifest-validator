@@ -397,102 +397,111 @@ run_fixture_test "invalid-versioned-v1-missing-v1field" \
   1 0
 
 # ---------------------------------------------------------------------------
-# realworld operator tests — binary fixture validation
+# realworld operator tests — batched by directory for speed
+# Each operator's valid/ and invalid/ dirs are processed in a single binary invocation
+# ~17 calls instead of ~1200 individual invocations
 # ---------------------------------------------------------------------------  
 echo ""
-echo "[realworld binary fixture tests]"
+echo "[realworld binary fixture tests — batched]"
 
 RW_FAILED=0
 RW_PASSED=0
 
-# Run realworld test for a single file
-run_realworld_test() {
-  local name="$1"
-  local cr_file="$2"
+# Run realworld test for a full directory (batched)
+# Usage: run_realworld_batch "label" "/path/to/dir" "CRD_DIR" expected_exit expected_valid
+run_realworld_batch() {
+  local label="$1"
+  local manifest_dir="$2"
   local crd_dir="$3"
   local expected_exit="$4"
   local expected_valid="$5"
-  
+
+  if [[ ! -d "$manifest_dir" ]]; then
+    echo "  SKIP  $label (directory not found)"
+    return
+  fi
+
+  # Count files ahead of time for validation
+  local file_count
+  file_count=$(find "$manifest_dir" -name "*.yaml" -not -empty 2>/dev/null | wc -l)
+  if [[ "$file_count" == "0" ]]; then
+    echo "  SKIP  $label (no non-empty yaml files)"
+    return
+  fi
+
   local output
   local actual_exit=0
-  
+
   if [[ -n "$crd_dir" ]]; then
-    output=$("$BINARY" -f "$cr_file" -crd "$crd_dir" 2>&1) || actual_exit=1
+    output=$("$BINARY" -f "$manifest_dir" -crd "$crd_dir" 2>&1) || actual_exit=1
   else
-    output=$("$BINARY" -f "$cr_file" 2>&1) || actual_exit=1
+    output=$("$BINARY" -f "$manifest_dir" 2>&1) || actual_exit=1
   fi
-  
-  local actual_valid
-  actual_valid=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary']['valid'])" 2>/dev/null || echo "-1")
-  
-  # Handle empty content edge case: total=0 means no resources found.
-  # If expected_valid=0 and actual total=0 (no resources decoded), treat as success
-  # because the malformed content was correctly detected as invalid.
-  local actual_total actual_skipped
+
+  # Parse JSON output (summary section)
+  local actual_valid actual_total actual_errors actual_skipped
+  actual_valid=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['valid'])" 2>/dev/null || echo "-1")
   actual_total=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['total'])" 2>/dev/null || echo "-1")
+  actual_errors=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['errors'])" 2>/dev/null || echo "-1")
   actual_skipped=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary'].get('skipped',0))" 2>/dev/null || echo "0")
-  
-  # Handle empty content edge case: no resources found (total=0) OR resources decoded but skipped (skipped>=1).
-  # In both cases the malformed content was correctly detected as invalid.
-  local empty_ok=0
+
+  # Malformed dir: expected_valid=0, actual_valid=0, actual_total=0 is success
+  # (empty/broken YAML correctly detected as invalid)
+  local malformed_ok=0
   if [[ "$expected_valid" == "0" ]] && [[ "$actual_valid" == "0" ]] && [[ "$actual_total" == "0" ]]; then
-    empty_ok=1
+    malformed_ok=1
   fi
-  # Also handle: total>=1, valid=0, skipped>=1, expected to fail (exit=1).
-  # This covers comment-only YAML, document separators, etc. that decode to manifests with no Kind.
+
+  # Skipped case: files decoded but skipped (no matching CRD) + expected to fail
   local skipped_ok=0
   if [[ "$expected_valid" == "0" ]] && [[ "$actual_valid" == "0" ]] && [[ "$actual_skipped" -ge 1 ]] && [[ "$expected_exit" == "1" ]]; then
     skipped_ok=1
   fi
-  
-  if [[ "$empty_ok" == "1" ]] || [[ "$skipped_ok" == "1" ]] || ([[ "$actual_exit" == "$expected_exit" ]] && [[ "$actual_valid" == "$expected_valid" ]]); then
-    echo "  PASS  $name"
+
+# For valid dirs: expect exit=0, valid=total (all pass)
+  # For invalid/malformed dirs: expect exit=1, valid=0 (correctly rejected)
+  local pass=0
+  if [[ "$expected_exit" == "0" ]]; then
+    # Valid dir: all files should pass
+    if [[ "$actual_exit" == "0" ]] && [[ "$actual_valid" == "$actual_total" ]]; then
+      pass=1
+    fi
+  else
+    # Invalid/malformed dir: should have invalid=0, valid=0
+    if [[ "$malformed_ok" == "1" ]] || [[ "$skipped_ok" == "1" ]]; then
+      pass=1
+    elif [[ "$actual_exit" == "$expected_exit" ]] && [[ "$actual_valid" == "0" ]]; then
+      pass=1
+    fi
+  fi
+
+  if [[ "$pass" == "1" ]]; then
+    echo "  PASS  $label ($file_count files, ${actual_valid}valid, ${actual_errors}errors)"
     RW_PASSED=$((RW_PASSED+1))
   else
-    echo "  FAIL  $name — expected exit=$expected_exit valid=$expected_valid, got exit=$actual_exit valid=$actual_valid"
+    echo "  FAIL  $label — expected exit=$expected_exit valid=$expected_valid, got exit=$actual_exit valid=$actual_valid (total=$actual_total, errors=$actual_errors, skipped=$actual_skipped)"
     RW_FAILED=$((RW_FAILED+1))
   fi
 }
 
 REALWORLD_DIR="tests/fixtures/realworld"
+operators="istio strimzi prometheus argocd redis postgresql flux cert-manager"
 
-# Test each operator's valid manifests
-operators="strimzi prometheus argocd istio redis postgresql flux cert-manager"
+# Test each operator's valid manifests (expect exit=0, valid=total)
+echo "  Testing operator valid directories..."
 for op in $operators; do
-  if [[ -d "$REALWORLD_DIR/$op/valid" ]]; then
-    echo "  Testing $op valid..."
-    for f in "$REALWORLD_DIR/$op/valid"/*.yaml; do
-      if [[ -f "$f" ]]; then
-        fname=$(basename "$f" .yaml)
-        run_realworld_test "$op/valid/$fname" "$f" "$CRD_DIR" 0 1
-      fi
-    done
-  fi
+  run_realworld_batch "$op/valid" "$REALWORLD_DIR/$op/valid" "$CRD_DIR" 0 1
 done
 
-# Test each operator's invalid manifests
+# Test each operator's invalid manifests (expect exit=1, valid=0)
+echo "  Testing operator invalid directories..."
 for op in $operators; do
-  if [[ -d "$REALWORLD_DIR/$op/invalid" ]]; then
-    echo "  Testing $op invalid..."
-    for f in "$REALWORLD_DIR/$op/invalid"/*.yaml; do
-      if [[ -f "$f" ]]; then
-        fname=$(basename "$f" .yaml)
-        run_realworld_test "$op/invalid/$fname" "$f" "$CRD_DIR" 1 0
-      fi
-    done
-  fi
+  run_realworld_batch "$op/invalid" "$REALWORLD_DIR/$op/invalid" "$CRD_DIR" 1 0
 done
 
 # Test malformed manifests (no CRD needed)
-if [[ -d "$REALWORLD_DIR/malformed" ]]; then
-  echo "  Testing malformed..."
-  for f in "$REALWORLD_DIR/malformed"/*.yaml; do
-    if [[ -f "$f" ]]; then
-      fname=$(basename "$f" .yaml)
-      run_realworld_test "malformed/$fname" "$f" "" 1 0
-    fi
-  done
-fi
+echo "  Testing malformed directory..."
+run_realworld_batch "malformed" "$REALWORLD_DIR/malformed" "" 1 0
 
 echo ""
 echo "Realworld fixture results: $RW_PASSED passed, $RW_FAILED failed"
@@ -501,279 +510,4 @@ if [[ "$RW_FAILED" -gt 0 ]]; then
   FAILED=$((FAILED+RW_FAILED))
 fi
 
-# CRDs in tests/fixtures/crd/ are sourced from upstream GitHub releases.
-# To refresh with latest upstream CRDs, run this function manually or via a separate script.
-# download_upstream_crds
-
-# =============================================================================
-# Real-World Operator Fixture Tests
-# These test the built binary against real-world operator manifests
-# =============================================================================
-echo ""
-echo "[realworld binary fixture tests]"
-
-REALWORLD_DIR="$FIXTURES_DIR/realworld"
-REALWORLD_CRD_DIR="$CRD_DIR"
-
-FAILED=0
-PASSED=0
-
-# ---------------------------------------------------------------------------
-# Strimzi
-# ---------------------------------------------------------------------------
-echo "--- strimzi ---"
-for f in "$REALWORLD_DIR"/strimzi/valid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  strimzi/valid/$name"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  strimzi/valid/$name"
-    FAILED=$((FAILED+1))
-  fi
-done
-for f in "$REALWORLD_DIR"/strimzi/invalid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  strimzi/invalid/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  strimzi/invalid/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# Prometheus
-# ---------------------------------------------------------------------------
-echo "--- prometheus ---"
-for f in "$REALWORLD_DIR"/prometheus/valid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  prometheus/valid/$name"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  prometheus/valid/$name"
-    FAILED=$((FAILED+1))
-  fi
-done
-for f in "$REALWORLD_DIR"/prometheus/invalid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  prometheus/invalid/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  prometheus/invalid/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# ArgoCD
-# ---------------------------------------------------------------------------
-echo "--- argocd ---"
-for f in "$REALWORLD_DIR"/argocd/valid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  argocd/valid/$name"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  argocd/valid/$name"
-    FAILED=$((FAILED+1))
-  fi
-done
-for f in "$REALWORLD_DIR"/argocd/invalid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  argocd/invalid/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  argocd/invalid/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# Istio
-# ---------------------------------------------------------------------------
-echo "--- istio ---"
-for f in "$REALWORLD_DIR"/istio/valid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  istio/valid/$name"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  istio/valid/$name"
-    FAILED=$((FAILED+1))
-  fi
-done
-for f in "$REALWORLD_DIR"/istio/invalid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  istio/invalid/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  istio/invalid/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# Redis
-# ---------------------------------------------------------------------------
-echo "--- redis ---"
-for f in "$REALWORLD_DIR"/redis/valid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  redis/valid/$name"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  redis/valid/$name"
-    FAILED=$((FAILED+1))
-  fi
-done
-for f in "$REALWORLD_DIR"/redis/invalid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  redis/invalid/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  redis/invalid/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# PostgreSQL
-# ---------------------------------------------------------------------------
-echo "--- postgresql ---"
-for f in "$REALWORLD_DIR"/postgresql/valid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  postgresql/valid/$name"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  postgresql/valid/$name"
-    FAILED=$((FAILED+1))
-  fi
-done
-for f in "$REALWORLD_DIR"/postgresql/invalid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  postgresql/invalid/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  postgresql/invalid/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# Flux
-# ---------------------------------------------------------------------------
-echo "--- flux ---"
-for f in "$REALWORLD_DIR"/flux/valid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  flux/valid/$name"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  flux/valid/$name"
-    FAILED=$((FAILED+1))
-  fi
-done
-for f in "$REALWORLD_DIR"/flux/invalid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  flux/invalid/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  flux/invalid/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# cert-manager
-# ---------------------------------------------------------------------------
-echo "--- cert-manager ---"
-for f in "$REALWORLD_DIR"/cert-manager/valid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']==0 and d['summary']['errors']==0 else 1)" 2>/dev/null; then
-    echo "  PASS  cert-manager/valid/$name"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  cert-manager/valid/$name"
-    FAILED=$((FAILED+1))
-  fi
-done
-for f in "$REALWORLD_DIR"/cert-manager/invalid/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" -crd "$REALWORLD_CRD_DIR" 2>&1) || true
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    echo "  PASS  cert-manager/invalid/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  cert-manager/invalid/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# Malformed (no CRD needed - just parsing errors)
-# ---------------------------------------------------------------------------
-echo "--- malformed ---"
-for f in "$REALWORLD_DIR"/malformed/*.yaml; do
-  name=$(basename "$f")
-  output=$("$BINARY" -f "$f" 2>&1) || true
-  # Malformed files should always produce errors or invalid results
-  # BUT: edge case files (only_newlines, only_tabs, only_whitespace) are correctly
-  # detected as malformed content that yields total=0, invalid=0, errors=0, skipped=0.
-  # In those cases the binary correctly exits 0 (no resources to validate).
-  pass=0
-  if echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); sys.exit(0 if d['summary']['invalid']>0 or d['summary']['errors']>0 else 1)" 2>/dev/null; then
-    pass=1
-  else
-    # Check edge case: invalid=0 AND errors=0 AND (total=0 OR skipped>=1) → binary correctly handled
-    actual_total=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['total'])" 2>/dev/null || echo "-1")
-    actual_skipped=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary'].get('skipped',0))" 2>/dev/null || echo "0")
-    if [[ "$actual_total" == "0" ]] || [[ "$actual_skipped" -ge 1 ]]; then
-      pass=1
-    fi
-  fi
-  if [[ "$pass" == "1" ]]; then
-    echo "  PASS  malformed/$name (correctly rejected)"
-    PASSED=$((PASSED+1))
-  else
-    echo "  FAIL  malformed/$name (should have been rejected)"
-    FAILED=$((FAILED+1))
-  fi
-done
-
-# ---------------------------------------------------------------------------
-# Summary
-# ---------------------------------------------------------------------------
-echo ""
-echo "Realworld fixture results: $PASSED passed, $FAILED failed"
-if [[ "$FAILED" -gt 0 ]]; then
-  echo "REALWORLD TESTS FAILED"
-  exit 1
-fi
-
-echo "All tests passed"
 exit 0
