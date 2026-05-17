@@ -1,0 +1,7 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: my-connect-missing-bootstrap
+  namespace: kafka
+spec:
+  replicas: 2

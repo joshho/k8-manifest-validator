@@ -1,0 +1,8 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: my-user-invalid-auth-type
+  namespace: kafka
+spec:
+  authentication:
+    type: x509

@@ -671,7 +671,7 @@ run_realworld_batch() {
 }
 
 REALWORLD_DIR="tests/fixtures/realworld"
-operators="istio strimzi prometheus argocd redis postgresql flux cert-manager etcd"
+operators="istio strimzi prometheus argocd redis postgresql flux cert-manager etcd rabbitmq kafka"
 
 # Test each operator's valid manifests (expect exit=0, valid=total)
 echo "  Testing operator valid directories..."
