@@ -1,0 +1,22 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch-with-services
+  namespace: elastic-system
+spec:
+  replicas: 3
+  version: "8.12.0"
+  nodeSets:
+  - name: master
+    count: 3
+    roles:
+    - master
+    - remote_cluster_client
+    - data
+    storage:
+      size: 10Gi
+  services:
+  - name: elasticsearch
+    serviceName: elasticsearch
+    transportPort: 9300
+    httpPort: 9200

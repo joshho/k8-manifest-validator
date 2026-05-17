@@ -1,0 +1,11 @@
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-bad
+  namespace: minio
+spec:
+  pools:
+  - name: pool-1
+    servers: "many"
+    volumesPerServer: 4
+  version: RELEASE.2024-01-16T19-43-48Z

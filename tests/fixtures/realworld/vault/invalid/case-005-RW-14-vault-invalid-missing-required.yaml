@@ -1,0 +1,7 @@
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-bad
+  namespace: vault-ns
+spec:
+  size: 3

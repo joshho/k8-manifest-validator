@@ -1,0 +1,12 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-db
+  namespace: auth
+spec:
+  instances: 1
+  version: "23.0"
+  externalDatabase:
+    enabled: true
+    host: db.internal
+    port: 5432

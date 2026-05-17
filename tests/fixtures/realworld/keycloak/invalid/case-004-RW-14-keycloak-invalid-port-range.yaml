@@ -1,0 +1,12 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-bad
+  namespace: auth
+spec:
+  instances: 1
+  version: "24.0"
+  externalDatabase:
+    enabled: true
+    host: db.example.com
+    port: 99999

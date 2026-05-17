@@ -1,0 +1,11 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-tls
+  namespace: auth
+spec:
+  instances: 1
+  version: "24.0"
+  tls:
+    enabled: true
+    secretName: keycloak-secret

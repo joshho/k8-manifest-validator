@@ -1,0 +1,19 @@
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-resources
+  namespace: minio
+spec:
+  pools:
+  - name: pool-1
+    servers: 2
+    volumesPerServer: 2
+    resources:
+      requests:
+        cpu: 500m
+        memory: 2Gi
+      limits:
+        cpu: 1000m
+        memory: 4Gi
+  version: RELEASE.2024-01-16T19-43-48Z
+  image: minio/minio:latest
