@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-float-where-integer-required
+spec:
+  intField: 3.14
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test
