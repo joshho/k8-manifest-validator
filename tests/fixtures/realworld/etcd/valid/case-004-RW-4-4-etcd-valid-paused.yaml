@@ -1,0 +1,8 @@
+apiVersion: etcd.database.coreos.com/v1beta2
+kind: EtcdCluster
+metadata:
+  name: etcd-paused
+  namespace: default
+spec:
+  size: 3
+  paused: true

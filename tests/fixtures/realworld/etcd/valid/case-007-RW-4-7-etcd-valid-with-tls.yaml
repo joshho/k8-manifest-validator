@@ -1,0 +1,11 @@
+apiVersion: etcd.database.coreos.com/v1beta2
+kind: EtcdCluster
+metadata:
+  name: etcd-with-tls
+  namespace: default
+spec:
+  size: 3
+  TLS:
+    trustedCAFile: /etc/kubernetes/pki/ca.crt
+    certFile: /etc/kubernetes/pki/etcd-server.crt
+    keyFile: /etc/kubernetes/pki/etcd-server.key

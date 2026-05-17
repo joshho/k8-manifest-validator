@@ -1,0 +1,36 @@
+apiVersion: etcd.database.coreos.com/v1beta2
+kind: EtcdCluster
+metadata:
+  name: etcd-full-spec
+  namespace: default
+  annotations:
+    etcd.database.coreos.com/scope: clusterwide
+spec:
+  size: 7
+  repository: quay.io/coreos/etcd
+  version: "3.4.10"
+  paused: false
+  TLS:
+    trustedCAFile: /etc/kubernetes/pki/ca.crt
+    certFile: /etc/kubernetes/pki/etcd-server.crt
+    keyFile: /etc/kubernetes/pki/etcd-server.key
+  pod:
+    labels:
+      app: etcd
+      etcd_cluster: etcd-full-spec
+    nodeSelector:
+      node-type: etcd
+    resources:
+      requests:
+        cpu: "200m"
+        memory: "256Mi"
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
+    tolerations:
+      - key: "dedicated"
+        operator: "Equal"
+        value: "etcd"
+        effect: "NoExecute"
+    annotations:
+      monitoring: "enabled"
