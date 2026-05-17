@@ -1,0 +1,10 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana-invalid-config-boolean
+  namespace: monitoring
+spec:
+  version: "11.2.0"
+  config:
+    users:
+      allow_sign_up: false

@@ -624,12 +624,12 @@ run_realworld_batch() {
     output=$("$BINARY" -f "$manifest_dir" 2>&1) || actual_exit=1
   fi
 
-  # Parse JSON output (summary section)
+  # Parse JSON output once and extract all values
   local actual_valid actual_total actual_errors actual_skipped
-  actual_valid=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['valid'])" 2>/dev/null || echo "-1")
-  actual_total=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['total'])" 2>/dev/null || echo "-1")
-  actual_errors=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['errors'])" 2>/dev/null || echo "-1")
-  actual_skipped=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary'].get('skipped',0))" 2>/dev/null || echo "0")
+  actual_valid=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary']['valid'])" 2>/dev/null || echo "-1")
+  actual_total=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary']['total'])" 2>/dev/null || echo "-1")
+  actual_errors=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary']['errors'])" 2>/dev/null || echo "-1")
+  actual_skipped=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary'].get('skipped',0))" 2>/dev/null || echo "0")
 
   # Malformed dir: expected_valid=0, actual_valid=0, actual_total=0 is success
   # (empty/broken YAML correctly detected as invalid)
@@ -671,7 +671,7 @@ run_realworld_batch() {
 }
 
 REALWORLD_DIR="tests/fixtures/realworld"
-operators="istio strimzi prometheus argocd redis postgresql flux cert-manager etcd rabbitmq kafka elasticsearch jaeger"
+operators="istio strimzi prometheus argocd redis postgresql flux cert-manager etcd rabbitmq kafka elasticsearch jaeger grafana"
 
 # Test each operator's valid manifests (expect exit=0, valid=total)
 echo "  Testing operator valid directories..."

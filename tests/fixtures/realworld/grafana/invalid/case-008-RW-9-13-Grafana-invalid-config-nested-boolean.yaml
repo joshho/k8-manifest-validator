@@ -1,0 +1,12 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana-invalid-config-boolean-nested
+  namespace: monitoring
+spec:
+  version: "11.2.0"
+  config:
+    auth.anonymous:
+      enabled: false
+    log.frontend:
+      enabled: false

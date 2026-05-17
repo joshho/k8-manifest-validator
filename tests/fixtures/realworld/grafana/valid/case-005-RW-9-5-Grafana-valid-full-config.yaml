@@ -1,0 +1,35 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana-full-example
+  namespace: monitoring
+spec:
+  version: "10.4.0"
+  replicas: 1
+  suspend: false
+  disableDefaultAdminSecret: false
+  serviceAccount:
+    metadata:
+      annotations:
+        iam.amazonaws.com/role: grafana-role
+  config:
+    server:
+      domain: dashboard.example.com
+      http_port: "3000"
+    database:
+      type: postgres
+      host: pg-database.example.com:5432
+      name: grafana_db
+    security:
+      admin_user: admin
+      admin_password: "********"
+    users:
+      allow_sign_up: "false"
+      allow_org_create: "false"
+      auto_assign_org: "true"
+    auth.anonymous:
+      enabled: "false"
+    log:
+      mode: console
+    log.frontend:
+      enabled: "true"
