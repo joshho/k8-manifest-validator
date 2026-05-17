@@ -1,0 +1,8 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch-negative-replicas
+  namespace: elastic-system
+spec:
+  replicas: -1
+  version: "8.12.0"
