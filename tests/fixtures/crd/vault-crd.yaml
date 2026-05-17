@@ -1,0 +1,75 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: vaults.vault.security.banzaicloud.com
+spec:
+  group: vault.security.banzaicloud.com
+  names:
+    kind: Vault
+    plural: vaults
+    singular: vault
+    listKind: VaultList
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              size:
+                type: integer
+                minimum: 1
+                maximum: 9
+              version:
+                type: string
+              resources:
+                type: object
+                properties:
+                  requests:
+                    type: object
+                    properties:
+                      cpu:
+                        type: string
+                      memory:
+                        type: string
+                  limits:
+                    type: object
+                    properties:
+                      cpu:
+                        type: string
+                      memory:
+                        type: string
+              encyrptor:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+              externalConfig:
+                type: object
+                properties:
+                  ui:
+                    type: boolean
+                  annotations:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                        value:
+                          type: string
+            required:
+            - size
+            - version
+          status:
+            type: object
+            properties:
+              phase:
+                type: string
+              readyReplicas:
+                type: integer

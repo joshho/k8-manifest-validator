@@ -1,0 +1,69 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-invalid-instances-zero
+spec:
+  instances: 0
+  version: "24.0.0"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-invalid-instances-too-large
+spec:
+  instances: 15
+  version: "24.0.0"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-invalid-instances-negative
+spec:
+  instances: -2
+  version: "24.0.0"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-invalid-instances-string
+spec:
+  instances: "3"
+  version: "24.0.0"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-invalid-missing-instances
+spec:
+  version: "24.0.0"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-invalid-missing-version
+spec:
+  instances: 2
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-invalid-db-port-string
+spec:
+  instances: 2
+  version: "24.0.0"
+  externalDatabase:
+    enabled: true
+    host: "db.example.com"
+    port: "5432"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-invalid-db-port-out-of-range
+spec:
+  instances: 2
+  version: "24.0.0"
+  externalDatabase:
+    enabled: true
+    host: "db.example.com"
+    port: 99999
