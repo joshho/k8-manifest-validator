@@ -1,0 +1,11 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: basic-grafana
+  namespace: monitoring
+spec:
+  replicas: 1
+  version: "10.2.0"
+  config:
+    security: {}
+    ingress: {}

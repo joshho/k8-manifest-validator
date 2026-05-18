@@ -1,0 +1,14 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-ingress
+  namespace: auth
+spec:
+  instances: 1
+  version: "24.0"
+  ingress:
+    enabled: true
+    className: traefik
+    hostname: auth.example.com
+    annotations:
+      kubernetes.io/ingress.class: traefik

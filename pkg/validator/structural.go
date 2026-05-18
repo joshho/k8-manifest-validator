@@ -15,20 +15,32 @@ import (
 // deferredFieldInit ensures thread-safe lazy compilation of the index.
 
 // normalizePath normalizes a field.Path for lookup in deferredFieldIndex.
-// It extracts bracketed name segments and finds the longest matching suffix.
+// It replaces numeric array indices with [*] wildcards and extracts bracketed name
+// segments to find the longest matching suffix.
 // Example: "spec[volumes][0][glusterfs][path]" → ".glusterfs.path" (matches .glusterfs.path)
 //          "spec[volumes][0][nfs][path]" → ".nfs.path" (matches .nfs.path)
+//          "spec[containers][0][env][0][name]" → ".containers[*].env[*].name"
+//            (matches .containers[*].env[*].name from codegen index)
 func normalizePath(p *field.Path) string {
 	s := p.String()
 
-	// Strip array indices: [0], [1], etc.
-	re := regexp.MustCompile(`\[\d+\]`)
-	s = re.ReplaceAllString(s, "")
+	// Replace numeric array indices with [*] wildcard for consistent suffix matching.
+	// e.g. "spec[containers][0][env][0][name]" → "spec[containers][*][env][*][name]"
+	re := regexp.MustCompile(`\[(\d+)\]`)
+	s = re.ReplaceAllString(s, "[*]")
 
-	// Extract all bracketed name segments: [name] → name
-	// e.g. "spec[spec][volumes][glusterfs][endpoints]" → [spec, spec, volumes, glusterfs, endpoints]
+	// Extract all bracketed name segments, FILTERING OUT [*] wildcards.
+	// Only keep actual name segments (e.g. [containers], [env], [name]).
+	// e.g. "spec[containers][*][env][*][name]" → ["containers", "env", "name"]
+	// This prevents wildcard tokens from appearing in suffix keys.
 	bracketRe := regexp.MustCompile(`\[([^\]]+)\]`)
 	matches := bracketRe.FindAllStringSubmatch(s, -1)
+	var nameSegments []string
+	for _, m := range matches {
+		if m[1] != "*" {
+			nameSegments = append(nameSegments, m[1])
+		}
+	}
 
 	if len(matches) == 0 {
 		return s
@@ -36,12 +48,8 @@ func normalizePath(p *field.Path) string {
 
 	// Build suffixes from the end and find the longest matching key
 	// e.g. for [glusterfs][endpoints], try: .endpoints → .glusterfs.endpoints
-	for i := 0; i < len(matches); i++ {
-		// Build suffix from matches[i] to end
-		suffixParts := make([]string, len(matches)-i)
-		for j := i; j < len(matches); j++ {
-			suffixParts[j-i] = matches[j][1]
-		}
+	for i := 0; i < len(nameSegments); i++ {
+		suffixParts := nameSegments[i:]
 		key := "." + strings.Join(suffixParts, ".")
 		if _, ok := LookupDeferredField(key); ok {
 			return key

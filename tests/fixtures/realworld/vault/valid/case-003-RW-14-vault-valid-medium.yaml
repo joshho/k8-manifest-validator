@@ -1,0 +1,12 @@
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-medium
+  namespace: vault-ns
+spec:
+  size: 5
+  version: "1.13.0"
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi

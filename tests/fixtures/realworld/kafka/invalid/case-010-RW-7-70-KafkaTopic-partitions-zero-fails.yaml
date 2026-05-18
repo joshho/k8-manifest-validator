@@ -1,0 +1,8 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: my-topic-zero-partitions
+  namespace: kafka
+spec:
+  partitions: 0
+  replicas: 3

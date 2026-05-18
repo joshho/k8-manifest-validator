@@ -1,0 +1,14 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq-ha
+  namespace: default
+spec:
+  replicas: 5
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "1000m"
+  persistence:
+    storageClass: standard
+    accessMode: ReadWriteMany

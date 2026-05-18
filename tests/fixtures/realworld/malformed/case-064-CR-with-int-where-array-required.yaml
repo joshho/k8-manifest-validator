@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-int-as-array
+spec:
+  arrayField: 42
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

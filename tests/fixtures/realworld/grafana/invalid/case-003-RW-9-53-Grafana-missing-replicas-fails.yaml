@@ -1,0 +1,7 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana-no-replicas
+  namespace: monitoring
+spec:
+  version: "10.2.0"

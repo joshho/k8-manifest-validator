@@ -1,0 +1,29 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch-full
+  namespace: elastic-system
+spec:
+  replicas: 5
+  version: "8.12.0"
+  nodeSets:
+  - name: master
+    count: 3
+    roles:
+    - master
+    - remote_cluster_client
+    config:
+      node.master: true
+      node.data: true
+    storage:
+      size: 50Gi
+      storageClassName: fast-storage
+  - name: data
+    count: 2
+    roles:
+    - data
+    config:
+      node.data: true
+    storage:
+      size: 100Gi
+      storageClassName: standard-storage

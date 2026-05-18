@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-missing-required-spec-field
+spec:
+  field: present
+  choiceField: option-a
+  # logicalField is missing — required

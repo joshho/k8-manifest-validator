@@ -1,0 +1,89 @@
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-valid-basic
+spec:
+  size: 3
+  version: "1.16.0"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-valid-single-replica
+spec:
+  size: 1
+  version: "1.14.1"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-valid-max-replicas
+spec:
+  size: 9
+  version: "1.17.0"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-valid-with-resources
+spec:
+  size: 5
+  version: "1.15.2"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-valid-with-encryptor
+spec:
+  size: 3
+  version: "1.16.0"
+  encyrptor:
+    enabled: true
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-valid-with-external-config
+spec:
+  size: 3
+  version: "1.16.0"
+  externalConfig:
+    ui: true
+    annotations:
+      - key: "env"
+        value: "prod"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-valid-size-2
+spec:
+  size: 2
+  version: "1.16.0"
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "128Mi"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-valid-full-config
+spec:
+  size: 7
+  version: "1.17.1"
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "512Mi"
+  encyrptor:
+    enabled: false
+  externalConfig:
+    ui: false

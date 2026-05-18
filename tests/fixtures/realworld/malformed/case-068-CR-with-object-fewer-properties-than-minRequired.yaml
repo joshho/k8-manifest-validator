@@ -1,0 +1,10 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-object-min-props-violation
+spec:
+  minPropsField:
+    name: only-one
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

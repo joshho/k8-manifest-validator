@@ -1,0 +1,12 @@
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger-bad
+  namespace: observability
+spec:
+  strategy: invalid-strategy
+  collector:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi

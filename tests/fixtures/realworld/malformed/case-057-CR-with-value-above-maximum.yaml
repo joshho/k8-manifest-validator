@@ -1,0 +1,9 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-out-of-range-max
+spec:
+  maxIntField: 999
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

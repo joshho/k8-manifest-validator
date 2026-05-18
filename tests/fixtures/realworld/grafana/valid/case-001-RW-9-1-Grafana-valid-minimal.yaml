@@ -1,0 +1,8 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: minimal-grafana
+  namespace: monitoring
+spec:
+  replicas: 1
+  version: 11.2.0

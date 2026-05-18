@@ -1,0 +1,8 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-bad
+  namespace: auth
+spec:
+  instances: 0
+  version: "24.0"
