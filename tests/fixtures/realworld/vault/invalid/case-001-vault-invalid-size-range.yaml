@@ -1,0 +1,67 @@
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-invalid-size-zero
+spec:
+  size: 0
+  version: "1.16.0"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-invalid-size-too-large
+spec:
+  size: 15
+  version: "1.16.0"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-invalid-size-negative
+spec:
+  size: -1
+  version: "1.16.0"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-invalid-size-string
+spec:
+  size: "3"
+  version: "1.16.0"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-invalid-missing-size
+spec:
+  version: "1.16.0"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-invalid-missing-version
+spec:
+  size: 3
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-invalid-resources-cpu-string
+spec:
+  size: 3
+  version: "1.16.0"
+  resources:
+    requests:
+      cpu: 100
+      memory: "256Mi"
+---
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-invalid-encryptor-enabled-string
+spec:
+  size: 3
+  version: "1.16.0"
+  encyrptor:
+    enabled: "true"

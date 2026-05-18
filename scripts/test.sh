@@ -712,12 +712,12 @@ run_realworld_batch() {
     output=$("$BINARY" -f "$manifest_dir" 2>&1) || actual_exit=1
   fi
 
-  # Parse JSON output (summary section)
+  # Parse JSON output once and extract all values
   local actual_valid actual_total actual_errors actual_skipped
-  actual_valid=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['valid'])" 2>/dev/null || echo "-1")
-  actual_total=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['total'])" 2>/dev/null || echo "-1")
-  actual_errors=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary']['errors'])" 2>/dev/null || echo "-1")
-  actual_skipped=$(echo "$output" | python3 -c "import json,sys; print(json.load(sys.stdin)['summary'].get('skipped',0))" 2>/dev/null || echo "0")
+  actual_valid=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary']['valid'])" 2>/dev/null || echo "-1")
+  actual_total=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary']['total'])" 2>/dev/null || echo "-1")
+  actual_errors=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary']['errors'])" 2>/dev/null || echo "-1")
+  actual_skipped=$(echo "$output" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d['summary'].get('skipped',0))" 2>/dev/null || echo "0")
 
   # Malformed dir: expected_valid=0, actual_valid=0, actual_total=0 is success
   # (empty/broken YAML correctly detected as invalid)
@@ -759,19 +759,52 @@ run_realworld_batch() {
 }
 
 REALWORLD_DIR="tests/fixtures/realworld"
-operators="istio strimzi prometheus argocd redis postgresql flux cert-manager"
+operators="istio strimzi prometheus argocd redis postgresql flux cert-manager etcd rabbitmq kafka elasticsearch jaeger grafana vault keycloak minio"
 
-# Test each operator's valid manifests (expect exit=0, valid=total)
-echo "  Testing operator valid directories..."
-for op in $operators; do
-  run_realworld_batch "$op/valid" "$REALWORLD_DIR/$op/valid" "$CRD_DIR" 0 1
-done
+# Parallelized: split into 2 streams to halve CRD registration overhead
+# Each stream writes its counts to temp files; main shell aggregates after wait
+echo "  Testing operator valid directories (parallel)..."
+(
+  for op in istio strimzi prometheus argocd redis postgresql flux cert-manager; do
+    run_realworld_batch "$op/valid" "$REALWORLD_DIR/$op/valid" "$CRD_DIR" 0 1
+  done
+) > /tmp/rw_stream1_valid.txt 2>&1 &
+p1=$!
+(
+  for op in etcd rabbitmq kafka elasticsearch jaeger grafana vault keycloak minio; do
+    run_realworld_batch "$op/valid" "$REALWORLD_DIR/$op/valid" "$CRD_DIR" 0 1
+  done
+) > /tmp/rw_stream2_valid.txt 2>&1 &
+p2=$!
+wait $p1 $p2
+cat /tmp/rw_stream1_valid.txt /tmp/rw_stream2_valid.txt | grep "^  PASS\|^  FAIL\|^  SKIP"
 
 # Test each operator's invalid manifests (expect exit=1, valid=0)
-echo "  Testing operator invalid directories..."
-for op in $operators; do
-  run_realworld_batch "$op/invalid" "$REALWORLD_DIR/$op/invalid" "$CRD_DIR" 1 0
-done
+echo "  Testing operator invalid directories (parallel)..."
+(
+  for op in istio strimzi prometheus argocd redis postgresql flux cert-manager; do
+    run_realworld_batch "$op/invalid" "$REALWORLD_DIR/$op/invalid" "$CRD_DIR" 1 0
+  done
+) > /tmp/rw_stream1_invalid.txt 2>&1 &
+p3=$!
+(
+  for op in etcd rabbitmq kafka elasticsearch jaeger grafana vault keycloak minio; do
+    run_realworld_batch "$op/invalid" "$REALWORLD_DIR/$op/invalid" "$CRD_DIR" 1 0
+  done
+) > /tmp/rw_stream2_invalid.txt 2>&1 &
+p4=$!
+wait $p3 $p4
+cat /tmp/rw_stream1_invalid.txt /tmp/rw_stream2_invalid.txt | grep "^  PASS\|^  FAIL\|^  SKIP"
+
+# Aggregate counts from stream output files
+RW_PASSED=$(( $(grep -c "^  PASS" /tmp/rw_stream1_valid.txt 2>/dev/null || echo 0) + \
+                   $(grep -c "^  PASS" /tmp/rw_stream2_valid.txt 2>/dev/null || echo 0) + \
+                   $(grep -c "^  PASS" /tmp/rw_stream1_invalid.txt 2>/dev/null || echo 0) + \
+                   $(grep -c "^  PASS" /tmp/rw_stream2_invalid.txt 2>/dev/null || echo 0) ))
+RW_FAILED=$(( $(grep -c "^  FAIL" /tmp/rw_stream1_valid.txt 2>/dev/null || echo 0) + \
+                   $(grep -c "^  FAIL" /tmp/rw_stream2_valid.txt 2>/dev/null || echo 0) + \
+                   $(grep -c "^  FAIL" /tmp/rw_stream1_invalid.txt 2>/dev/null || echo 0) + \
+                   $(grep -c "^  FAIL" /tmp/rw_stream2_invalid.txt 2>/dev/null || echo 0) ))
 
 # Test malformed manifests (no CRD needed)
 echo "  Testing malformed directory..."

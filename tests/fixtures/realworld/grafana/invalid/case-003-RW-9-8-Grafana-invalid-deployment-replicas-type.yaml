@@ -1,0 +1,9 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana-invalid-deployment
+  namespace: monitoring
+spec:
+  deployment:
+    spec:
+      replicas: "not-a-number"

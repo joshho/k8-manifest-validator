@@ -1,0 +1,14 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: my-connect-full
+  namespace: kafka
+spec:
+  replicas: 3
+  bootstrapServers: my-cluster-kafka:9092
+  tls:
+    trustedCertificates:
+      - secretName: my-cluster-ca-cert
+        certificate: ca.crt
+  authentication:
+    type: tls

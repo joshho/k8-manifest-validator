@@ -1,0 +1,10 @@
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-ui
+  namespace: vault-ns
+spec:
+  size: 1
+  version: "1.12.0"
+  externalConfig:
+    ui: true

@@ -1,0 +1,99 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-valid-basic
+spec:
+  instances: 1
+  version: "24.0.0"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-valid-three-instances
+spec:
+  instances: 3
+  version: "23.0.1"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-valid-max-instances
+spec:
+  instances: 10
+  version: "25.0.0"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-valid-with-image
+spec:
+  instances: 2
+  version: "22.0.2"
+  image: "quay.io/keycloak/keycloak:22.0.2"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-valid-with-resources
+spec:
+  instances: 2
+  version: "24.0.0"
+  resources:
+    requests:
+      cpu: "500m"
+      memory: "1Gi"
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-valid-with-tls
+spec:
+  instances: 2
+  version: "24.0.0"
+  tls:
+    enabled: true
+    secretName: "keycloak-tls-certs"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-valid-with-ingress
+spec:
+  instances: 1
+  version: "24.0.0"
+  ingress:
+    enabled: true
+    className: "nginx"
+    hostname: "keycloak.example.com"
+---
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-valid-full-config
+spec:
+  instances: 3
+  version: "25.0.1"
+  image: "quay.io/keycloak/keycloak:25.0.1"
+  resources:
+    requests:
+      cpu: "1"
+      memory: "2Gi"
+    limits:
+      cpu: "2"
+      memory: "4Gi"
+  externalDatabase:
+    enabled: true
+    host: "db.example.com"
+    port: 5432
+  tls:
+    enabled: true
+    secretName: "keycloak-tls"
+  ingress:
+    enabled: true
+    className: "traefik"
+    hostname: "keycloak.prod.example.com"
+    annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"

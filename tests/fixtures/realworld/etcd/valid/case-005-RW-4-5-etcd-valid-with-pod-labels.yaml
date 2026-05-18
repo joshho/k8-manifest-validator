@@ -1,0 +1,11 @@
+apiVersion: etcd.database.coreos.com/v1beta2
+kind: EtcdCluster
+metadata:
+  name: etcd-with-pod-labels
+  namespace: default
+spec:
+  size: 3
+  pod:
+    labels:
+      environment: production
+      team: infrastructure

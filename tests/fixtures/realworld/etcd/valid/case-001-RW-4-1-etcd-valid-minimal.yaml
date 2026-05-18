@@ -1,0 +1,7 @@
+apiVersion: etcd.database.coreos.com/v1beta2
+kind: EtcdCluster
+metadata:
+  name: etcd-minimal
+  namespace: default
+spec:
+  size: 3

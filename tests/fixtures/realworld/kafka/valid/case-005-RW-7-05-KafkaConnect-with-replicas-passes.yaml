@@ -1,0 +1,8 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: my-connect
+  namespace: kafka
+spec:
+  replicas: 2
+  bootstrapServers: my-cluster-kafka:9092

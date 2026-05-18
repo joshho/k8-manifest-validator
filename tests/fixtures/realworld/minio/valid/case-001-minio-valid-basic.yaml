@@ -1,0 +1,116 @@
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-valid-basic
+spec:
+  pools:
+    - name: pool-1
+      servers: 4
+      volumesPerServer: 4
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-valid-single-pool
+spec:
+  pools:
+    - name: pool-1
+      servers: 1
+      volumesPerServer: 1
+  version: "RELEASE.2023-11-20T20-11-58Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-valid-max-servers
+spec:
+  pools:
+    - name: pool-1
+      servers: 32
+      volumesPerServer: 4
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-valid-max-volumes
+spec:
+  pools:
+    - name: pool-1
+      servers: 4
+      volumesPerServer: 16
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-valid-with-resources
+spec:
+  pools:
+    - name: pool-1
+      servers: 4
+      volumesPerServer: 4
+      resources:
+        requests:
+          cpu: "2"
+          memory: "8Gi"
+        limits:
+          cpu: "4"
+          memory: "16Gi"
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-valid-with-s3
+spec:
+  pools:
+    - name: pool-1
+      servers: 4
+      volumesPerServer: 4
+  version: "RELEASE.2024-01-16T16-30-29Z"
+  s3:
+    bucket: "minio-bucket"
+    endpoint: "s3.amazonaws.com"
+    region: "us-east-1"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-valid-multi-pool
+spec:
+  pools:
+    - name: pool-1
+      servers: 2
+      volumesPerServer: 2
+    - name: pool-2
+      servers: 4
+      volumesPerServer: 2
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-valid-full-config
+spec:
+  pools:
+    - name: pool-1
+      servers: 8
+      volumesPerServer: 4
+      resources:
+        requests:
+          cpu: "4"
+          memory: "16Gi"
+        limits:
+          cpu: "8"
+          memory: "32Gi"
+  version: "RELEASE.2024-01-16T16-30-29Z"
+  image: "minio/minio:latest"
+  s3:
+    bucket: "prod-bucket"
+    endpoint: "s3.example.com"
+    region: "us-west-2"
+  features:
+    bucketDNS: true
+    encryption: true

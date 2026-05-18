@@ -1,0 +1,17 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana-with-config
+  namespace: monitoring
+spec:
+  config:
+    security:
+      admin_user: admin
+    server:
+      domain: grafana.example.com
+      http_addr: 0.0.0.0
+      http_port: '3000'
+    users:
+      allow_sign_up: 'false'
+  replicas: 2
+  version: 11.2.0

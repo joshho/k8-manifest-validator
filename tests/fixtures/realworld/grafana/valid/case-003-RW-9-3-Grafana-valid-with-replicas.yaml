@@ -1,0 +1,11 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: grafana-replicas
+  namespace: monitoring
+spec:
+  version: "11.1.0"
+  replicas: 2
+  config:
+    server:
+      domain: grafana.example.com

@@ -1,0 +1,29 @@
+apiVersion: keycloak.org/v1alpha1
+kind: Keycloak
+metadata:
+  name: keycloak-full
+  namespace: auth
+spec:
+  instances: 2
+  version: "24.0"
+  image: quay.io/keycloak/keycloak:24.0
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+    limits:
+      cpu: 2000m
+      memory: 2Gi
+  externalDatabase:
+    enabled: true
+    host: postgres.example.com
+    port: 5432
+  tls:
+    enabled: true
+    secretName: keycloak-tls
+  ingress:
+    enabled: true
+    className: nginx
+    hostname: keycloak.example.com
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt-prod

@@ -1,0 +1,11 @@
+kind: Jaeger
+metadata:
+  name: jaeger-bad
+  namespace: observability
+spec:
+  strategy: single
+  collector:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi

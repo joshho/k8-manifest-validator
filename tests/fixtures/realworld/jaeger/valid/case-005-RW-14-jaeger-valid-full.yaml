@@ -1,0 +1,22 @@
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger-full
+  namespace: observability
+spec:
+  strategy: all
+  collector:
+    replicas: 3
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
+  agent:
+    strategy: sidecar
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi

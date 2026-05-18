@@ -1,0 +1,8 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaUser
+metadata:
+  name: my-user-empty-auth
+  namespace: kafka
+spec:
+  authentication:
+    type: ""

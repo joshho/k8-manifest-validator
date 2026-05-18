@@ -1,0 +1,10 @@
+apiVersion: vault.security.banzaicloud.com/v1alpha1
+kind: Vault
+metadata:
+  name: vault-encrypted
+  namespace: vault-ns
+spec:
+  size: 3
+  version: "1.14.0"
+  encyrptor:
+    enabled: true

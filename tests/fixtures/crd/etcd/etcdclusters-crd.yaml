@@ -1,0 +1,106 @@
+# Generated CRD for etcd.database.coreos.com/v1beta2 EtcdCluster
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: etcdclusters.etcd.database.coreos.com
+  labels:
+    app: etcd-operator
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.6.2
+spec:
+  group: etcd.database.coreos.com
+  names:
+    kind: EtcdCluster
+    listKind: EtcdClusterList
+    plural: etcdclusters
+    singular: etcdcluster
+    shortNames:
+      - ec
+  scope: Namespaced
+  versions:
+    - name: v1beta2
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            apiVersion:
+              type: string
+            kind:
+              type: string
+            metadata:
+              type: object
+            spec:
+              type: object
+              required:
+                - size
+              properties:
+                size:
+                  type: integer
+                  minimum: 1
+                  maximum: 7
+                  description: "Expected size of the etcd cluster (1-7)"
+                repository:
+                  type: string
+                  description: "Container image repository"
+                version:
+                  type: string
+                  pattern: '^\d+\.\d+\.\d+$'
+                  description: "etcd version (semver format)"
+                paused:
+                  type: boolean
+                  description: "Pause operator control"
+                pod:
+                  type: object
+                  description: "Pod policy for etcd pods"
+                  properties:
+                    labels:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    nodeSelector:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    affinity:
+                      type: object
+                    antiAffinity:
+                      type: boolean
+                    resources:
+                      type: object
+                    tolerations:
+                      type: array
+                      items:
+                        type: object
+                    etcdEnv:
+                      type: array
+                      items:
+                        type: object
+                    persistentVolumeClaimSpec:
+                      type: object
+                    annotations:
+                      type: object
+                      additionalProperties:
+                        type: string
+                    busyboxImage:
+                      type: string
+                    securityContext:
+                      type: object
+                    DNSTimeoutInSecond:
+                      type: integer
+                    clusterDomain:
+                      type: string
+                TLS:
+                  type: object
+                  description: "TLS configuration"
+            status:
+              type: object
+              properties:
+                size:
+                  type: integer
+                currentVersion:
+                  type: string
+                targetVersion:
+                  type: string
+  preserveUnknownFields: false

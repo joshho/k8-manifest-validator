@@ -1,0 +1,25 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq-full
+  namespace: messaging
+spec:
+  replicas: 5
+  persistence:
+    storageClass: fast-storage
+    accessMode: ReadWriteOnce
+  resources:
+    requests:
+      cpu: 1000m
+      memory: 2Gi
+    limits:
+      cpu: 2000m
+      memory: 4Gi
+  secretBackend:
+    enabled: true
+  tls:
+    enabled: true
+    secretName: rmq-tls-secret
+  additionalConfig: |
+    loopback_users.guest = false
+    log.console = true

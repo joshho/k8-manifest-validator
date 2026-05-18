@@ -1,0 +1,14 @@
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-cert
+  namespace: minio
+spec:
+  pools:
+  - name: pool-1
+    servers: 3
+    volumesPerServer: 4
+  version: RELEASE.2024-01-16T19-43-48Z
+  image: minio/minio:latest
+  certificates:
+    clientSecretName: minio-client-cert

@@ -1,0 +1,80 @@
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-invalid-servers-zero
+spec:
+  pools:
+    - name: pool-1
+      servers: 0
+      volumesPerServer: 4
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-invalid-servers-too-large
+spec:
+  pools:
+    - name: pool-1
+      servers: 64
+      volumesPerServer: 4
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-invalid-servers-string
+spec:
+  pools:
+    - name: pool-1
+      servers: "4"
+      volumesPerServer: 4
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-invalid-volumes-zero
+spec:
+  pools:
+    - name: pool-1
+      servers: 4
+      volumesPerServer: 0
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-invalid-volumes-too-large
+spec:
+  pools:
+    - name: pool-1
+      servers: 4
+      volumesPerServer: 32
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-invalid-empty-pools
+spec:
+  pools: []
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-invalid-missing-pools
+spec:
+  version: "RELEASE.2024-01-16T16-30-29Z"
+---
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-invalid-servers-float
+spec:
+  pools:
+    - name: pool-1
+      servers: 4.5
+      volumesPerServer: 4
+  version: "RELEASE.2024-01-16T16-30-29Z"

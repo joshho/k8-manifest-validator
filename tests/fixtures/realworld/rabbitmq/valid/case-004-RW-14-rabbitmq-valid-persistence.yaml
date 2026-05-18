@@ -1,0 +1,22 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: rabbitmq-persistent
+  namespace: messaging
+spec:
+  replicas: 3
+  persistence:
+    storageClass: standard
+    accessMode: ReadWriteOnce
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: 1000m
+      memory: 2Gi
+  service:
+    type: ClusterIP
+  tls:
+    enabled: true
+    secretName: rabbitmq-tls

@@ -1,0 +1,13 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+metadata:
+  name: test-object-max-props-violation
+spec:
+  maxPropsField:
+    name: first
+    value: second
+    extra: third
+    another: fourth
+  requiredField: present
+  choiceField: option-a
+  logicalField: prefix-test

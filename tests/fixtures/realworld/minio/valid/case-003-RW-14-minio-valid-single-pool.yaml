@@ -1,0 +1,12 @@
+apiVersion: minio.min.io/v2
+kind: Tenant
+metadata:
+  name: minio-single
+  namespace: minio
+spec:
+  pools:
+  - name: pool-1
+    servers: 1
+    volumesPerServer: 1
+  version: RELEASE.2024-01-16T19-43-48Z
+  image: minio/minio:latest
