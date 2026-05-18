@@ -583,6 +583,94 @@ run_fixture_test "invalid-versioned-v1alpha1-missing-field" \
   1 0
 
 # ---------------------------------------------------------------------------
+# YAML edge cases — AWU-26
+# ---------------------------------------------------------------------------
+run_fixture_test "duplicate-key-in-object" \
+  "$FIXTURES_DIR/cr/duplicate-key-in-object.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "duplicate-key-in-object-invalid" \
+  "$FIXTURES_DIR/cr/duplicate-key-in-object-invalid.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "yaml-document-separator" \
+  "$FIXTURES_DIR/cr/yaml-document-separator.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 2
+
+run_fixture_test "yaml-document-separator-invalid" \
+  "$FIXTURES_DIR/cr/yaml-document-separator-invalid.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 1
+
+run_fixture_test "yaml-null-alternatives" \
+  "$FIXTURES_DIR/cr/yaml-null-alternatives.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "yaml-null-alternatives-invalid" \
+  "$FIXTURES_DIR/cr/yaml-null-alternatives-invalid.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "empty-file" \
+  "$FIXTURES_DIR/cr/empty-file" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 0
+
+run_fixture_test "comment-only" \
+  "$FIXTURES_DIR/cr/comment-only.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 0
+
+run_fixture_test "yaml-anchor-alias" \
+  "$FIXTURES_DIR/cr/yaml-anchor-alias.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "yaml-multiline-string" \
+  "$FIXTURES_DIR/cr/yaml-multiline-string.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "yaml-multiline-string-invalid" \
+  "$FIXTURES_DIR/cr/yaml-multiline-string-invalid.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "yaml-octal-number" \
+  "$FIXTURES_DIR/cr/yaml-octal-number.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+run_fixture_test "yaml-escape-sequences" \
+  "$FIXTURES_DIR/cr/yaml-escape-sequences.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "non-yaml-extension" \
+  "$FIXTURES_DIR/cr/non-yaml-extension.txt" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 0
+
+run_fixture_test "yaml-binary-tag" \
+  "$FIXTURES_DIR/cr/yaml-binary-tag.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 1
+
+run_fixture_test "binary-file" \
+  "$FIXTURES_DIR/cr/binary-file" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  0 0
+
+run_fixture_test "invalid-encoding" \
+  "$FIXTURES_DIR/cr/invalid-encoding.yaml" \
+  "$CRD_DIR/comprehensive-crd.yaml" \
+  1 0
+
+# ---------------------------------------------------------------------------
 # realworld operator tests — batched by directory for speed
 # Each operator's valid/ and invalid/ dirs are processed in a single binary invocation
 # ~17 calls instead of ~1200 individual invocations

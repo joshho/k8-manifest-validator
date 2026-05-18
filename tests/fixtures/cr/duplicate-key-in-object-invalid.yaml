@@ -1,0 +1,8 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+spec:
+  patternField: first
+  patternField: INVALID_UPPER
+  requiredField: req
+  choiceField: option-a
+  logicalField: prefix-test

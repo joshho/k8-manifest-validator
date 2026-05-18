@@ -1,0 +1,15 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+spec:
+  field: first-doc
+  requiredField: req
+  choiceField: option-a
+  logicalField: prefix-test
+---
+apiVersion: example.com/v1
+kind: Comprehensive
+spec:
+  intField: "not-an-integer"
+  requiredField: req
+  choiceField: option-a
+  logicalField: prefix-test

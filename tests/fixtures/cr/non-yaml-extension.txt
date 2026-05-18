@@ -1,0 +1,7 @@
+apiVersion: example.com/v1
+kind: Comprehensive
+spec:
+  field: value
+  requiredField: req
+  choiceField: option-a
+  logicalField: prefix-test
