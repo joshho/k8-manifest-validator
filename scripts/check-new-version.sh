@@ -5,16 +5,19 @@ set -euo pipefail
 #
 # Usage:
 #   ./scripts/check-new-version.sh --minor     # check for new minor release
-#   ./scripts/check-new-version.sh --patch     # check for new patch (current minor)
+#   ./scripts/check-new-version.sh --patch    # check for new patch (current minor)
 #
 # Exits 0 with no output if already current.
 # Exits 0 and prints "NEW_MINOR=v1.XX" if new minor found.
-# Exits 0 and prints "NEW_PATCH=v1.XX.Y" if new patch found.
+# Exits 0 and prints "NEW_PATCH=v1.XX.0" if new patch found.
 
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")/" && pwd)"
 cd "$SCRIPT_DIR"
 
 MODE=""
+CURRENT_VERSION=""
+CURRENT_K8S=""
+CURRENT_PKG_MINOR=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -29,29 +32,22 @@ if [[ -z "$MODE" ]]; then
   exit 1
 fi
 
-# Read current state
 CURRENT_VERSION=$(cat VERSION | tr -d '[:space:]')
 CURRENT_K8S=$(echo "$CURRENT_VERSION" | sed 's/^v//' | sed 's/-[0-9]*$//')
-
-# Read current k8s package minor from go.mod
 CURRENT_PKG_MINOR=$(grep 'k8s\.io/api ' go.mod | grep -oP 'v0\.\K[0-9]+')
+CURRENT_PKG_PATCH=$(grep 'k8s\.io/api ' go.mod | grep -oP 'v0\.[0-9]+\.\K[0-9]+')
 
 echo "=== k8s version checker ==="
 echo "MODE:            ${MODE}"
 echo "VERSION:         ${CURRENT_VERSION}"
 echo "K8s minor:       ${CURRENT_K8S}"
-echo "Package minor:   ${CURRENT_PKG_MINOR}"
+echo "Package minor:   v0.${CURRENT_PKG_MINOR}.${CURRENT_PKG_PATCH}"
 
 # === MINOR MODE ===
 if [[ "$MODE" == "minor" ]]; then
-  # Fetch latest k8s release tag
   LATEST_TAG=$(curl -sSfL --max-time 15 \
     "https://api.github.com/repos/kubernetes/kubernetes/releases/latest" \
-    | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-print(data.get('tag_name',''))
-" 2>/dev/null || true)
+    | python3 -c "import sys,json;print(json.load(sys.stdin).get('tag_name',''))" 2>/dev/null || true)
 
   if [[ -z "$LATEST_TAG" ]]; then
     echo "Error: could not fetch latest k8s release"
@@ -77,45 +73,33 @@ print(data.get('tag_name',''))
 fi
 
 # === PATCH MODE ===
+# For release branches: checks if k8s has released a newer minor than what
+# go.mod currently has. k8s.io packages only tag at .0, so a patch bump
+# means bumping to a newer {minor}.0 when a new release branch is cut.
 if [[ "$MODE" == "patch" ]]; then
-  # Read current patch from go.mod
-  CURRENT_PKG_PATCH=$(grep 'k8s\.io/api ' go.mod | grep -oP 'v0\.[0-9]+\.\K[0-9]+')
+  echo "Current:        v0.${CURRENT_PKG_MINOR}.${CURRENT_PKG_PATCH}"
 
-  echo "Current patch:   v0.${CURRENT_PKG_MINOR}.${CURRENT_PKG_PATCH}"
+  K8S_LATEST=$(curl -sSfL --max-time 15 \
+    "https://api.github.com/repos/kubernetes/kubernetes/releases/latest" \
+    | python3 -c "import sys,json;print(json.load(sys.stdin).get('tag_name',''))" 2>/dev/null || true)
 
-  # Fetch latest patch for current minor
-  LATEST_PATCH=$(curl -sSfL --max-time 15 \
-    "https://api.github.com/repos/kubernetes/kubernetes/releases?per_page=50" \
-    | python3 -c "
-import sys, json
-releases = json.load(sys.stdin)
-for r in releases:
-    tag = r.get('tag_name','')
-    if not tag.startswith('v1.${CURRENT_PKG_MINOR}.'):
-        continue
-    if 'alpha' in tag or 'beta' in tag or 'rc' in tag:
-        continue
-    parts = tag.lstrip('v').split('.')
-    if len(parts) != 3:
-        continue
-    print(parts[2])
-    break
-" 2>/dev/null || true)
-
-  if [[ -z "$LATEST_PATCH" ]]; then
-    echo "Could not determine latest patch for k8s ${CURRENT_PKG_MINOR}. Assuming current."
+  if [[ -z "$K8S_LATEST" ]]; then
+    echo "Could not fetch latest k8s release"
     exit 0
   fi
 
-  # IMPORTANT: k8s.io/api, k8s.io/apimachinery, k8s.io/apiextensions-apiserver
-  # only tag releases at .0 patch. They do NOT have .1, .2 etc tags.
-  # Force patch to 0 — go.get always uses v0.N.0
-  LATEST_PATCH="0"
+  K8S_LATEST_MINOR=$(echo "$K8S_LATEST" | sed 's/^v//' | cut -d. -f2)
+  K8S_LATEST_PATCH=$(echo "$K8S_LATEST" | sed 's/^v//' | cut -d. -f3)
+  echo "Latest k8s:     $K8S_LATEST (minor $K8S_LATEST_MINOR, patch $K8S_LATEST_PATCH)"
 
-  echo "Latest patch:    v1.${CURRENT_PKG_MINOR}.${LATEST_PATCH} (forced .0 — k8s.io packages only tag .0)"
-
-  if [[ "$LATEST_PATCH" -gt "$CURRENT_PKG_PATCH" ]]; then
-    echo "NEW_PATCH=v1.${CURRENT_PKG_MINOR}.${LATEST_PATCH}"
+  if [[ "$K8S_LATEST_MINOR" -gt "$CURRENT_PKG_MINOR" ]]; then
+    echo "New k8s minor detected: v1.${K8S_LATEST_MINOR}.0 (go.mod is v0.${CURRENT_PKG_MINOR}.${CURRENT_PKG_PATCH})"
+    echo "NEW_PATCH=v1.${K8S_LATEST_MINOR}.0"
+    exit 0
+  elif [[ "$K8S_LATEST_MINOR" -eq "$CURRENT_PKG_MINOR" ]] && \
+       [[ "$K8S_LATEST_PATCH" -gt "$CURRENT_PKG_PATCH" ]]; then
+    echo "New k8s patch available: v1.${K8S_LATEST_MINOR}.${K8S_LATEST_PATCH} (go.mod is v0.${CURRENT_PKG_MINOR}.${CURRENT_PKG_PATCH})"
+    echo "NEW_PATCH=v1.${K8S_LATEST_MINOR}.${K8S_LATEST_PATCH}"
     exit 0
   else
     echo "Already on latest patch"
