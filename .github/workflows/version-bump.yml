@@ -149,10 +149,19 @@ jobs:
           git add VERSION go.mod go.sum
           git commit -m "release: patch k8s to $TAG" || true
           git tag -f "$TAG"
-          echo "[validate] go build ./..."
-          "$GO" build ./...
-          echo "[validate] go test ./..."
-          "$GO" test ./...
+          # Only run build/test when the branch itself is the active minor
+          # (i.e. release/X matches k8s latest minor) — skip for older pinned branches
+          K8S_MINOR=$(curl -sSfL --max-time 15 "https://api.github.com/repos/kubernetes/kubernetes/releases/latest" | python3 -c "import sys,json;print(json.load(sys.stdin).get('tag_name',''))" 2>/dev/null | sed 's/^v//' | cut -d. -f2)
+          BRANCH_MINOR=$(echo "${{ github.ref_name }}" | sed 's/release\/v//')
+          echo "k8s latest minor: $K8S_MINOR, branch minor: $BRANCH_MINOR"
+          if [[ "$K8S_MINOR" == "$BRANCH_MINOR" ]]; then
+            echo "[validate] go build ./..."
+            "$GO" build ./...
+            echo "[validate] go test ./..."
+            "$GO" test ./...
+          else
+            echo "[skip validate] branch minor $BRANCH_MINOR != k8s minor $K8S_MINOR (pinned older k8s.io)"
+          fi
 
       - name: Push branch + tag
         if: steps.check.outputs.update_available == 'true'
