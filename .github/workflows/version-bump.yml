@@ -144,6 +144,11 @@ jobs:
           GO=/home/node/.local/go/go/bin/go
           if ! command -v "$GO" &>/dev/null; then GO=$(command -v go); fi
           ./scripts/bump-version.sh --patch
+          # Tag the bump commit
+          TAG=$(cat VERSION | tr -d '[:space:]')
+          git add VERSION go.mod go.sum
+          git commit -m "release: patch k8s to $TAG" || true
+          git tag -f "$TAG"
           echo "[validate] go build ./..."
           "$GO" build ./...
           echo "[validate] go test ./..."
@@ -160,9 +165,17 @@ jobs:
           git config --global user.email "ci@k8-manifest-validator.io"
           git config --global user.name "CI Bot"
           TAG=$(cat VERSION | tr -d '[:space:]')
+          if [[ -z "$TAG" ]]; then
+            echo "ERROR: VERSION file is empty, cannot push tag"
+            exit 1
+          fi
           git push origin ${{ github.ref_name }}
-          git push origin "$TAG"
-          echo "Pushed branch and tag $TAG"
+          if [[ -n "$TAG" ]]; then
+            git push origin "$TAG"
+            echo "Pushed branch and tag $TAG"
+          else
+            git push origin ${{ github.ref_name }}
+          fi
 
       - name: No patch update needed
         if: steps.check.outputs.update_available == 'false'
