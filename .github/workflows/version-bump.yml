@@ -144,6 +144,11 @@ jobs:
           GO=/home/node/.local/go/go/bin/go
           if ! command -v "$GO" &>/dev/null; then GO=$(command -v go); fi
           ./scripts/bump-version.sh --patch
+          # Tag the bump commit
+          TAG=$(cat VERSION | tr -d '[:space:]')
+          git add VERSION go.mod go.sum
+          git commit -m "release: patch k8s to $TAG" || true
+          git tag -f "$TAG"
           echo "[validate] go build ./..."
           "$GO" build ./...
           echo "[validate] go test ./..."
