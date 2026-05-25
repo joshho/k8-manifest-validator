@@ -92,7 +92,14 @@ if [[ "$MODE" == "patch" ]]; then
   K8S_LATEST_PATCH=$(echo "$K8S_LATEST" | sed 's/^v//' | cut -d. -f3)
   echo "Latest k8s:     $K8S_LATEST (minor $K8S_LATEST_MINOR, patch $K8S_LATEST_PATCH)"
 
-  if [[ "$K8S_LATEST_MINOR" -gt "$CURRENT_PKG_MINOR" ]]; then
+  # Only bump if k8s is EXACTLY one minor ahead — release branches are pinned
+  # to their own minor. A multi-minor jump (e.g. v0.32.0 → v0.36.0) would break
+  # the build because the codebase uses APIs that changed between those versions.
+  DIFF=$((K8S_LATEST_MINOR - CURRENT_PKG_MINOR))
+  if [[ "$DIFF" -gt 1 ]]; then
+    echo "k8s jumped multiple minors (v0.${CURRENT_PKG_MINOR} → v0.${K8S_LATEST_MINOR}); refusing to bump (would break build)"
+    exit 0
+  elif [[ "$K8S_LATEST_MINOR" -gt "$CURRENT_PKG_MINOR" ]]; then
     echo "New k8s minor detected: v1.${K8S_LATEST_MINOR}.0 (go.mod is v0.${CURRENT_PKG_MINOR}.${CURRENT_PKG_PATCH})"
     echo "NEW_PATCH=v1.${K8S_LATEST_MINOR}.0"
     exit 0
