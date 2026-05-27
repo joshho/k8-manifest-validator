@@ -32,6 +32,11 @@ if [[ -z "$MODE" ]]; then
   exit 1
 fi
 
+if [[ ! -f VERSION ]]; then
+  echo "ERROR: VERSION file not found in $(pwd)" >&2
+  exit 1
+fi
+
 CURRENT_VERSION=$(cat VERSION | tr -d '[:space:]')
 CURRENT_K8S=$(echo "$CURRENT_VERSION" | sed 's/^v//' | sed 's/-[0-9]*$//')
 CURRENT_PKG_MINOR=$(grep 'k8s\.io/api ' go.mod | grep -oP 'v0\.\K[0-9]+')

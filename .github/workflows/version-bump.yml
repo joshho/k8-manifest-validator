@@ -122,6 +122,10 @@ jobs:
       - name: Check if patch update is needed
         id: check
         run: |
+          echo "[debug] pwd=$(pwd)"
+          echo "[debug] github.ref=${{ github.ref }}"
+          echo "[debug] github.ref_name=${{ github.ref_name }}"
+          echo "[debug] VERSION contents: $(cat VERSION 2>&1 || echo 'FILE NOT FOUND')"
           result=$(./scripts/check-new-version.sh --patch 2>&1 || true)
           echo "check_output: $result"
           if echo "$result" | grep -q "NEW_PATCH="; then
