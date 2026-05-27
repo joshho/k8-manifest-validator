@@ -12,7 +12,7 @@ set -euo pipefail
 # Exits 0 and prints "NEW_PATCH=v1.XX.0" if new patch found.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")/" && pwd)"
-cd "$SCRIPT_DIR"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 MODE=""
 CURRENT_VERSION=""
@@ -32,15 +32,15 @@ if [[ -z "$MODE" ]]; then
   exit 1
 fi
 
-if [[ ! -f VERSION ]]; then
-  echo "ERROR: VERSION file not found in $(pwd)" >&2
+if [[ ! -f "$REPO_ROOT/VERSION" ]]; then
+  echo "ERROR: VERSION file not found at $REPO_ROOT/VERSION" >&2
   exit 1
 fi
 
-CURRENT_VERSION=$(cat VERSION | tr -d '[:space:]')
+CURRENT_VERSION=$(cat "$REPO_ROOT/VERSION" | tr -d '[:space:]')
 CURRENT_K8S=$(echo "$CURRENT_VERSION" | sed 's/^v//' | sed 's/-[0-9]*$//')
-CURRENT_PKG_MINOR=$(grep 'k8s\.io/api ' go.mod | grep -oP 'v0\.\K[0-9]+')
-CURRENT_PKG_PATCH=$(grep 'k8s\.io/api ' go.mod | grep -oP 'v0\.[0-9]+\.\K[0-9]+')
+CURRENT_PKG_MINOR=$(grep 'k8s\.io/api ' "$REPO_ROOT/go.mod" | grep -oP 'v0\.\K[0-9]+')
+CURRENT_PKG_PATCH=$(grep 'k8s\.io/api ' "$REPO_ROOT/go.mod" | grep -oP 'v0\.[0-9]+\.\K[0-9]+')
 
 echo "=== k8s version checker ==="
 echo "MODE:            ${MODE}"
