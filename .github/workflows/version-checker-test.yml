@@ -1,0 +1,47 @@
+name: version-checker tests
+
+on:
+  push:
+    branches:
+      - main
+      - 'release/v[0-9]+.[0-9]+'
+    paths:
+      - 'scripts/test_check-new-version.py'
+      - 'scripts/check-new-version.sh'
+  pull_request:
+    paths:
+      - 'scripts/test_check-new-version.py'
+      - 'scripts/check-new-version.sh'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  test-check-new-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run unit tests
+        run: python3 scripts/test_check-new-version.py
+
+      - name: Show available test scenarios
+        run: |
+          echo "=== Test scenarios ==="
+          echo "1. VERSION missing → clear error"
+          echo "2. same minor+patch → no bump needed"
+          echo "3. one minor ahead → NEW_PATCH"
+          echo "4. two minors ahead → refuses to bump"
+          echo "5. REPO_ROOT resolves from script location (not cwd)"
+          echo "6. --minor mode: new minor detected"
+          echo "7. --minor mode: already current"
+          echo "8. same minor, newer patch available → NEW_PATCH"
+          echo "9. patch mode always produces non-empty output"
